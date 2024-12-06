@@ -1,0 +1,68 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: open-webui
+    namespace: open-webui
+spec:
+    interval: 15m
+    chart:
+        spec:
+            chart: external-service
+            version: 14.1.2
+            sourceRef:
+                kind: HelmRepository
+                name: truecharts
+                namespace: flux-system
+    releaseName: open-webui
+    values:
+        ingress:
+            main:
+                annotations:
+                    traefik.frontend.passHostHeader: "false"
+                enabled: true
+                hosts:
+                    - host: chat.${DOMAIN_0}
+                      paths:
+                        - path: /
+                          pathType: Prefix
+                ingressClassName: ""
+                integrations:
+                    certManager:
+                        certificateIssuer: cert
+                        enabled: true
+                    homepage:
+                        description: Run open source AI models!
+                        enabled: true
+                        group: Apps
+                        icon: ""
+                        name: AI Chat
+                        widget:
+                            custom:
+                                key: ""
+                            enabled: false
+                    traefik:
+                        allowCors: false
+                        enabled: true
+                        entrypoints:
+                            - websecure
+                        middlewares:
+                            - name: auth
+                              namespace: "traefik"
+        release_name: open-webui
+        service:
+            main:
+                enabled: true
+                externalIP: 192.168.1.241
+                ports:
+                    main:
+                        enabled: true
+                        port: 3000
+                        protocol: http
+                type: ExternalIP
+                useSlice: false
+        workload:
+            main:
+                enabled: false
+                podSpec:
+                    containers:
+                        main: {}

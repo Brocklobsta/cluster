@@ -1,0 +1,198 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: sonarr
+    namespace: sonarr
+spec:
+    interval: 15m
+    chart:
+        spec:
+            chart: sonarr
+            version: 22.0.10
+            sourceRef:
+                kind: HelmRepository
+                name: truecharts
+                namespace: flux-system
+    releaseName: sonarr
+    values:
+        TZ: America/Los_Angeles
+        addons:
+            codeserver:
+                enabled: false
+            netshoot:
+                enabled: false
+            vpn:
+                type: disabled
+        credentials:
+            b2:
+                accessKey: ${S3_KEY_ID}
+                bucket: ${S3_BUCKET}
+                encrKey: ${S3_PASSWORD}
+                name: b2
+                path: ""
+                secretKey: ${S3_SECRET_KEY}
+                type: s3
+                url: ${S3_ENDPOINT}
+        exportarrImage:
+            pullPolicy: IfNotPresent
+            repository: ghcr.io/onedr0p/exportarr
+            tag: v2.0.1@sha256:727e7bc8f2f0934a2117978c59f4476b954018b849a010ea6cfb380bd6539644
+        ingress:
+            main:
+                enabled: true
+                hosts:
+                    - host: son.${DOMAIN_0}
+                      paths:
+                        - path: /
+                          pathType: Prefix
+                ingressClassName: ""
+                integrations:
+                    certManager:
+                        certificateIssuer: cert
+                        enabled: true
+                    homepage:
+                        description: ""
+                        enabled: true
+                        group: Arr
+                        icon: ""
+                        name: ""
+                        widget:
+                            custom:
+                                key: ${HOMEPAE_SONARR_KEY}
+                            enabled: true
+                    traefik:
+                        allowCors: false
+                        enabled: true
+                        entrypoints:
+                            - websecure
+                        middlewares:
+                            - name: auth
+                              namespace: "traefik"
+        metrics:
+            main:
+                enabled: false
+                endpoints:
+                    - path: /metrics
+                      port: metrics
+                prometheusRule:
+                    enabled: false
+                targetSelector: metrics
+                type: servicemonitor
+        persistence:
+            config:
+                enabled: true
+                readOnly: false
+                storageClass: ""
+                targetSelector:
+                    exportarr:
+                        exportarr:
+                            mountPath: /config
+                            readOnly: true
+                    main:
+                        main:
+                            mountPath: /config
+                volsync:
+                    - credentials: b2
+                      dest:
+                        enabled: true
+                      name: config
+                      src:
+                        enabled: true
+                      type: restic
+            series:
+                enabled: true
+                type: nfs
+                path: /mnt/Redwood/media/series
+                server: ${TRUENAS_IP}
+                readOnly: false
+                mountPath: /mnt/media/series
+            downloads:
+                enabled: true
+                type: nfs
+                path: /mnt/Redwood/media/downloads
+                server: ${TRUENAS_IP}
+                readOnly: false
+                mountPath: /downloads
+        release_name: sonarr
+        resources: {}
+        securityContext:
+            container:
+                UMASK: "0022"
+                runAsGroup: 568
+                runAsUser: 568
+            pod:
+                fsGroupChangePolicy: OnRootMismatch
+        service:
+            main:
+                enabled: true
+                ports:
+                    main:
+                        port: 8989
+                type: ClusterIP
+            metrics:
+                enabled: true
+                ports:
+                    metrics:
+                        enabled: true
+                        port: 8990
+                        targetSelector: exportarr
+                targetSelector: exportarr
+                type: ClusterIP
+        updated: true
+        workload:
+            exportarr:
+                enabled: true
+                podSpec:
+                    containers:
+                        exportarr:
+                            args:
+                                - sonarr
+                            enabled: true
+                            env:
+                                CONFIG: /config/config.xml
+                                INTERFACE: 0.0.0.0
+                                PORT: '{{ .Values.service.metrics.ports.metrics.port }}'
+                                URL: '{{ printf "http://%v:%v" (include "tc.v1.common.lib.chart.names.fullname" $) .Values.service.main.ports.main.port }}'
+                            imageSelector: exportarrImage
+                            primary: true
+                            probes:
+                                liveness:
+                                    enabled: true
+                                    path: /healthz
+                                    port: '{{ .Values.service.metrics.ports.metrics.port }}'
+                                    type: http
+                                readiness:
+                                    enabled: true
+                                    path: /healthz
+                                    port: '{{ .Values.service.metrics.ports.metrics.port }}'
+                                    type: http
+                                startup:
+                                    enabled: true
+                                    path: /healthz
+                                    port: '{{ .Values.service.metrics.ports.metrics.port }}'
+                                    type: http
+                replicas: 1
+                strategy: RollingUpdate
+                type: Deployment
+            main:
+                podSpec:
+                    containers:
+                        main:
+                            env:
+                                SONARR__AUTHENTICATION_METHOD: ""
+                                SONARR__PORT: '{{ .Values.service.main.ports.main.port }}'
+                            probes:
+                                liveness:
+                                    enabled: true
+                                    path: /ping
+                                    type: http
+                                readiness:
+                                    enabled: true
+                                    path: /ping
+                                    type: http
+                                startup:
+                                    enabled: true
+                                    path: /ping
+                                    type: http
+                replicas: 1
+                type: Deployment

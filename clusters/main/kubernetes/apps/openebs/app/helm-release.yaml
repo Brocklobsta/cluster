@@ -1,0 +1,117 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: openebs
+    namespace: openebs
+spec:
+    interval: 15m
+    chart:
+        spec:
+            chart: openebs
+            version: 6.0.1
+            sourceRef:
+                kind: HelmRepository
+                name: truecharts
+                namespace: flux-system
+    releaseName: openebs
+    values:
+        localpv-provisioner:
+            analytics:
+                enabled: true
+                pingInterval: 24h
+            enabled: false
+            fullnameOverride: ""
+            helperPod:
+                image:
+                    pullPolicy: IfNotPresent
+                    registry: ""
+                    repository: openebs/linux-utils
+                    tag: 4.0.0
+            hostpathClass:
+                basePath: ""
+                enabled: false
+                ext4Quota:
+                    enabled: false
+                    hardLimitGrace: 0%
+                    softLimitGrace: 0%
+                isDefaultClass: false
+                name: openebs-hostpath
+                reclaimPolicy: Delete
+                xfsQuota:
+                    enabled: false
+                    hardLimitGrace: 0%
+                    softLimitGrace: 0%
+            imagePullSecrets: null
+            localpv:
+                basePath: /var/openebs/local
+                enableLeaderElection: true
+                enabled: true
+                healthCheck:
+                    initialDelaySeconds: 30
+                    periodSeconds: 60
+                image:
+                    pullPolicy: IfNotPresent
+                    registry: null
+                    repository: openebs/provisioner-localpv
+                    tag: 4.0.0
+                name: localpv-provisioner
+                podLabels:
+                    name: openebs-localpv-provisioner
+                privileged: true
+                replicas: 1
+                resources: null
+                updateStrategy:
+                    type: RollingUpdate
+            nameOverride: ""
+            rbac:
+                create: true
+            serviceAccount:
+                create: true
+                name: null
+        lvm-localpv:
+            crd:
+                enableInstall: false
+                volumeSnapshot: false
+            enabled: false
+        release_name: openebs
+        service:
+            main:
+                enabled: false
+                ports:
+                    main:
+                        enabled: false
+        storageClass:
+            zfs-main:
+                allowVolumeExpansion: true
+                enabled: false
+                isDefault: true
+                parameters:
+                    compression: zstd-6
+                    dedup: "off"
+                    encryption: "off"
+                    fstype: zfs
+                    poolname: Redwood/pvc
+                    recordsize: 64k
+                    shared: "yes"
+                    thinprovision: "yes"
+                provisioner: zfs.csi.openebs.io
+                reclaimPolicy: Retain
+        volumeSnapshotClass:
+            zfspv:
+                deletionPolicy: Delete
+                driver: zfs.csi.openebs.io
+                enabled: true
+                isDefault: true
+        workload:
+            main:
+                enabled: false
+        zfs-localpv:
+            crd:
+                enableInstall: false
+                enabled: false
+                volumeSnapshot: false
+            crds:
+                enableInstall: false
+                enabled: false
+                volumeSnapshot: false
+            enabled: true

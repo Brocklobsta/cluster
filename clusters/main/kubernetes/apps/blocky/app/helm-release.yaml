@@ -1,0 +1,336 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: blocky
+    namespace: blocky
+spec:
+    interval: 15m
+    chart:
+        spec:
+            chart: blocky
+            version: 15.2.2
+            sourceRef:
+                kind: HelmRepository
+                name: truecharts
+                namespace: flux-system
+    releaseName: blocky
+    values:
+        TZ: America/Los_Angeles
+        addons:
+            codeserver:
+                enabled: false
+            netshoot:
+                enabled: false
+            vpn:
+                type: disabled
+        blocking:
+            blacklist:
+                - lists:
+                    - https://raw.githubusercontent.com/DandelionSprout/adfilt/master/Alternate%20versions%20Anti-Malware%20List/AntiMalwareHosts.txt
+                    - https://osint.digitalside.it/Threat-Intel/lists/latestdomains.txt
+                    - https://s3.amazonaws.com/lists.disconnect.me/simple_malvertising.txt
+                    - https://v.firebog.net/hosts/Prigent-Crypto.txt
+                    - https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Risk/hosts
+                    - https://bitbucket.org/ethanr/dns-blacklists/raw/8575c9f96e5b4a1308f2f12394abd86d0927a4a0/bad_lists/Mandiant_APT1_Report_Appendix_D.txt
+                    - https://phishing.army/download/phishing_army_blocklist_extended.txt
+                    - https://gitlab.com/quidsup/notrack-blocklists/raw/master/notrack-malware.txt
+                    - https://v.firebog.net/hosts/RPiList-Malware.txt
+                    - https://v.firebog.net/hosts/RPiList-Phishing.txt
+                    - https://raw.githubusercontent.com/Spam404/lists/master/main-blacklist.txt
+                    - https://raw.githubusercontent.com/AssoEchap/stalkerware-indicators/master/generated/hosts
+                    - https://urlhaus.abuse.ch/downloads/hostfile/
+                  name: Malicious
+                - lists:
+                    - https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt
+                    - https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts
+                    - https://v.firebog.net/hosts/static/w3kbl.txt
+                  name: Suspicious
+                - lists:
+                    - https://adaway.org/hosts.txt
+                    - https://v.firebog.net/hosts/AdguardDNS.txt
+                    - https://v.firebog.net/hosts/Admiral.txt
+                    - https://raw.githubusercontent.com/anudeepND/blacklist/master/adservers.txt
+                    - https://s3.amazonaws.com/lists.disconnect.me/simple_ad.txt
+                    - https://v.firebog.net/hosts/Easylist.txt
+                    - https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=0&mimetype=plaintext
+                    - https://raw.githubusercontent.com/FadeMind/hosts.extras/master/UncheckyAds/hosts
+                    - https://raw.githubusercontent.com/bigdargon/hostsVN/master/hosts
+                  name: Advertising
+            blockTTL: 6h
+            blockType: nxDomain
+            clientGroupsBlock:
+                - groups:
+                    - Malicious
+                    - Suspicious
+                    - Advertising
+                  name: default
+            downloadAttempts: 3
+            downloadCooldown: 2s
+            downloadTimeout: 60s
+            processingConcurrency: 4
+            refreshPeriod: 4h
+            startStrategy: blocking
+        blocky:
+            enablePrometheus: true
+        bootstrapDns:
+            upstream: 1.1.1.1
+        caching:
+            cacheTimeNegative: 30m
+            maxItemsCount: 0
+            maxTime: 30m
+            minTime: 5m
+            prefetchExpires: 2h
+            prefetchMaxItemsCount: 0
+            prefetchThreshold: 5
+            prefetching: false
+        certFile: ""
+        clientLookup:
+            upstream: ""
+        cnpg:
+            main:
+                backups:
+                    credentials: b2
+                    enabled: true
+                    retentionPolicy: ""
+                    revision: "2"
+                cluster:
+                    instances: 1
+                    singleNode: true
+                database: blocky
+                enabled: true
+                hibernate: false
+                mode: recovery
+                monitoring:
+                    disableDefaultQueries: false
+                    enablePodMonitor: true
+                password: ${CNPG_PASSWORD}
+                pgVersion: 16
+                pooler:
+                    enabled: false
+                recovery:
+                    credentials: b2
+                    enabled: true
+                    revision: "1"
+                    serverName: ""
+                user: blocky
+        configmap:
+            dashboard:
+                data:
+                    blocky.json: '{{ .Files.Get "dashboard.json" | indent 8 }}'
+                    blockypostgres.json: '{{ .Files.Get "dashboardpsql.json" | indent 8 }}'
+                enabled: true
+                labels:
+                    grafana_dashboard: "1"
+            datasource:
+                data:
+                    datasourceblockypsql.yaml: |-
+                        apiVersion: 1
+                        datasources:
+                        - name: BlockyPostgres
+                          type: postgres
+                          uid: blockypostgres
+                          url: {{ printf "%s.%s:5432" (.Values.cnpg.main.creds.host | trimAll "\"") .Release.Namespace }}
+                          access: proxy
+                          user: {{ .Values.cnpg.main.user }}
+                          secureJsonData:
+                            password: {{ .Values.cnpg.main.creds.password | default "na" }}
+                          jsonData:
+                            database: {{ .Values.cnpg.main.database }}
+                            sslmode: 'disable' # disable/require/verify-ca/verify-full
+                            maxOpenConns: 100 # Grafana v5.4+
+                            maxIdleConns: 100 # Grafana v5.4+
+                            maxIdleConnsAuto: true # Grafana v9.5.1+
+                            connMaxLifetime: 14400 # Grafana v5.4+
+                            postgresVersion: 1500 # 903=9.3, 904=9.4, 905=9.5, 906=9.6, 1000=10
+                            timescaledb: false
+                enabled: true
+                labels:
+                    grafana_datasources: "1"
+        credentials:
+            b2:
+                accessKey: ${S3_KEY_ID}
+                bucket: ${S3_BUCKET}
+                encrKey: ${S3_PASSWORD}
+                name: b2
+                path: ""
+                secretKey: ${S3_SECRET_KEY}
+                type: s3
+                url: ${S3_ENDPOINT}
+        customDNS:
+            customTTL: 1h
+            filterUnmappedTypes: true
+        defaultUpstreams:
+            - tcp-tls:1.1.1.1:853
+            - tcp-tls:1.0.0.1:853
+        dohUserAgent: ""
+        hostsFile:
+            enabled: false
+            filePath: /etc/hosts
+            hostsTTL: 60m
+            refreshPeriod: 30m
+        ingress:
+            main:
+                enabled: false
+        k8sgateway:
+            advancedOptions: false
+            apex: ""
+            domains:
+                - dnsChallenge:
+                    enabled: false
+                  domain: ${DOMAIN_0}
+            enabled: true
+            forward:
+                enabled: false
+                options:
+                    - name: tls_servername
+                      value: cloudflare-dns.com
+                primary: tls://1.1.1.1
+                secondary: tls://1.0.0.1
+            secondary: ""
+            ttl: 300
+        k8sgatewayImage:
+            pullPolicy: IfNotPresent
+            repository: quay.io/oriedge/k8s_gateway
+            tag: v0.4.0@sha256:7bdbd447c0244b8f89de9cd6f4826ed0ac66c9406fac3a4ac80081020c251c6b
+        keyFile: ""
+        logFormat: text
+        logLevel: info
+        logPrivacy: false
+        logTimestamp: true
+        metrics:
+            main:
+                enabled: true
+                endpoints:
+                    - path: /metrics
+                      port: main
+                prometheusRule:
+                    enabled: false
+                type: servicemonitor
+        minTlsServeVersion: 1.2
+        overrideDefaults: true
+        podOptions:
+            automountServiceAccountToken: true
+        queryLog:
+            creationAttempts: 3
+            creationCooldown: 2s
+            logRetentionDays: 0
+            target: /var/log/something
+            type: ""
+        rbac:
+            main:
+                clusterWide: true
+                enabled: true
+                primary: true
+                rules:
+                    - apiGroups:
+                        - ""
+                      resources:
+                        - services
+                        - namespaces
+                      verbs:
+                        - list
+                        - watch
+                    - apiGroups:
+                        - extensions
+                        - networking.k8s.io
+                      resources:
+                        - ingresses
+                      verbs:
+                        - list
+                        - watch
+        redis:
+            enabled: true
+            includeCommon: true
+        release_name: blocky
+        resources: {}
+        securityContext:
+            container:
+                UMASK: "0022"
+                runAsGroup: 568
+                runAsUser: 568
+            pod:
+                fsGroupChangePolicy: OnRootMismatch
+        service:
+            dns:
+                enabled: true
+                loadBalancerIP: ""
+                ports:
+                    dns:
+                        enabled: true
+                        port: 53
+                        protocol: udp
+                        targetPort: 53
+                    dnstcp:
+                        enabled: true
+                        port: '{{ .Values.service.dns.ports.dns.port }}'
+                        protocol: tcp
+                        targetPort: 53
+                type: LoadBalancer
+            dot:
+                enabled: true
+                loadBalancerIP: ""
+                ports:
+                    dot:
+                        enabled: true
+                        port: 853
+                        protocol: tcp
+                        targetPort: 853
+                type: LoadBalancer
+            https:
+                enabled: true
+                ports:
+                    https:
+                        enabled: true
+                        port: 4443
+                        protocol: https
+                        targetPort: 4443
+            k8sgateway:
+                enabled: true
+                ports:
+                    k8sgateway:
+                        enabled: true
+                        port: 5353
+                        protocol: udp
+                        targetPort: 5353
+            main:
+                enabled: true
+                ports:
+                    main:
+                        enabled: true
+                        port: 4000
+                        protocol: http
+                        targetPort: 4000
+        serviceAccount:
+            main:
+                enabled: true
+                primary: true
+        webUI:
+            apiURL: http://127.0.0.1:4000
+            enabled: true
+        workload:
+            main:
+                podSpec:
+                    containers:
+                        main:
+                            probes:
+                                liveness:
+                                    command:
+                                        - /app/blocky
+                                        - healthcheck
+                                    enabled: false
+                                    type: exec
+                                readiness:
+                                    command:
+                                        - /app/blocky
+                                        - healthcheck
+                                    enabled: false
+                                    type: exec
+                                startup:
+                                    command:
+                                        - /app/blocky
+                                        - healthcheck
+                                    enabled: false
+                                    type: exec
+                replicas: 1
+                strategy: RollingUpdate
+                type: Deployment

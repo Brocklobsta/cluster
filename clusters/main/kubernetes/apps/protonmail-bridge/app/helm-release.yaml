@@ -1,0 +1,103 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: protonmail-bridge
+    namespace: protonmail-bridge
+spec:
+    interval: 15m
+    chart:
+        spec:
+            chart: protonmail-bridge
+            version: 15.1.5
+            sourceRef:
+                kind: HelmRepository
+                name: truecharts
+                namespace: flux-system
+    releaseName: protonmail-bridge
+    values:
+        TZ: America/Los_Angeles
+        addons:
+            codeserver:
+                enabled: false
+            netshoot:
+                enabled: false
+            vpn:
+                type: disabled
+        credentials:
+            b2:
+                accessKey: ${S3_KEY_ID}
+                bucket: ${S3_BUCKET}
+                encrKey: ${S3_PASSWORD}
+                name: b2
+                path: ""
+                secretKey: ${S3_SECRET_KEY}
+                type: s3
+                url: ${S3_ENDPOINT}
+        persistence:
+            config:
+                enabled: true
+                mountPath: /root
+                readOnly: false
+                storageClass: ""
+                volsync:
+                    - credentials: b2
+                      dest:
+                        enabled: true
+                      name: config
+                      src:
+                        enabled: true
+                      type: restic
+        release_name: protonmail-bridge
+        resources: {}
+        securityContext:
+            container:
+                UMASK: "0022"
+                readOnlyRootFilesystem: false
+                runAsGroup: 0
+                runAsNonRoot: false
+                runAsUser: 0
+            pod:
+                fsGroupChangePolicy: OnRootMismatch
+        service:
+            imap:
+                enabled: true
+                ports:
+                    imap:
+                        enabled: true
+                        port: 143
+                        protcol: tcp
+                        targetPort: 143
+                type: ClusterIP
+            main:
+                enabled: false
+                ports:
+                    main:
+                        enabled: false
+            smtp:
+                enabled: true
+                ports:
+                    smtp:
+                        enabled: true
+                        port: 25
+                        primary: true
+                        protocol: tcp
+                        targetPort: 25
+                primary: true
+                type: ClusterIP
+        workload:
+            main:
+                podSpec:
+                    containers:
+                        main:
+                            probes:
+                                liveness:
+                                    port: '{{ .Values.service.smtp.ports.smtp.targetPort }}'
+                                    type: tcp
+                                readiness:
+                                    port: '{{ .Values.service.smtp.ports.smtp.targetPort }}'
+                                    type: tcp
+                                startup:
+                                    port: '{{ .Values.service.smtp.ports.smtp.targetPort }}'
+                                    type: tcp
+                replicas: 1
+                type: Deployment

@@ -1,0 +1,38 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: cloudnative-pg
+    namespace: cloudnative-pg
+spec:
+    interval: 15m
+    chart:
+        spec:
+            chart: cloudnative-pg
+            version: 7.0.5
+            sourceRef:
+                kind: HelmRepository
+                name: truecharts
+                namespace: flux-system
+    releaseName: cloudnative-pg
+    values:
+        cloudnative-pg:
+            monitoring:
+                grafanaDashboard:
+                    configMapName: cnpg-grafana-dashboard
+                    create: true
+                    namespace: ""
+                    sidecarLabel: grafana_dashboard
+                    sidecarLabelValue: "1"
+                podMonitorEnabled: true
+        operator:
+            register: true
+        release_name: cloudnative-pg
+        service:
+            main:
+                enabled: false
+                ports:
+                    main:
+                        enabled: false
+        workload:
+            main:
+                enabled: false

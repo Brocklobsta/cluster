@@ -1,0 +1,338 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: nextcloud
+    namespace: nextcloud
+spec:
+    interval: 15m
+    chart:
+        spec:
+            chart: nextcloud
+            version: 30.1.24
+            sourceRef:
+                kind: HelmRepository
+                name: truecharts
+                namespace: flux-system
+    releaseName: nextcloud
+    values:
+        TZ: America/Los_Angeles
+        addons:
+            codeserver:
+                enabled: false
+            netshoot:
+                enabled: false
+            vpn:
+                type: disabled
+        clamavImage:
+            pullPolicy: IfNotPresent
+            repository: clamav/clamav
+            tag: 1.3.1@sha256:94ccfcc8b6f52c5279a5d01253d57595927dedb25e89a066aa7c043866ec41b4
+        cnpg:
+            main:
+                backups:
+                    credentials: b2
+                    enabled: true
+                    retentionPolicy: ""
+                    revision: "2"
+                cluster:
+                    instances: 1
+                    singleNode: true
+                database: nextcloud
+                enabled: true
+                hibernate: false
+                mode: recovery
+                monitoring:
+                    disableDefaultQueries: false
+                    enablePodMonitor: true
+                password: ${CNPG_PASSWORD}
+                pgVersion: 15
+                pooler:
+                    enabled: false
+                recovery:
+                    credentials: b2
+                    enabled: true
+                    revision: "1"
+                    serverName: ""
+                user: nextcloud
+        collaboraImage:
+            pullPolicy: IfNotPresent
+            repository: collabora/code
+            tag: 24.04.3.1.1@sha256:8d4759b5dc9ac6a7c943caf20765fafa8519a8a91579a29a02bad28b8ab35fcd
+        credentials:
+            b2:
+                accessKey: ${S3_KEY_ID}
+                bucket: ${S3_BUCKET}
+                encrKey: ${S3_PASSWORD}
+                name: b2
+                path: ""
+                secretKey: ${S3_SECRET_KEY}
+                type: s3
+                url: ${S3_ENDPOINT}
+        cronjobs:
+            - cmd:
+                - echo "Running [php -f /var/www/html/cron.php] ..."
+                - php -f /var/www/html/cron.php
+                - echo "Finished [php -f /var/www/html/cron.php]"
+              enabled: true
+              name: nextcloud-cron
+              schedule: '*/5 * * * *'
+            - cmd:
+                - echo "Running [occ preview:pre-generate] ..."
+                - occ preview:pre-generate
+                - echo "Finished [occ preview:pre-generate]"
+              enabled: '{{ .Values.nextcloud.previews.cron }}'
+              name: preview-cron
+              schedule: '{{ .Values.nextcloud.previews.schedule }}'
+        hpbImage:
+            pullPolicy: IfNotPresent
+            repository: tccr.io/tccr/nextcloud-push-notify
+            tag: v0.6.12@sha256:5c0b2fa23cce532ca2ed97abfe98287023a6d16369a7499ea8a03959969e9f10
+        imaginaryImage:
+            pullPolicy: IfNotPresent
+            repository: tccr.io/tccr/nextcloud-imaginary
+            tag: v20230401@sha256:3ee40a5bcea3266612070df7243704b35db77948494f4725595f1eb41270e266
+        ingress:
+            main:
+                enabled: true
+                hosts:
+                    - host: cloud.${DOMAIN_0}
+                      paths:
+                        - path: /
+                          pathType: Prefix
+                ingressClassName: ""
+                integrations:
+                    certManager:
+                        certificateIssuer: cert
+                        enabled: true
+                    homepage:
+                        description: ""
+                        enabled: true
+                        group: Apps
+                        icon: ""
+                        name: ""
+                        widget:
+                            custom:
+                                key: ""
+                            enabled: false
+                    traefik:
+                        allowCors: false
+                        enabled: true
+                        entrypoints:
+                            - websecure
+                required: true
+        metrics:
+            main:
+                enabled: true
+                prometheusRule:
+                    enabled: false
+        nextcloud:
+            credentials:
+                initialAdminPassword: ${ADMIN_PASSWORD}
+                initialAdminUser: admin
+            general:
+                accessIP: ${TRUENAS_IP}
+                default_phone_region: US
+            notify_push:
+                enabled: true
+        nginxImage:
+            pullPolicy: IfNotPresent
+            repository: nginxinc/nginx-unprivileged
+            tag: 1.26.0@sha256:2f9cdab1fb340a6c1908366654c4d6b19d58286a46635eb034a53fc61b44c34d
+        persistence:
+            config:
+                enabled: true
+                readOnly: false
+                storageClass: ""
+                targetSelector:
+                    main:
+                        main:
+                            mountPath: /var/www/html/config
+                    nextcloud-cron:
+                        nextcloud-cron:
+                            mountPath: /var/www/html/config
+                    nginx:
+                        nginx:
+                            mountPath: /var/www/html/config
+                            readOnly: true
+                    notify:
+                        notify:
+                            mountPath: /var/www/html/config
+                            readOnly: true
+                    preview-cron:
+                        preview-cron:
+                            mountPath: /var/www/html/config
+                volsync:
+                    - credentials: b2
+                      dest:
+                        enabled: true
+                      name: config
+                      src:
+                        enabled: true
+                      type: restic
+            data:
+                autoPermissions:
+                    enabled: false
+                enabled: true
+                path: /mnt/Redwood/nextcloud
+                readOnly: false
+                server: ${TRUENAS_IP}
+                targetSelector:
+                    main:
+                        init-perms:
+                            mountPath: /var/www/html/data
+                        main:
+                            mountPath: /var/www/html/data
+                    nextcloud-cron:
+                        nextcloud-cron:
+                            mountPath: /var/www/html/data
+                    nginx:
+                        nginx:
+                            mountPath: /var/www/html/data
+                            readOnly: true
+                    preview-cron:
+                        preview-cron:
+                            mountPath: /var/www/html/data
+                type: nfs
+            html:
+                enabled: true
+                readOnly: false
+                storageClass: ""
+                targetSelector:
+                    main:
+                        main:
+                            mountPath: /var/www/html
+                    nextcloud-cron:
+                        nextcloud-cron:
+                            mountPath: /var/www/html
+                    nginx:
+                        nginx:
+                            mountPath: /var/www/html
+                            readOnly: true
+                    preview-cron:
+                        preview-cron:
+                            mountPath: /var/www/html
+                volsync:
+                    - credentials: b2
+                      dest:
+                        enabled: true
+                      name: html
+                      src:
+                        enabled: true
+                      type: restic
+            nginx:
+                enabled: true
+                objectName: nginx-config
+                targetSelector:
+                    nginx:
+                        nginx:
+                            mountPath: /etc/nginx/nginx.conf
+                            readOnly: true
+                            subPath: nginx.conf
+                type: configmap
+            nginx-temp:
+                enabled: true
+                targetSelector:
+                    nginx:
+                        nginx:
+                            mountPath: /tmp/nginx
+                type: emptyDir
+            opcache-recommended:
+                enabled: true
+                objectName: opcache
+                targetSelector:
+                    main:
+                        main:
+                            mountPath: /usr/local/etc/php/conf.d/opcache-recommended.ini
+                            readOnly: true
+                            subPath: opcache-recommended.ini
+                type: configmap
+            php-tune:
+                enabled: true
+                objectName: php-tune
+                targetSelector:
+                    main:
+                        main:
+                            mountPath: /usr/local/etc/php-fpm.d/zz-tune.conf
+                            readOnly: true
+                            subPath: zz-tune.conf
+                type: configmap
+            redis-session:
+                enabled: true
+                objectName: redis-session
+                targetSelector:
+                    main:
+                        main:
+                            mountPath: /usr/local/etc/php/conf.d/redis-session.ini
+                            readOnly: true
+                            subPath: redis-session.ini
+                type: configmap
+        redis:
+            enabled: true
+            includeCommon: true
+            username: default
+        release_name: nextcloud
+        resources: {}
+        securityContext:
+            container:
+                UMASK: "0022"
+                runAsGroup: 568
+                runAsUser: 568
+            pod:
+                fsGroupChangePolicy: OnRootMismatch
+        service:
+            clamav:
+                enabled: true
+                ports:
+                    clamav:
+                        enabled: true
+                        port: 3310
+                        targetPort: 3310
+                        targetSelector: clamav
+                targetSelector: clamav
+            collabora:
+                enabled: true
+                ports:
+                    collabora:
+                        enabled: true
+                        port: 9980
+                        targetPort: 9980
+                        targetSelector: collabora
+                targetSelector: collabora
+            imaginary:
+                enabled: true
+                ports:
+                    imaginary:
+                        enabled: true
+                        port: 9090
+                        targetSelector: imaginary
+                targetSelector: imaginary
+            main:
+                ports:
+                    main:
+                        port: 8080
+                        targetSelector: nginx
+                targetSelector: nginx
+            nextcloud:
+                enabled: true
+                ports:
+                    nextcloud:
+                        enabled: true
+                        port: 9000
+                        targetPort: 9000
+                        targetSelector: main
+                targetSelector: main
+            notify:
+                enabled: true
+                ports:
+                    metrics:
+                        enabled: true
+                        port: 7868
+                        targetSelector: notify
+                    notify:
+                        enabled: true
+                        port: 7867
+                        primary: true
+                        targetPort: 7867
+                        targetSelector: notify
+                targetSelector: notify
+        updated: true

@@ -1,0 +1,379 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: homepage
+    namespace: homepage
+spec:
+    interval: 15m
+    chart:
+        spec:
+            chart: homepage
+            version: 8.0.9
+            sourceRef:
+                kind: HelmRepository
+                name: truecharts
+                namespace: flux-system
+    releaseName: homepage
+    values:
+        TZ: America/Los_Angeles
+        addons:
+            codeserver:
+                enabled: false
+            netshoot:
+                enabled: false
+            vpn:
+                type: disabled
+        configmap:
+            config:
+                data:
+                    bookmarks.yaml: |
+                        ---
+                        # For configuration options and examples, please see:
+                        # https://gethomepage.dev/latest/configs/bookmarks
+
+                        - Developer:
+                            - Github:
+                                - abbr: GH
+                                  href: https://github.com/
+
+                        - Social:
+                            - Reddit:
+                                - abbr: RE
+                                  href: https://reddit.com/
+
+                        - Entertainment:
+                            - YouTube:
+                                - abbr: YT
+                                  href: https://youtube.com/
+
+                        - TrueCharts:
+                            - TrueCharts:
+                              - abbr: TC
+                                icon: https://truecharts.org/svg/favicon.svg
+                                href: https://truecharts.org
+                                description: "TrueCharts Website"
+                            - Github:
+                              - abbr: GH
+                                icon: https://github.com/fluidicon.png
+                                href: https://github.com/truecharts
+                                description: "TrueCharts GitHub"
+                            - Open Collective:
+                              - abbr: TC
+                                icon: https://opencollective.com/favicon.ico
+                                href: https://opencollective.com/truecharts
+                                description: "TrueCharts Open Collective"
+                            - Discord:
+                              - abbr: DC
+                                icon: https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://discord.com&size=32
+                                href: https://truecharts.org/s/discord
+                                description: "TrueCharts Discord"
+                    custom.css: ""
+                    custom.js: ""
+                    kubernetes.yaml: |
+                        mode: cluster
+                    services.yaml: "---\n# For configuration options and examples, please see:\n# https://gethomepage.dev/latest/configs/services\n\n- Arr:\n    - My First Service:\n        href: http://localhost/\n        description: Homepage is awesome\n\n- Media:\n    - My Second Service:\n        href: http://localhost/\n        description: Homepage is the best\n\n- Infra:\n    - My Third Service:\n        href: http://localhost/\n        description: Homepage is \U0001F60E\n"
+                    settings.yaml: |
+                        ---
+                        # For configuration options and examples, please see:
+                        # https://gethomepage.dev/latest/configs/settings
+
+                        providers:
+                          openweathermap: openweathermapapikey
+                          weatherapi: weatherapiapikey
+                    widgets.yaml: |
+                        ---
+                        # For configuration options and examples, please see:
+                        # https://gethomepage.dev/latest/configs/widgets
+
+                        - resources:
+                            cpu: true
+                            memory: true
+                            disk: /
+
+                        - search:
+                            provider: duckduckgo
+                            target: _blank
+                enabled: true
+        credentials:
+            b2:
+                accessKey: ${S3_KEY_ID}
+                bucket: ${S3_BUCKET}
+                encrKey: ${S3_PASSWORD}
+                name: b2
+                path: ""
+                secretKey: ${S3_SECRET_KEY}
+                type: s3
+                url: ${S3_ENDPOINT}
+        forceConfigFromValues: false
+        ingress:
+            main:
+                enabled: true
+                hosts:
+                    - host: www.${DOMAIN_0}
+                      paths:
+                        - path: /
+                          pathType: Prefix
+                    - host: ${DOMAIN_0}
+                      paths:
+                        - path: /
+                          pathType: Prefix
+                    - host: homepage.${DOMAIN_0}
+                      paths:
+                        - path: /
+                          pathType: Prefix
+                ingressClassName: ""
+                integrations:
+                    certManager:
+                        certificateIssuer: cert
+                        enabled: true
+                    homepage:
+                        enabled: false
+                    traefik:
+                        allowCors: false
+                        enabled: true
+                        entrypoints:
+                            - websecure
+                        middlewares:
+                            - name: homepage-redirect
+                              namespace: "traefik"
+                            - name: auth
+                              namespace: "traefik"
+        persistence:
+            bookmarks-config:
+                enabled: '{{ not .Values.forceConfigFromValues }}'
+                mountPath: /dummy-config/bookmarks.yaml
+                objectName: config
+                readOnly: true
+                subPath: bookmarks.yaml
+                targetSelector:
+                    main: {}
+                type: configmap
+            config:
+                enabled: true
+                mountPath: /app/config
+                readOnly: false
+                storageClass: ""
+                targetSelector:
+                    main: {}
+                volsync:
+                    - credentials: b2
+                      dest:
+                        enabled: true
+                      name: storage
+                      src:
+                        enabled: true
+                      type: restic
+            custom-css-config:
+                enabled: '{{ not .Values.forceConfigFromValues }}'
+                mountPath: /dummy-config/custom.css
+                objectName: config
+                readOnly: true
+                subPath: custom.css
+                targetSelector:
+                    main: {}
+                type: configmap
+            custom-js-config:
+                enabled: '{{ not .Values.forceConfigFromValues }}'
+                mountPath: /dummy-config/custom.js
+                objectName: config
+                readOnly: true
+                subPath: custom.js
+                targetSelector:
+                    main: {}
+                type: configmap
+            force-bookmarks-config:
+                enabled: '{{ .Values.forceConfigFromValues }}'
+                mountPath: /app/config/bookmarks.yaml
+                objectName: config
+                readOnly: true
+                subPath: bookmarks.yaml
+                type: configmap
+            force-custom-css-config:
+                enabled: '{{ .Values.forceConfigFromValues }}'
+                mountPath: /app/config/custom.css
+                objectName: config
+                readOnly: true
+                subPath: custom.css
+                type: configmap
+            force-custom-js-config:
+                enabled: '{{ .Values.forceConfigFromValues }}'
+                mountPath: /app/config/custom.js
+                objectName: config
+                readOnly: true
+                subPath: custom.js
+                type: configmap
+            force-services-config:
+                enabled: '{{ .Values.forceConfigFromValues }}'
+                mountPath: /app/config/services.yaml
+                objectName: config
+                readOnly: true
+                subPath: services.yaml
+                type: configmap
+            force-settings-config:
+                enabled: '{{ .Values.forceConfigFromValues }}'
+                mountPath: /app/config/settings.yaml
+                objectName: config
+                readOnly: true
+                subPath: settings.yaml
+                type: configmap
+            force-widgets-config:
+                enabled: '{{ .Values.forceConfigFromValues }}'
+                mountPath: /app/config/widgets.yaml
+                objectName: config
+                readOnly: true
+                subPath: widgets.yaml
+                type: configmap
+            kubernetes-config:
+                enabled: true
+                mountPath: /app/config/kubernetes.yaml
+                objectName: config
+                readOnly: true
+                subPath: kubernetes.yaml
+                type: configmap
+            services-config:
+                enabled: '{{ not .Values.forceConfigFromValues }}'
+                mountPath: /dummy-config/services.yaml
+                objectName: config
+                readOnly: true
+                subPath: services.yaml
+                targetSelector:
+                    main: {}
+                type: configmap
+            settings-config:
+                enabled: '{{ not .Values.forceConfigFromValues }}'
+                mountPath: /dummy-config/settings.yaml
+                objectName: config
+                readOnly: true
+                subPath: settings.yaml
+                targetSelector:
+                    main: {}
+                type: configmap
+            widgets-config:
+                enabled: '{{ not .Values.forceConfigFromValues }}'
+                mountPath: /dummy-config/widgets.yaml
+                objectName: config
+                readOnly: true
+                subPath: widgets.yaml
+                targetSelector:
+                    main: {}
+                type: configmap
+        podOptions:
+            dnsConfig:
+                options:
+                    - name: ndots
+                      value: "3"
+        rbac:
+            main:
+                clusterWide: true
+                enabled: true
+                primary: true
+                rules:
+                    - apiGroups:
+                        - ""
+                      resources:
+                        - namespaces
+                        - pods
+                        - nodes
+                      verbs:
+                        - get
+                        - list
+                    - apiGroups:
+                        - extensions
+                        - networking.k8s.io
+                      resources:
+                        - ingresses
+                      verbs:
+                        - get
+                        - list
+                    - apiGroups:
+                        - traefik.containo.us
+                        - traefik.io
+                      resources:
+                        - ingressroutes
+                      verbs:
+                        - get
+                        - list
+                    - apiGroups:
+                        - metrics.k8s.io
+                      resources:
+                        - nodes
+                        - pods
+                      verbs:
+                        - get
+                        - list
+                    - apiGroups:
+                        - apiextensions.k8s.io
+                      resources:
+                        - customresourcedefinitions/status
+                      verbs:
+                        - get
+        release_name: homepage
+        resources: {}
+        securityContext:
+            container:
+                UMASK: "0022"
+                runAsGroup: 568
+                runAsUser: 568
+            pod:
+                fsGroupChangePolicy: OnRootMismatch
+        service:
+            main:
+                enabled: true
+                ports:
+                    main:
+                        port: 10352
+                        protocol: http
+                        targetPort: 3000
+                type: ClusterIP
+        serviceAccount:
+            main:
+                enabled: true
+                primary: true
+        workload:
+            main:
+                podSpec:
+                    automountServiceAccountToken: true
+                    containers:
+                        main: {}
+                    initContainers:
+                        init-config:
+                            command:
+                                - /bin/sh
+                                - -c
+                                - |
+                                  mkdir -p /app/config
+                                  if [ ! -f /app/config/bookmarks.yaml ]; then
+                                    echo "Bookmarks file not found, copying dummy..."
+                                    cp /dummy-config/bookmarks.yaml /app/config/bookmarks.yaml
+                                    echo "Config file copied, you can now edit it at /app/config/bookmarks.yaml"
+                                  fi
+                                  if [ ! -f /app/config/services.yaml ]; then
+                                    echo "services file not found, copying dummy..."
+                                    cp /dummy-config/services.yaml /app/config/services.yaml
+                                    echo "Config file copied, you can now edit it at /app/config/services.yaml"
+                                  fi
+                                  if [ ! -f /app/config/settings.yaml ]; then
+                                    echo "settings file not found, copying dummy..."
+                                    cp /dummy-config/settings.yaml /app/config/settings.yaml
+                                    echo "Config file copied, you can now edit it at /app/config/settings.yaml"
+                                  fi
+                                  if [ ! -f /app/config/widgets.yaml ]; then
+                                    echo "widgets file not found, copying dummy..."
+                                    cp /dummy-config/widgets.yaml /app/config/widgets.yaml
+                                    echo "Config file copied, you can now edit it at /app/config/widgets.yaml"
+                                  fi
+                                  if [ ! -f /app/config/custom.css ]; then
+                                    echo "custom.css file not found, copying dummy..."
+                                    cp /dummy-config/custom.css /app/config/custom.css
+                                    echo "Config file copied, you can now edit it at /app/config/custom.css"
+                                  fi
+                                  if [ ! -f /app/config/custom.js ]; then
+                                    echo "custom.js file not found, copying dummy..."
+                                    cp /dummy-config/custom.js /app/config/custom.js
+                                    echo "Config file copied, you can now edit it at /app/config/custom.js"
+                                  fi
+                            enabled: true
+                            imageSelector: alpineImage
+                            type: init
+                replicas: 1
+                type: Deployment

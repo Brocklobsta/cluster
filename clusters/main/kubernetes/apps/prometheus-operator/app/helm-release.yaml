@@ -1,0 +1,77 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: prometheus-operator
+    namespace: prometheus-operator
+spec:
+    interval: 15m
+    chart:
+        spec:
+            chart: prometheus-operator
+            version: 7.0.4
+            sourceRef:
+                kind: HelmRepository
+                name: truecharts
+                namespace: flux-system
+    releaseName: prometheus-operator
+    values:
+        kps:
+            alertmanager:
+                enabled: false
+            coreDns:
+                enabled: false
+            crds:
+                enabled: true
+            defaultRules:
+                create: false
+            global:
+                rbac:
+                    create: true
+            grafana:
+                defaultDashboardsEnabled: false
+                enabled: false
+                forceDeployDashboards: false
+            kubeApiServer:
+                enabled: false
+            kubeControllerManager:
+                enabled: false
+            kubeDns:
+                enabled: false
+            kubeEtcd:
+                enabled: false
+            kubeProxy:
+                enabled: false
+            kubeScheduler:
+                enabled: false
+            kubeStateMetrics:
+                enabled: false
+            kubelet:
+                enabled: false
+            kubernetesServiceMonitors:
+                enabled: false
+            nodeExporter:
+                enabled: false
+            prometheus:
+                enabled: false
+            prometheus-windows-exporter:
+                prometheus:
+                    monitor:
+                        enabled: false
+            prometheusOperator:
+                enabled: true
+            thanosRuler:
+                enabled: false
+            windowsMonitoring:
+                enabled: false
+        operator:
+            register: true
+        release_name: prometheus-operator
+        service:
+            main:
+                enabled: false
+                ports:
+                    main:
+                        enabled: false
+        workload:
+            main:
+                enabled: false
