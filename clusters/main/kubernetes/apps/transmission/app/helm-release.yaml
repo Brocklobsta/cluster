@@ -56,7 +56,7 @@ spec:
                 ingressClassName: ""
                 integrations:
                     certManager:
-                        certificateIssuer: cert
+                        certificateIssuer: domain-0-le-prod
                         enabled: true
                     homepage:
                         description: ""

@@ -38,8 +38,8 @@ spec:
     service:
       main:
         enabled: true
-        type: LoadBalancer
-        loadBalancerIP: ""
+        type: ClusterIP
+        # loadBalancerIP: ""
       tcp:
         loadBalancerIP: ${TRAEFIK_IP}
     middlewares:
