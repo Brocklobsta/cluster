@@ -85,7 +85,7 @@ spec:
             type: restic
             credentials: b2
             dest:
-              enabled: true
+              enabled: false
             src:
               enabled: true
               trigger:
