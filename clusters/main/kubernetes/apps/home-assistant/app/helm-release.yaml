@@ -142,6 +142,7 @@ spec:
         workload:
             main:
                 podSpec:
+                    hostNetwork: true
                     containers:
                         main: {}
                     initContainers:
