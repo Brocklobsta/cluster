@@ -92,3 +92,7 @@ spec:
                 type: device
                 mountPath: /dev/ttyUSB0
                 hostPath: /dev/ttyUSB0
+        workload:
+            main:
+                podSpec:
+                    hostNetwork: true
