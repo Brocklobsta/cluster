@@ -1,0 +1,127 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: qbittorrent
+    namespace: qbittorrent
+spec:
+    postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              version: v1
+              kind: Deployment
+              name: qbittorrent
+            patch: |
+              - op: add
+                path: /spec/template/spec/containers/1/resources/limits/truecharts.org~1tun
+                value: 1
+    interval: 5m
+    chart:
+        spec:
+            # renovate: registryUrl=https://charts.truechartsoci.org
+            chart: qbittorrent
+            version: 22.1.8
+            sourceRef:
+                kind: HelmRepository
+                name: truecharts
+                namespace: flux-system
+            interval: 5m
+    install:
+        createNamespace: true
+        crds: CreateReplace
+        remediation:
+            retries: 3
+    upgrade:
+        crds: CreateReplace
+        remediation:
+            retries: 3
+    values:
+      portal:
+        open:
+          enabled: false
+      global:
+        stopAll: false
+      credentials:
+        b2:
+          type: s3
+          url: "${S3_ENDPOINT}"
+          bucket: "$S3_BUCKET"
+          accessKey: "${S3_KEY_ID}"
+          secretKey: "${S3_SECRET_KEY}"
+          encrKey: "${S3_PASSWORD}"
+      ingress:
+        main:
+          enabled: true
+          integrations:
+            traefik:
+              enabled: true
+              entrypoints:
+              - websecure
+              middlewares:
+              - name: auth
+                namespace: 'traefik'
+            certManager:
+              enabled: true
+              certificateIssuer: domain-1-le-prod
+            homepage:
+              description: ""
+              enabled: true
+              group: Arr
+              icon: ""
+              name: ""
+              widget:
+                custom:
+                  key: ""
+                enabled: true
+          hosts:
+            - host: dl.${DOMAIN_0}
+              paths:
+                - path: /
+                  pathType: Prefix
+      persistence:
+        config:
+          volsync:
+          - name: config
+            type: restic
+            credentials: b2
+            dest:
+              enabled: true
+            src:
+              enabled: true
+              trigger:
+                schedule: 40 0 * * *
+        downloads:
+          enabled: true
+          type: nfs
+          path: /mnt/Redwood/media/downloads
+          server: ${TRUENAS_IP}
+          readOnly: false
+          mountPath: /downloads
+      workload:
+        qbitportforward:
+          enabled: false
+      service:
+        proxy:
+          enabled: true
+          ports:
+            gluetun:
+              enabled: true
+              port: 8888
+              protocol: "http"
+              targetPort: 8888
+      addons:
+        vpn:
+          type: gluetun
+          killSwitch: true
+          excludedNetworks_IPv4:
+          - 192.168.1.0/24
+          env:
+            VPN_ENDPOINT_IP: ${VPN_ENDPOINT_IP}
+            VPN_ENDPOINT_PORT: "51820"
+            VPN_PORT_FORWARDING: "on"
+            VPN_PORT_FORWARDING_PROVIDER: protonvpn
+            VPN_SERVICE_PROVIDER: custom
+            VPN_TYPE: wireguard
+            WIREGUARD_ADDRESSES: 10.2.0.2/32
+            WIREGUARD_PRIVATE_KEY: ${TRANSMISSION_WIREGUARD_PRIVATE_KEY}
+            WIREGUARD_PUBLIC_KEY: ${TRANSMISSION_WIREGUARD_PUBLIC_KEY}
