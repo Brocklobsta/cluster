@@ -16,13 +16,6 @@ spec:
     releaseName: home-assistant
     values:
         TZ: America/Los_Angeles
-        addons:
-            codeserver:
-                enabled: false
-            netshoot:
-                enabled: false
-            vpn:
-                type: disabled
         cnpg:
             main:
                 backups:
@@ -33,17 +26,9 @@ spec:
                 cluster:
                     instances: 1
                     singleNode: true
-                database: home-assistant
-                enabled: true
-                hibernate: false
                 mode: recovery
-                monitoring:
-                    disableDefaultQueries: false
-                    enablePodMonitor: true
                 password: ${CNPG_PASSWORD}
                 pgVersion: 15
-                pooler:
-                    enabled: false
                 recovery:
                     credentials: b2
                     enabled: true
@@ -68,7 +53,6 @@ spec:
                       paths:
                         - path: /
                           pathType: Prefix
-                ingressClassName: ""
                 integrations:
                     certManager:
                         certificateIssuer: domain-0-le-prod
@@ -108,96 +92,3 @@ spec:
                 type: device
                 mountPath: /dev/ttyUSB0
                 hostPath: /dev/ttyUSB0
-        prometheus:
-            serviceMonitor:
-                enabled: false
-        release_name: home-assistant
-        resources: {}
-        # broadcastProxyImage:
-        #     repository: docker.io/alpine/socat
-        #     pullPolicy: IfNotPresent
-        #     tag: 1.8.0.0@sha256:a6be4c0262b339c53ddad723cdd178a1a13271e1137c65e27f90a08c16de02b8
-        service:
-            main:
-                enabled: true
-                loadBalancerIP: ""
-                ports:
-                    main:
-                        port: 8123
-                        targetPort: 8123
-                    # weatherflow:
-                    #     port: 50222
-                    #     targetPort: 50222
-                    #     protocol: udp
-                    #     enabled: true
-                type: LoadBalancer
-            # weatherflow:
-            #     enabled: true
-            #     ports:
-            #         weatherflow:
-            #             port: 50222
-            #             targetPort: 50222
-            #             protocol: udp
-            #             enabled: true
-        workload:
-            main:
-                podSpec:
-                    hostNetwork: true
-                    containers:
-                        main: {}
-                    initContainers:
-                        init:
-                            command: /config/init/init.sh
-                            enabled: true
-                            imageSelector: yqImage
-                            type: init
-                replicas: 1
-                type: Deployment
-            # broadcastproxy:
-            #     enabled: true
-            #     type: DaemonSet
-            #     podSpec:
-            #         hostNetwork: true
-            #         # Proxy doesn't seem to respect the TERM signal, so by default
-            #         # this ends up just hanging until the default grace period ends.
-            #         # This is unnecesary since this workload only proxies weatherflow
-            #         # messages.
-            #         terminationGracePeriodSeconds: 3
-            #         containers:
-            #             broadcastproxy:
-            #                 enabled: true
-            #                 primary: true
-            #                 imageSelector: broadcastProxyImage
-            #                 securityContext:
-            #                     readOnlyRootFilesystem: true
-            #                 command: ["/bin/sh"]
-            #                 # Quite a lot going on here:
-            #                 # - Resolve home-assistant's weatherflow service IP from its FQDN via getent hosts
-            #                 # - Export the IP to `$TARGET_IP`
-            #                 # - Check `$TARGET_IP` is not empty (so we can crash if it is - will help to detect templating errors)
-            #                 # - Touch `/tmp/healty` to use with the readiness, liveness and startup probes
-            #                 # - Start socat in proxy mode
-            #                 # - On exit remove `/tmp/healthy`
-            #                 args:
-            #                     - "-c"
-            #                     - 'export TARGET_IP=$(getent hosts ''{{ printf "%v-weatherflow" (include "tc.v1.common.lib.chart.names.fullname" $) }}'' | awk ''{ print $1 }'') && [[ ! -z $TARGET_IP ]] && touch /tmp/healthy && socat UDP4-LISTEN:50222,fork,reuseaddr,rcvbuf=8096 UDP4-SENDTO:${TARGET_IP}:50222,rcvbuf=8096 ; rm -rf /tmp/healthy'
-            #                     # - 'touch /tmp/healthy'
-            #                 probes:
-            #                     readiness:
-            #                         enabled: true
-            #                         type: exec
-            #                         command:
-            #                             - cat
-            #                             - /tmp/healthy
-            #                     liveness:
-            #                         enabled: true
-            #                         type: exec
-            #                         command:
-            #                             - cat
-            #                             - /tmp/healthy
-            #                     startup:
-            #                         enabled: true
-            #                         type: exec
-            #                         command:
-            #                             - cat
-            #                             - /tmp/healthy

@@ -22,7 +22,6 @@ resources:
   - recyclarr/ks.yaml
   - sonarr/ks.yaml
   - static/ks.yaml
-  - transmission/ks.yaml
   - truenas-gui/ks.yaml
   - vaultwarden/ks.yaml
   - qbittorrent/ks.yaml
