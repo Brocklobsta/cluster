@@ -2,11 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - authentik/ks.yaml
-  - blocky/ks.yaml
-  - cert-manager/ks.yaml
   - cloudflareddns/ks.yaml
-  - cloudnative-pg/ks.yaml
-  - clusterissuer/ks.yaml
   - emby/ks.yaml
   - gitea/ks.yaml
   - grafana/ks.yaml
@@ -16,22 +12,17 @@ resources:
   - kubernetes-dashboard/ks.yaml
   - lidarr/ks.yaml
   - matter-server/ks.yaml
-  - minio/ks.yaml
   - nextcloud/ks.yaml
   - ombi/ks.yaml
   - open-webui/ks.yaml
-  - openebs/ks.yaml
   - prometheus/ks.yaml
-  - prometheus-operator/ks.yaml
   - protonmail-bridge/ks.yaml
   - prowlarr/ks.yaml
   - radarr/ks.yaml
   - recyclarr/ks.yaml
   - sonarr/ks.yaml
   - static/ks.yaml
-  - traefik/ks.yaml
   - transmission/ks.yaml
   - truenas-gui/ks.yaml
   - vaultwarden/ks.yaml
-  - volsync/ks.yaml
   - qbittorrent/ks.yaml
