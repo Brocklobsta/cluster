@@ -77,7 +77,7 @@ spec:
             outposts:
                 ldap:
                     enabled: true
-                    token: B8pPDzXo1WJUwPqZhHuocOV2rlC3T4OoJmrx71CW36UEyddrEeNE1hBvSYK7VyrRKpDI3ckTcWzc0fk3SHIdh4dUO4JAn4hYpaq82ynbfe3sInpSQp94VquCbKa1PowS
+                    token: ${AUTHENTIK_LDAP_TOKEN}
                 proxy:
                     enabled: false
                     token: ""
