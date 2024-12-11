@@ -13,33 +13,29 @@ spec:
                 kind: HelmRepository
                 name: truecharts
                 namespace: flux-system
-    releaseName: recyclarr
     values:
         TZ: America/Los_Angeles
-        addons:
-            codeserver:
-                enabled: false
-            netshoot:
-                enabled: false
-            vpn:
-                type: disabled
+        # addons:
+        #     codeserver:
+        #         enabled: true
+        #         service:
+        #             type: LoadBalancer
+        #             loadBalancerIP: 192.168.1.219
+        #             ports:
+        #                 codeserver:
+        #                     port: 12321
+
         credentials:
             b2:
                 accessKey: ${S3_KEY_ID}
                 bucket: ${S3_BUCKET}
                 encrKey: ${S3_PASSWORD}
                 name: b2
-                path: ""
                 secretKey: ${S3_SECRET_KEY}
                 type: s3
                 url: ${S3_ENDPOINT}
         persistence:
             config:
-                enabled: true
-                mountPath: /config
-                readOnly: false
-                storageClass: ""
-                targetSelectAll: true
                 volsync:
                     - credentials: b2
                       dest:
@@ -48,43 +44,3 @@ spec:
                       src:
                         enabled: true
                       type: restic
-        release_name: recyclarr
-        resources: {}
-        securityContext:
-            container:
-                UMASK: "0022"
-                runAsGroup: 568
-                runAsUser: 568
-            pod:
-                fsGroupChangePolicy: OnRootMismatch
-        service:
-            main:
-                enabled: false
-                ports:
-                    main:
-                        enabled: false
-        workload:
-            main:
-                podSpec:
-                    containers:
-                        main:
-                            env:
-                                CRON_SCHEDULE: '@daily'
-                            probes:
-                                liveness:
-                                    enabled: false
-                                readiness:
-                                    enabled: false
-                                startup:
-                                    enabled: false
-                    initContainers:
-                        initconfig:
-                            command:
-                                - recyclarr
-                                - config
-                                - create
-                            enabled: true
-                            imageSelector: image
-                            type: install
-                replicas: 1
-                type: Deployment
