@@ -13,34 +13,17 @@ spec:
                 kind: HelmRepository
                 name: truecharts
                 namespace: flux-system
-    releaseName: matter-server
     values:
         image:
             repository: ghcr.io/home-assistant-libs/python-matter-server
             pullPolicy: IfNotPresent
             tag: stable
         TZ: America/Los_Angeles
-        addons:
-            codeserver:
-                enabled: false
-            netshoot:
-                enabled: false
-            vpn:
-                type: disabled
-
         persistence:
             config:
                 enabled: true
                 readOnly: false
-                storageClass: ""
-                targetSelector:
-                    exportarr:
-                        exportarr:
-                            mountPath: /data
-                            readOnly: true
-                    main:
-                        main:
-                            mountPath: /data
+                mountPath: /data
                 volsync:
                     - credentials: b2
                       dest:
@@ -62,19 +45,10 @@ spec:
         ingress:
             main:
                 enabled: false
-        release_name: matter-server
-        resources: {}
-        securityContext:
-            container:
-                UMASK: "0022"
-                runAsGroup: 568
-                runAsUser: 568
-            pod:
-                fsGroupChangePolicy: OnRootMismatch
         service:
             main:
                 enabled: true
-                loadBalancerIP: ""
+                loadBalancerIP: ${MATTER_SERVER_IP}
                 ports:
                     main:
                         enabled: true
@@ -82,23 +56,3 @@ spec:
                         protocol: http
                         targetPort: 5580
                 type: LoadBalancer
-        workload:
-            main:
-                podSpec:
-                    containers:
-                        main:
-                            probes:
-                                liveness:
-                                    enabled: true
-                                    path: /
-                                    type: tcp
-                                readiness:
-                                    enabled: true
-                                    path: /
-                                    type: tcp
-                                startup:
-                                    enabled: true
-                                    path: /
-                                    type: tcp
-                replicas: 1
-                type: Deployment
