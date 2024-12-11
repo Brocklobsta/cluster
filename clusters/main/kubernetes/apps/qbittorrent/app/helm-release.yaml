@@ -116,8 +116,8 @@ spec:
           excludedNetworks_IPv4:
           - 192.168.1.0/24
           env:
-            VPN_ENDPOINT_IP: ${VPN_ENDPOINT_IP}
-            VPN_ENDPOINT_PORT: "42928"
+            WIREGUARD_ENDPOINT_IP: ${VPN_ENDPOINT_IP}
+            WIREGUARD_ENDPOINT_PORT: 51820
             VPN_PORT_FORWARDING: "on"
             VPN_PORT_FORWARDING_PROVIDER: protonvpn
             VPN_SERVICE_PROVIDER: custom
