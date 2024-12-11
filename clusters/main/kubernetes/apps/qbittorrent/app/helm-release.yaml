@@ -118,7 +118,7 @@ spec:
           env:
             WIREGUARD_ENDPOINT_IP: ${VPN_ENDPOINT_IP}
             WIREGUARD_ENDPOINT_PORT: 51820
-            VPN_PORT_FORWARDING: "on"
+            VPN_PORT_FORWARDING: on
             VPN_PORT_FORWARDING_PROVIDER: protonvpn
             VPN_SERVICE_PROVIDER: custom
             VPN_TYPE: wireguard
