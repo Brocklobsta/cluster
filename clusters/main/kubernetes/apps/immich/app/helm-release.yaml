@@ -53,38 +53,20 @@ spec:
                         certificateIssuer: domain-0-le-prod
                         enabled: true
                     homepage:
-                        description: ""
                         enabled: true
                         group: Apps
-                        icon: ""
-                        name: ""
-                        widget:
-                            custom:
-                                key: ""
-                            enabled: false
                     traefik:
-                        allowCors: false
                         enabled: true
                         entrypoints:
                             - websecure
         persistence:
             library:
                 enabled: true
-                mountPath: /usr/src/app/upload/library
-                path: /mnt/Redwood/immich
+                path: ${IMMICH_LIBRARY_PATH}
                 readOnly: false
                 server: ${TRUENAS_IP}
-                targetSelector:
-                    main: {}
-                    microservices: {}
                 type: nfs
             profile:
-                enabled: true
-                mountPath: /usr/src/app/upload/profile
-                readOnly: false
-                targetSelector:
-                    main: {}
-                    microservices: {}
                 volsync:
                     - credentials: b2
                       dest:
@@ -94,12 +76,6 @@ spec:
                         enabled: true
                       type: restic
             thumbs:
-                enabled: true
-                mountPath: /usr/src/app/upload/thumbs
-                readOnly: false
-                targetSelector:
-                    main: {}
-                    microservices: {}
                 volsync:
                     - credentials: b2
                       dest:
@@ -109,12 +85,6 @@ spec:
                         enabled: true
                       type: restic
             uploads:
-                enabled: true
-                mountPath: /usr/src/app/upload/upload
-                readOnly: false
-                targetSelector:
-                    main: {}
-                    microservices: {}
                 volsync:
                     - credentials: b2
                       dest:
@@ -124,12 +94,6 @@ spec:
                         enabled: true
                       type: restic
             video:
-                enabled: true
-                mountPath: /usr/src/app/upload/encoded-video
-                readOnly: false
-                targetSelector:
-                    main: {}
-                    microservices: {}
                 volsync:
                     - credentials: b2
                       dest:
