@@ -13,7 +13,6 @@ spec:
                 kind: HelmRepository
                 name: truecharts
                 namespace: flux-system
-    releaseName: ombi
     values:
         TZ: America/Los_Angeles
         credentials:
@@ -39,17 +38,13 @@ spec:
                         certificateIssuer: domain-0-le-prod
                         enabled: true
                     homepage:
-                        description: ""
                         enabled: true
                         group: Apps
-                        icon: ""
-                        name: ""
                         widget:
                             custom:
                                 key: ${HOMEPAGE_OMBI_KEY}
                             enabled: true
                     traefik:
-                        allowCors: false
                         enabled: true
                         entrypoints:
                             - websecure
@@ -58,10 +53,6 @@ spec:
                               namespace: "traefik"
         persistence:
             config:
-                enabled: true
-                mountPath: /config
-                readOnly: false
-                storageClass: ""
                 volsync:
                     - credentials: b2
                       dest:
