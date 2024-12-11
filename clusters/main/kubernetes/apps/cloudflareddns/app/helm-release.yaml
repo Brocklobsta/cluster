@@ -16,26 +16,13 @@ spec:
     releaseName: cloudflareddns
     values:
         TZ: America/Los_Angeles
-        addons:
-            codeserver:
-                enabled: false
-            netshoot:
-                enabled: false
-            vpn:
-                type: disabled
         cloudflareddns:
-            api_key: ""
             api_token: ${DOMAIN_0_CLOUDFLARE_TOKEN}
-            api_token_zone: ""
             detect_mode: dig-whoami.cloudflare
-            detect_override: ""
             host_zone_record:
                 - domain: ${DOMAIN_0}
                   record: A
                   zone: ${CLOUDFLARE_ZONE}
-            interval: 300
-            log_level: 3
-            user: ""
         credentials:
             b2:
                 accessKey: ${S3_KEY_ID}
@@ -48,10 +35,6 @@ spec:
                 url: ${S3_ENDPOINT}
         persistence:
             config:
-                enabled: true
-                mountPath: /config
-                readOnly: false
-                storageClass: ""
                 volsync:
                     - credentials: b2
                       dest:
@@ -60,37 +43,3 @@ spec:
                       src:
                         enabled: true
                       type: restic
-        release_name: cloudflareddns
-        resources: {}
-        securityContext:
-            container:
-                UMASK: "0022"
-                readOnlyRootFilesystem: false
-                runAsGroup: 0
-                runAsNonRoot: false
-                runAsUser: 0
-            pod:
-                fsGroupChangePolicy: OnRootMismatch
-        service:
-            main:
-                enabled: false
-                ports:
-                    main:
-                        enabled: false
-        workload:
-            main:
-                podSpec:
-                    containers:
-                        main:
-                            envFrom:
-                                - secretRef:
-                                    name: secret
-                            probes:
-                                liveness:
-                                    enabled: false
-                                readiness:
-                                    enabled: false
-                                startup:
-                                    enabled: false
-                replicas: 1
-                type: Deployment
