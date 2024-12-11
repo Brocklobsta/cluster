@@ -65,28 +65,28 @@ spec:
             movies:
                 enabled: true
                 type: nfs
-                path: /mnt/Redwood/media/movies
+                path: ${MOVIES_PATH}
                 server: ${TRUENAS_IP}
                 readOnly: false
-                mountPath: /mnt/media/movies
+                mountPath: ${MOVIES_MOUNT_PATH}
             series:
                 enabled: true
                 type: nfs
-                path: /mnt/Redwood/media/series
+                path: ${SERIES_PATH}
                 server: ${TRUENAS_IP}
                 readOnly: false
-                mountPath: /mnt/media/series
+                mountPath: ${SERIES_MOUNT_PATH}
             music:
                 enabled: true
                 type: nfs
-                path: /mnt/Redwood/media/music
+                path: ${MUSIC_PATH}
                 server: ${TRUENAS_IP}
                 readOnly: false
-                mountPath: /mnt/media/music
+                mountPath: ${MUSIC_MOUNT_PATH}
         service:
             main:
                 enabled: true
-                loadBalancerIP: ""
+                loadBalancerIP: ${EMBY_IP}
                 ports:
                     main:
                         port: 8096
