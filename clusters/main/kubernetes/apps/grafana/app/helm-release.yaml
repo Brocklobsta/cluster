@@ -16,13 +16,6 @@ spec:
     releaseName: grafana
     values:
         TZ: America/Los_Angeles
-        addons:
-            codeserver:
-                enabled: false
-            netshoot:
-                enabled: false
-            vpn:
-                type: disabled
         cnpg:
             main:
                 backups:
@@ -50,41 +43,6 @@ spec:
                     revision: "1"
                     serverName: ""
                 user: grafana
-        configmap:
-            config:
-                data:
-                    grafana.ini: |-
-                        paths:
-                          data: /var/lib/grafana/
-                          logs: /var/log/grafana
-                          plugins: /var/lib/grafana/plugins
-                          provisioning: /etc/grafana/provisioning
-                        analytics:
-                          check_for_updates: true
-                        log:
-                          mode: console
-                        grafana_net:
-                          url: https://grafana.net
-                        server:
-                          domain: "{{ if (and .Values.ingress.main.enabled .Values.ingress.main.hosts) }}{{ .Values.ingress.main.hosts | first }}{{ else }}''{{ end }}"
-                    ldap.toml: '# nope'
-                enabled: true
-            dashboard-provider:
-                data:
-                    provider.yaml: |-
-                        apiVersion: 1
-                        providers:
-                          - name: sidecarProvider
-                            orgId: 1
-                            folder: ''
-                            type: file
-                            disableDeletion: false
-                            allowUiUpdates: false
-                            updateIntervalSeconds: 30
-                            options:
-                              foldersFromFilesStructure: true
-                              path: /tmp/dashboards
-                enabled: true
         credentials:
             b2:
                 accessKey: ${S3_KEY_ID}
@@ -123,15 +81,6 @@ spec:
                         enabled: true
                         entrypoints:
                             - websecure
-        metrics:
-            main:
-                enabled: true
-                endpoints:
-                    - path: /metrics
-                      port: main
-                prometheusRule:
-                    enabled: false
-                type: servicemonitor
         persistence:
             config:
                 enabled: true
@@ -152,170 +101,10 @@ spec:
                       src:
                         enabled: true
                       type: restic
-            grafana-tmp:
-                enabled: true
-                mountPath: /app/tmp
-                targetSelectAll: true
-                type: emptyDir
-            ldap:
-                enabled: true
-                mountPath: /etc/grafana/ldap.toml
-                objectName: config
-                subPath: ldap.toml
-                type: configmap
-            sc-alerts-volume:
-                enabled: true
-                mountPath: /etc/grafana/provisioning/alerts
-                targetSelectAll: true
-                type: emptyDir
-            sc-dashboard-config:
-                enabled: true
-                mountPath: /etc/grafana/provisioning/dashboards/sc-dashboardproviders.yaml
-                objectName: dashboard-provider
-                subPath: provider.yaml
-                type: configmap
-            sc-dashboard-volume:
-                enabled: true
-                mountPath: /tmp/dashboards
-                targetSelectAll: true
-                type: emptyDir
-            sc-datasource-volume:
-                enabled: true
-                mountPath: /etc/grafana/provisioning/datasources
-                targetSelectAll: true
-                type: emptyDir
-            sc-notifiers-volume:
-                enabled: true
-                mountPath: /etc/grafana/provisioning/notifiers
-                targetSelectAll: true
-                type: emptyDir
-            sc-plugins-volume:
-                enabled: true
-                mountPath: /etc/grafana/provisioning/plugins
-                targetSelectAll: true
-                type: emptyDir
-        podOptions:
-            automountServiceAccountToken: true
-        rbac:
-            main:
-                clusterWide: true
-                enabled: true
-                primary: true
-                rules:
-                    - apiGroups:
-                        - ""
-                      resources:
-                        - configmaps
-                        - secrets
-                      verbs:
-                        - get
-                        - watch
-                        - list
-        release_name: grafana
-        resources: {}
-        securityContext:
-            container:
-                UMASK: "0022"
-                readOnlyRootFilesystem: false
-                runAsGroup: 568
-                runAsUser: 568
-            pod:
-                fsGroupChangePolicy: OnRootMismatch
-        service:
-            main:
-                enabled: true
-                ports:
-                    main:
-                        port: 10038
-                        protocol: http
-                        targetPort: 3000
-                type: ClusterIP
-        serviceAccount:
-            main:
-                enabled: true
-                primary: true
-        sidecarImage:
-            repository: quay.io/kiwigrid/k8s-sidecar
-            tag: 1.27.2@sha256:e3280f62096bee918a605658505baa8878223b483053396f769bd9f15a2876c0
         workload:
             main:
                 podSpec:
                     containers:
-                        alerts:
-                            enabled: true
-                            env:
-                                FOLDER: /etc/grafana/provisioning/alerts
-                                IGNORE_ALREADY_PROCESSED: false
-                                LABEL: grafana_alerts
-                                LABEL_VALUE: "1"
-                                LOG_LEVEL: info
-                                METHOD: WATCH
-                                NAMESPACE: ALL
-                                REQ_METHOD: POST
-                                REQ_PASSWORD: '{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_PASSWORD }}'
-                                REQ_URL: http://localhost:3000/api/admin/provisioning/alerts/reload
-                                REQ_USERNAME: '{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_USER }}'
-                                RESOURCE: both
-                                SKIP_TLS_VERIFY: false
-                                UNIQUE_FILENAMES: false
-                            imageSelector: sidecarImage
-                            probes:
-                                liveness:
-                                    enabled: false
-                                readiness:
-                                    enabled: false
-                                startup:
-                                    enabled: false
-                        dashboards:
-                            enabled: true
-                            env:
-                                FOLDER: /tmp/dashboards
-                                IGNORE_ALREADY_PROCESSED: false
-                                LABEL: grafana_dashboard
-                                LABEL_VALUE: "1"
-                                LOG_LEVEL: info
-                                METHOD: WATCH
-                                NAMESPACE: ALL
-                                REQ_METHOD: POST
-                                REQ_PASSWORD: '{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_PASSWORD }}'
-                                REQ_URL: http://localhost:3000/api/admin/provisioning/dashboards/reload
-                                REQ_USERNAME: '{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_USER }}'
-                                RESOURCE: both
-                                SKIP_TLS_VERIFY: false
-                                UNIQUE_FILENAMES: false
-                            imageSelector: sidecarImage
-                            probes:
-                                liveness:
-                                    enabled: false
-                                readiness:
-                                    enabled: false
-                                startup:
-                                    enabled: false
-                        datasources:
-                            enabled: true
-                            env:
-                                FOLDER: /etc/grafana/provisioning/datasources
-                                IGNORE_ALREADY_PROCESSED: false
-                                LABEL: grafana_datasources
-                                LABEL_VALUE: "1"
-                                LOG_LEVEL: info
-                                METHOD: WATCH
-                                NAMESPACE: ALL
-                                REQ_METHOD: POST
-                                REQ_PASSWORD: '{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_PASSWORD }}'
-                                REQ_URL: http://localhost:3000/api/admin/provisioning/datasources/reload
-                                REQ_USERNAME: '{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_USER }}'
-                                RESOURCE: both
-                                SKIP_TLS_VERIFY: false
-                                UNIQUE_FILENAMES: false
-                            imageSelector: sidecarImage
-                            probes:
-                                liveness:
-                                    enabled: false
-                                readiness:
-                                    enabled: false
-                                startup:
-                                    enabled: false
                         main:
                             env:
                                 GF_AUTH_GENERIC_OAUTH_API_URL: https://auth.${DOMAIN_0}/application/o/userinfo/
@@ -352,63 +141,3 @@ spec:
                                 GF_SECURITY_ADMIN_USER: admin
                                 GF_SERVER_HTTP_PORT: 3000
                                 GF_SERVER_ROOT_URL: https://graph.${DOMAIN_0}
-                            probes:
-                                liveness:
-                                    path: /api/health
-                                readiness:
-                                    path: /api/health
-                                startup:
-                                    path: /api/health
-                        notifiers:
-                            enabled: true
-                            env:
-                                FOLDER: /etc/grafana/provisioning/notifiers
-                                IGNORE_ALREADY_PROCESSED: false
-                                LABEL: grafana_notifiers
-                                LABEL_VALUE: "1"
-                                LOG_LEVEL: info
-                                METHOD: WATCH
-                                NAMESPACE: ALL
-                                REQ_METHOD: POST
-                                REQ_PASSWORD: '{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_PASSWORD }}'
-                                REQ_URL: http://localhost:3000/api/admin/provisioning/notifiers/reload
-                                REQ_USERNAME: '{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_USER }}'
-                                RESOURCE: both
-                                SKIP_TLS_VERIFY: false
-                                UNIQUE_FILENAMES: false
-                            imageSelector: sidecarImage
-                            probes:
-                                liveness:
-                                    enabled: false
-                                readiness:
-                                    enabled: false
-                                startup:
-                                    enabled: false
-                        plugins:
-                            enabled: true
-                            env:
-                                FOLDER: /etc/grafana/provisioning/plugins
-                                IGNORE_ALREADY_PROCESSED: false
-                                LABEL: grafana_plugins
-                                LABEL_VALUE: "1"
-                                LOG_LEVEL: info
-                                METHOD: WATCH
-                                NAMESPACE: ALL
-                                REQ_METHOD: POST
-                                REQ_PASSWORD: '{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_PASSWORD }}'
-                                REQ_URL: http://localhost:3000/api/admin/provisioning/plugins/reload
-                                REQ_USERNAME: '{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_USER }}'
-                                RESOURCE: both
-                                SKIP_TLS_VERIFY: false
-                                UNIQUE_FILENAMES: false
-                            imageSelector: sidecarImage
-                            probes:
-                                liveness:
-                                    enabled: false
-                                readiness:
-                                    enabled: false
-                                startup:
-                                    enabled: false
-                replicas: 1
-                strategy: RollingUpdate
-                type: Deployment
