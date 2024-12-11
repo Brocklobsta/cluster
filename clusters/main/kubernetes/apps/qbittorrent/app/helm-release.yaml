@@ -44,11 +44,11 @@ spec:
       credentials:
         b2:
           type: s3
-          url: "${S3_ENDPOINT}"
-          bucket: "$S3_BUCKET"
-          accessKey: "${S3_KEY_ID}"
-          secretKey: "${S3_SECRET_KEY}"
-          encrKey: "${S3_PASSWORD}"
+          url: ${S3_ENDPOINT}
+          bucket: ${S3_BUCKET}
+          accessKey: ${S3_KEY_ID}
+          secretKey: ${S3_SECRET_KEY}
+          encrKey: ${S3_PASSWORD}
       ingress:
         main:
           enabled: true
