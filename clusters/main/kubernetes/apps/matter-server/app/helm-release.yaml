@@ -7,7 +7,7 @@ spec:
     interval: 15m
     chart:
         spec:
-            chart: custom-app
+            chart: app-template
             version: 14.2.0
             sourceRef:
                 kind: HelmRepository
@@ -57,17 +57,14 @@ spec:
                 secretKey: ${S3_SECRET_KEY}
                 type: s3
                 url: ${S3_ENDPOINT}
-        ingress:
-            main:
-                enabled: false
         service:
             main:
-                enabled: true
-                loadBalancerIP: ${MATTER_SERVER_IP}
                 ports:
                     main:
-                        enabled: true
                         port: 5580
-                        protocol: http
                         targetPort: 5580
-                type: LoadBalancer
+                type: ClusterIP
+        workload:
+            main:
+                podSpec:
+                    hostNetwork: true
