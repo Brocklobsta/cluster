@@ -110,3 +110,5 @@ spec:
             main:
                 podSpec:
                     hostNetwork: true
+                    nodeSelector:
+                        zigbee: "true"

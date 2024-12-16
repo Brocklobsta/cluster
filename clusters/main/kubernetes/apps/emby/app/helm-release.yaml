@@ -107,3 +107,10 @@ spec:
                         port: 8096
                         targetPort: 8096
                 type: LoadBalancer
+        resources:
+            limits:
+                nvidia.com/gpu: 1
+        workload:
+            main:
+                podSpec:
+                    runtimeClassName: "nvidia"
