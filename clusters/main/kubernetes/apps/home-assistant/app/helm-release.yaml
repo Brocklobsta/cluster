@@ -109,6 +109,5 @@ spec:
         workload:
             main:
                 podSpec:
-                    hostNetwork: true
                     nodeSelector:
                         zigbee: "true"
