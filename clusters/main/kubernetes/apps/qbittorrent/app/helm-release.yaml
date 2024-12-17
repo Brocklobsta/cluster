@@ -95,9 +95,6 @@ spec:
           server: ${TRUENAS_IP}
           readOnly: false
           mountPath: /downloads
-      workload:
-        qbitportforward:
-          enabled: false
       service:
         proxy:
           enabled: true
