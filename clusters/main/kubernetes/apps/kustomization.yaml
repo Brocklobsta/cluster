@@ -14,7 +14,6 @@ resources:
   - matter-server/ks.yaml
   - nextcloud/ks.yaml
   - ombi/ks.yaml
-  - open-webui/ks.yaml
   - prometheus/ks.yaml
   - protonmail-bridge/ks.yaml
   - prowlarr/ks.yaml
