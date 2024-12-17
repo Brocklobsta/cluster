@@ -28,4 +28,5 @@ resources:
   - stakater.yaml
   - topolvm.yaml
   - truecharts.yaml
+  - nvdp.yaml
 # more goes here!
