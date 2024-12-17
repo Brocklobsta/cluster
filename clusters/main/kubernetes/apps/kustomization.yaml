@@ -25,3 +25,4 @@ resources:
   - truenas-gui/ks.yaml
   - vaultwarden/ks.yaml
   - qbittorrent/ks.yaml
+  - ollama/ks.yaml

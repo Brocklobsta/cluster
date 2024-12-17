@@ -49,14 +49,22 @@ nodes:
       installDiskSelector:
         size: <= 1600GB
       nodeLabels:
-        # Node has GPU
-        gpu: "true"
         # Node has zigbee dongle
         zigbee: "true"
+      patches:
+          - "@./patches/gpu.yaml"
+      schematic:
+          customization:
+              systemExtensions:
+                  officialExtensions:
+                      - siderolabs/util-linux-tools
+                      - siderolabs/iscsi-tools
+                      - siderolabs/qemu-guest-agent
+                      - siderolabs/nonfree-kmod-nvidia-lts
+                      - siderolabs/nvidia-container-toolkit-lts
 controlPlane:
     patches:
         - '@./patches/controlplane.yaml'
-        - "@./patches/gpu.yaml"
     kernelModules:
      - name: nvme_tcp
      - name: vfio_pci
@@ -70,8 +78,6 @@ controlPlane:
                     - siderolabs/util-linux-tools
                     - siderolabs/iscsi-tools
                     - siderolabs/qemu-guest-agent
-                    - siderolabs/nonfree-kmod-nvidia-lts
-                    - siderolabs/nvidia-container-toolkit-lts
     machineFiles:
     - content: |
         [plugins."io.containerd.grpc.v1.cri"]
@@ -100,7 +106,6 @@ controlPlane:
 worker:
     patches:
         - '@./patches/worker.yaml'
-        - "@./patches/gpu.yaml"
     kernelModules:
      - name: nvme_tcp
      - name: vfio_pci
@@ -112,8 +117,6 @@ worker:
                     - siderolabs/util-linux-tools
                     - siderolabs/iscsi-tools
                     - siderolabs/qemu-guest-agent
-                    - siderolabs/nonfree-kmod-nvidia-lts
-                    - siderolabs/nvidia-container-toolkit-lts
     machineFiles:
     - content: |
         [plugins."io.containerd.grpc.v1.cri"]
