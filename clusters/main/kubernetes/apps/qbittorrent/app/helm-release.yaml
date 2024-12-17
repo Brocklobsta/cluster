@@ -85,11 +85,9 @@ spec:
             type: restic
             credentials: b2
             dest:
-              enabled: false
+              enabled: true
             src:
               enabled: true
-              trigger:
-                schedule: 40 0 * * *
         downloads:
           enabled: true
           type: nfs

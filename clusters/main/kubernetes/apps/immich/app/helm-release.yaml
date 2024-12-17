@@ -36,14 +36,14 @@ spec:
                     credentials: b2
                     enabled: true
                     retentionPolicy: ""
-                    revision: "2"
+                    revision: "3"
                 mode: recovery
                 password: ${CNPG_PASSWORD}
                 pgVersion: 16
                 recovery:
                     credentials: b2
                     enabled: true
-                    revision: "1"
+                    revision: "2"
                     serverName: ""
         credentials:
             b2:

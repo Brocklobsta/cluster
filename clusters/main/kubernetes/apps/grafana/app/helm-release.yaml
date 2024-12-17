@@ -36,7 +36,7 @@ spec:
                     credentials: b2
                     enabled: true
                     retentionPolicy: ""
-                    revision: "2"
+                    revision: "3"
                 cluster:
                     instances: 1
                     singleNode: true
@@ -54,7 +54,7 @@ spec:
                 recovery:
                     credentials: b2
                     enabled: true
-                    revision: "1"
+                    revision: "2"
                     serverName: ""
                 user: grafana
         credentials:
