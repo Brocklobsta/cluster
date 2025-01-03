@@ -36,7 +36,7 @@ spec:
                     credentials: b2
                     enabled: true
                     retentionPolicy: ""
-                    revision: "3"
+                    revision: "4"
                 cluster:
                     instances: 1
                     singleNode: true
@@ -46,7 +46,7 @@ spec:
                 recovery:
                     credentials: b2
                     enabled: true
-                    revision: "2"
+                    revision: "3"
                     serverName: ""
                 user: home-assistant
         credentials:

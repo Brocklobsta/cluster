@@ -36,7 +36,7 @@ spec:
                     credentials: b2
                     enabled: true
                     retentionPolicy: ""
-                    revision: "3"
+                    revision: "4"
                 cluster:
                     singleNode: true
                 mode: recovery
@@ -48,7 +48,7 @@ spec:
                 recovery:
                     credentials: b2
                     enabled: true
-                    revision: "2"
+                    revision: "3"
                     serverName: ""
                 user: nextcloud
         credentials:
