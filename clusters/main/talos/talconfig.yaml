@@ -47,6 +47,8 @@ nodes:
           - '@./patches/gpu.yaml'
       schematic:
           customization:
+              extraKernelArgs:
+                  - net.ifnames=0
               systemExtensions:
                   officialExtensions:
                       - siderolabs/util-linux-tools

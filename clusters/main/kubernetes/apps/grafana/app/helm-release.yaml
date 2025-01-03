@@ -29,6 +29,8 @@ spec:
     uninstall:
         keepHistory: false
     values:
+        global:
+            stopAll: false
         TZ: America/Los_Angeles
         cnpg:
             main:
