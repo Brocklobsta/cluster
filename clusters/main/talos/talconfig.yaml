@@ -40,19 +40,11 @@ nodes:
               gateway: ${GATEWAY}
           vip:
             ip: ${VIP}
-    - hostname: k8s-worker-1
-      ipAddress: ${WORKER1IP_IP}
-      controlPlane: false
-      nameservers:
-        - 1.1.1.1
-        - 8.8.8.8
-      installDiskSelector:
-        size: <= 1600GB
       nodeLabels:
         # Node has zigbee dongle
         zigbee: "true"
       patches:
-          - "@./patches/gpu.yaml"
+          - '@./patches/gpu.yaml'
       schematic:
           customization:
               systemExtensions:
@@ -62,6 +54,14 @@ nodes:
                       - siderolabs/qemu-guest-agent
                       - siderolabs/nonfree-kmod-nvidia-lts
                       - siderolabs/nvidia-container-toolkit-lts
+    - hostname: k8s-worker-1
+      ipAddress: ${WORKER1IP_IP}
+      controlPlane: false
+      nameservers:
+        - 1.1.1.1
+        - 8.8.8.8
+      installDiskSelector:
+        size: <= 1600GB
 controlPlane:
     patches:
         - '@./patches/controlplane.yaml'
