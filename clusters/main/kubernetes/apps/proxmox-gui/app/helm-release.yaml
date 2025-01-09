@@ -61,5 +61,5 @@ spec:
                     main:
                         enabled: true
                         port: 8006
-                        protocol: http
+                        protocol: https
                 type: ExternalIP
