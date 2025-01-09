@@ -25,3 +25,4 @@ resources:
   - vaultwarden/ks.yaml
   - qbittorrent/ks.yaml
   - ollama/ks.yaml
+  - proxmox-gui/ks.yaml
