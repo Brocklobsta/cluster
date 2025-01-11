@@ -29,6 +29,8 @@ spec:
     uninstall:
         keepHistory: false
     values:
+        global:
+            stopAll: false
         broadcastProxyImage:
             repository: docker.io/alpine/socat
             pullPolicy: IfNotPresent
@@ -128,7 +130,7 @@ spec:
                     runtimeClassName: "nvidia"
             broadcastproxy:
                 enabled: true
-                type: DaemonSet
+                type: Deployment
                 podSpec:
                     hostNetwork: true
                     terminationGracePeriodSeconds: 3
