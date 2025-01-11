@@ -56,7 +56,7 @@ spec:
         service:
             main:
                 enabled: true
-                externalIP: 192.168.1.241
+                externalIP: ${PROXMOX_IP}
                 ports:
                     main:
                         enabled: true
