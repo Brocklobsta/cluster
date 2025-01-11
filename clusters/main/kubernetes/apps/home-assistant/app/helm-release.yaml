@@ -127,7 +127,7 @@ spec:
                         zigbee: "true"
             broadcastproxy:
                 enabled: true
-                type: Deployment
+                type: DaemonSet
                 podSpec:
                     hostNetwork: true
                     terminationGracePeriodSeconds: 3
