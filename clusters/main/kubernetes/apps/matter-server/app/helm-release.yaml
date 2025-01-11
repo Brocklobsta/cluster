@@ -68,3 +68,6 @@ spec:
             main:
                 podSpec:
                     hostNetwork: true
+                    # Run on the same node as home-assistant
+                    nodeSelector:
+                        zigbee: "true"
