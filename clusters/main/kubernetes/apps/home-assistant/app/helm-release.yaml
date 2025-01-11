@@ -29,6 +29,12 @@ spec:
     uninstall:
         keepHistory: false
     values:
+        global:
+            stopAll: false
+        broadcastProxyImage:
+            repository: docker.io/alpine/socat
+            pullPolicy: IfNotPresent
+            tag: 1.8.0.0@sha256:a6be4c0262b339c53ddad723cdd178a1a13271e1137c65e27f90a08c16de02b8
         TZ: America/Los_Angeles
         cnpg:
             main:
@@ -91,8 +97,7 @@ spec:
                 enabled: true
                 mountPath: /config
                 readOnly: false
-                storageClass: ""
-                targetSelectAll: true
+                targetSelectAll: false
                 volsync:
                     - credentials: b2
                       dest:
@@ -106,8 +111,55 @@ spec:
                 type: device
                 mountPath: /dev/ttyUSB0
                 hostPath: /dev/ttyUSB0
+        service:
+            weatherflow:
+                enabled: true
+                ports:
+                    weatherflow:
+                        enabled: true
+                        protocol: udp
+                        port: 50222
+                        targetPort: 50222
         workload:
             main:
                 podSpec:
                     nodeSelector:
                         zigbee: "true"
+            broadcastproxy:
+                enabled: true
+                type: Deployment
+                podSpec:
+                    hostNetwork: true
+                    terminationGracePeriodSeconds: 3
+                    containers:
+                        broadcastproxy:
+                            enabled: true
+                            primary: true
+                            imageSelector: broadcastProxyImage
+                            securityContext:
+                                readOnlyRootFilesystem: true
+                            command: ["/bin/sh"]
+                            args:
+                                - "-c"
+                                - 'export TARGET_IP=$(getent hosts ''{{ printf "%v-weatherflow" (include "tc.v1.common.lib.chart.names.fullname" $) }}'' | awk ''{ print $1 }'') && [[ ! -z $TARGET_IP ]] && touch /tmp/healthy && socat UDP4-LISTEN:50222,fork,reuseaddr,rcvbuf=8096 UDP4-SENDTO:${TARGET_IP}:50222,rcvbuf=8096 ; rm -rf /tmp/healthy'
+                            probes:
+                                readiness:
+                                    enabled: true
+                                    type: exec
+                                    command:
+                                        - cat
+                                        - /tmp/healthy
+                                liveness:
+                                    enabled: true
+                                    type: exec
+                                    command:
+                                        - cat
+                                        - /tmp/healthy
+                                startup:
+                                    enabled: true
+                                    type: exec
+                                    command:
+                                        - cat
+                                        - /tmp/healthy
+        weatherflow:
+            enabled: true
