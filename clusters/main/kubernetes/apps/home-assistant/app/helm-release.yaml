@@ -141,7 +141,7 @@ spec:
                             command: ["/bin/sh"]
                             args:
                                 - "-c"
-                                - 'sleep 3 && export TARGET_IP=$(getent hosts ''{{ printf "%v-weatherflow" (include "tc.v1.common.lib.chart.names.fullname" $) }}'' | awk ''{ print $1 }'') && [[ ! -z $TARGET_IP ]] && echo ${TARGET_IP} > /tmp/healthy && socat UDP4-LISTEN:50222,fork,reuseaddr,rcvbuf=8096 UDP4-SENDTO:${TARGET_IP}:50222,rcvbuf=8096 ; rm -rf /tmp/healthy'
+                                - 'export TARGET_IP=$(getent hosts ''{{ printf "%v-weatherflow" (include "tc.v1.common.lib.chart.names.fullname" $) }}'' | awk ''{ print $1 }'') && [[ ! -z $TARGET_IP ]] && echo ${TARGET_IP} > /tmp/healthy && socat UDP4-LISTEN:50222,fork,reuseaddr,rcvbuf=8096 UDP4-SENDTO:${TARGET_IP}:50222,rcvbuf=8096 ; rm -rf /tmp/healthy'
                             probes:
                                 readiness:
                                     enabled: true
