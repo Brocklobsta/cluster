@@ -64,15 +64,8 @@ spec:
               enabled: true
               certificateIssuer: domain-0-le-prod
             homepage:
-              description: ""
               enabled: true
               group: Arr
-              icon: ""
-              name: ""
-              widget:
-                custom:
-                  key: ""
-                enabled: true
           hosts:
             - host: dl.${DOMAIN_0}
               paths:
@@ -120,3 +113,5 @@ spec:
             WIREGUARD_ADDRESSES: 10.2.0.2/32
             WIREGUARD_PRIVATE_KEY: ${TRANSMISSION_WIREGUARD_PRIVATE_KEY}
             WIREGUARD_PUBLIC_KEY: ${TRANSMISSION_WIREGUARD_PUBLIC_KEY}
+            FIREWALL_INPUT_PORTS: 10095,8888
+            HTTPPROXY: "on"
