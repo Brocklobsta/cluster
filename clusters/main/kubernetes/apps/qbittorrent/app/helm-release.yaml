@@ -88,15 +88,8 @@ spec:
           server: ${TRUENAS_IP}
           readOnly: false
           mountPath: /downloads
-      service:
-        proxy:
-          enabled: true
-          ports:
-            gluetun:
-              enabled: true
-              port: 8888
-              protocol: "http"
-              targetPort: 8888
+      qbitportforward:
+        enabled: true
       addons:
         vpn:
           type: gluetun
@@ -113,5 +106,3 @@ spec:
             WIREGUARD_ADDRESSES: 10.2.0.2/32
             WIREGUARD_PRIVATE_KEY: ${TRANSMISSION_WIREGUARD_PRIVATE_KEY}
             WIREGUARD_PUBLIC_KEY: ${TRANSMISSION_WIREGUARD_PUBLIC_KEY}
-            FIREWALL_INPUT_PORTS: 10095,8888
-            HTTPPROXY: "on"
