@@ -26,3 +26,4 @@ resources:
   - qbittorrent/ks.yaml
   - ollama/ks.yaml
   - proxmox-gui/ks.yaml
+  - kitchenowl/ks.yaml
