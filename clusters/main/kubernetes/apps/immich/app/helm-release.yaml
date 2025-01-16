@@ -29,6 +29,10 @@ spec:
     uninstall:
         keepHistory: false
     values:
+        global:
+            stopAll: false
+        immich:
+            mlImageType: mlCudaImage
         TZ: America/Los_Angeles
         cnpg:
             main:
@@ -117,4 +121,12 @@ spec:
                       src:
                         enabled: true
                       type: restic
-
+        workload:
+            machinelearning:
+                podSpec:
+                    containers:
+                        machinelearning:
+                            resources:
+                                limits:
+                                    nvidia.com/gpu: 1
+                    runtimeClassName: "nvidia"
