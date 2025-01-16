@@ -68,3 +68,25 @@ spec:
             permanent: true
             regex: ^https:\/\/(?:www\.)?${DOMAIN_0}\/(.*)
             replacement: https://homepage.${DOMAIN_0}/
+    ingress:
+      main:
+        enabled: true
+        integrations:
+          traefik:
+            enabled: true
+            entrypoints:
+            - websecure
+            middlewares:
+            - name: auth
+              namespace: traefik
+            fixedMiddlewares:
+            - name: chain-basic
+              namespace: traefik
+          certManager:
+            enabled: true
+            certificateIssuer: domain-0-le-prod
+        hosts:
+          - host: traefik.${DOMAIN_0}
+            paths:
+              - path: /
+                pathType: Prefix
