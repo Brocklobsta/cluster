@@ -29,6 +29,11 @@ spec:
     uninstall:
         keepHistory: false
     values:
+        global:
+            stopAll: false
+        ollama:
+            registration:
+                    enabled: false
         TZ: America/Los_Angeles
         credentials:
             b2:
@@ -59,9 +64,6 @@ spec:
                         enabled: true
                         entrypoints:
                             - websecure
-                        middlewares:
-                            - name: auth
-                              namespace: "traefik"
         persistence:
             config:
                 volsync:
@@ -79,3 +81,15 @@ spec:
             main:
                 podSpec:
                     runtimeClassName: "nvidia"
+            ui:
+                podSpec:
+                    containers:
+                        ui:
+                            env:
+                                ENABLE_OAUTH_SIGNUP: true
+                                OAUTH_CLIENT_ID: ${OLLAMA_CLIENT_ID}
+                                OAUTH_CLIENT_SECRET: ${OLLAMA_CLIENT_SECRET}
+                                OPENID_PROVIDER_URL: ${OLLAMA_PROVIDER_URL}
+                                OAUTH_PROVIDER_NAME: Authentik
+                                OAUTH_MERGE_ACCOUNTS_BY_EMAIL: true
+                                OAUTH_SCOPES: openid email username
