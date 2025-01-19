@@ -31,10 +31,10 @@ spec:
     values:
         global:
             stopAll: false
-        broadcastProxyImage:
-            repository: docker.io/alpine/socat
+        matterServerImage:
+            repository: ghcr.io/home-assistant-libs/python-matter-server
             pullPolicy: IfNotPresent
-            tag: 1.8.0.0@sha256:a6be4c0262b339c53ddad723cdd178a1a13271e1137c65e27f90a08c16de02b8
+            tag: stable
         TZ: America/Los_Angeles
         cnpg:
             main:
@@ -78,17 +78,9 @@ spec:
                         certificateIssuer: domain-0-le-prod
                         enabled: true
                     homepage:
-                        description: ""
                         enabled: true
                         group: Apps
-                        icon: ""
-                        name: ""
-                        widget:
-                            custom:
-                                key: ""
-                            enabled: false
                     traefik:
-                        allowCors: false
                         enabled: true
                         entrypoints:
                             - websecure
@@ -106,60 +98,50 @@ spec:
                       src:
                         enabled: true
                       type: restic
+            matter:
+                enabled: true
+                targetSelector:
+                    main:
+                        matter:
+                            mountPath: /data
+                volsync:
+                    - credentials: b2
+                      dest:
+                        enabled: true
+                      name: matter
+                      src:
+                        enabled: true
+                      type: restic
             zigbee:
                 enabled: true
                 type: device
                 mountPath: /dev/ttyUSB0
                 hostPath: /dev/ttyUSB0
-        service:
-            weatherflow:
-                enabled: true
-                ports:
-                    weatherflow:
-                        enabled: true
-                        protocol: udp
-                        port: 50222
-                        targetPort: 50222
         workload:
             main:
                 podSpec:
                     nodeSelector:
                         zigbee: "true"
-            broadcastproxy:
-                enabled: true
-                type: Deployment
-                podSpec:
                     hostNetwork: true
-                    terminationGracePeriodSeconds: 3
                     containers:
-                        broadcastproxy:
+                        matter:
                             enabled: true
-                            primary: true
-                            imageSelector: broadcastProxyImage
+                            imageSelector: matterServerImage
                             securityContext:
-                                readOnlyRootFilesystem: true
-                            command: ["/bin/sh"]
-                            args:
-                                - "-c"
-                                - 'export TARGET_IP=$(getent hosts ''{{ printf "%v-weatherflow" (include "tc.v1.common.lib.chart.names.fullname" $) }}'' | awk ''{ print $1 }'') && [[ ! -z $TARGET_IP ]] && touch /tmp/healthy && socat -T 1 UDP4-LISTEN:50222,fork,reuseaddr,rcvbuf=8096 UDP4-SENDTO:$TARGET_IP:50222,rcvbuf=8096 ; rm -rf /tmp/healthy'
+                                readOnlyRootFilesystem: false
                             probes:
                                 readiness:
                                     enabled: true
-                                    type: exec
-                                    command:
-                                        - cat
-                                        - /tmp/healthy
+                                    type: http
+                                    port: 5580
+                                    path: /
                                 liveness:
                                     enabled: true
-                                    type: exec
-                                    command:
-                                        - cat
-                                        - /tmp/healthy
+                                    type: http
+                                    port: 5580
+                                    path: /
                                 startup:
                                     enabled: true
-                                    type: exec
-                                    command:
-                                        - cat
-                                        - /tmp/healthy
-        weatherflow:
-            enabled: true
+                                    type: http
+                                    port: 5580
+                                    path: /
