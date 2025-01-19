@@ -34,7 +34,7 @@ spec:
         broadcastProxyImage:
             repository: docker.io/alpine/socat
             pullPolicy: IfNotPresent
-            tag: 1.8.0.1@sha256:73b67842a3fa71bc7ae93435900a1f4110112ffc2965a0dde619be699b72a323
+            tag: 1.8.0.1@sha256:d95d6a210a87164533d444e8d7ebd586231b3387a27ee7c0732ade3d6c3b0f4d
         TZ: America/Los_Angeles
         credentials:
             b2:
