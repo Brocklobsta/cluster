@@ -31,10 +31,6 @@ spec:
     values:
         global:
             stopAll: false
-        broadcastProxyImage:
-            repository: docker.io/alpine/socat
-            pullPolicy: IfNotPresent
-            tag: 1.8.0.1@sha256:d6450f96ed8b389f53929dc8ba0a4c42bc1db66d613efe923173a181f1256ca8
         TZ: America/Los_Angeles
         credentials:
             b2:
@@ -113,14 +109,6 @@ spec:
                         port: 8096
                         targetPort: 8096
                 type: LoadBalancer
-            autodiscovery:
-                enabled: true
-                ports:
-                    autodiscovery:
-                        enabled: true
-                        protocol: udp
-                        port: 7359
-                        targetPort: 7359
         workload:
             main:
                 podSpec:
@@ -130,41 +118,5 @@ spec:
                                 limits:
                                     nvidia.com/gpu: 1
                     runtimeClassName: "nvidia"
-            broadcastproxy:
-                enabled: true
-                type: Deployment
-                podSpec:
-                    hostNetwork: true
-                    terminationGracePeriodSeconds: 3
-                    containers:
-                        broadcastproxy:
-                            enabled: true
-                            primary: true
-                            imageSelector: broadcastProxyImage
-                            securityContext:
-                                readOnlyRootFilesystem: true
-                            command: ["/bin/sh"]
-                            args:
-                                - "-c"
-                                - 'export TARGET_IP=$(getent hosts ''{{ printf "%v-autodiscovery" (include "tc.v1.common.lib.chart.names.fullname" $) }}'' | awk ''{ print $1 }'') && [[ ! -z $TARGET_IP ]] && touch /tmp/healthy && socat -T 1 UDP4-LISTEN:7359,fork,reuseaddr,rcvbuf=8096 UDP4-SENDTO:$TARGET_IP:7359,rcvbuf=8096 ; rm -rf /tmp/healthy'
-                            probes:
-                                readiness:
-                                    enabled: true
-                                    type: exec
-                                    command:
-                                        - cat
-                                        - /tmp/healthy
-                                liveness:
-                                    enabled: true
-                                    type: exec
-                                    command:
-                                        - cat
-                                        - /tmp/healthy
-                                startup:
-                                    enabled: true
-                                    type: exec
-                                    command:
-                                        - cat
-                                        - /tmp/healthy
         autodiscovery:
             enabled: true
