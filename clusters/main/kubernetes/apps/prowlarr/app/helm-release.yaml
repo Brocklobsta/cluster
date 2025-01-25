@@ -29,6 +29,8 @@ spec:
     uninstall:
         keepHistory: false
     values:
+        global:
+            stopAll: false
         TZ: America/Los_Angeles
         credentials:
             b2:
@@ -53,17 +55,13 @@ spec:
                         certificateIssuer: domain-0-le-prod
                         enabled: true
                     homepage:
-                        description: ""
                         enabled: true
                         group: Arr
-                        icon: ""
-                        name: ""
                         widget:
                             custom:
                                 key: ${HOMEPAGE_PROWLARR_KEY}
                             enabled: true
                     traefik:
-                        allowCors: false
                         enabled: true
                         entrypoints:
                             - websecure
@@ -72,16 +70,6 @@ spec:
                               namespace: "traefik"
         persistence:
             config:
-                enabled: true
-                readOnly: false
-                targetSelector:
-                    exportarr:
-                        exportarr:
-                            mountPath: /config
-                            readOnly: true
-                    main:
-                        main:
-                            mountPath: /config
                 volsync:
                     - credentials: b2
                       dest:
@@ -90,5 +78,4 @@ spec:
                       src:
                         enabled: true
                       type: restic
-        updated: true
 
