@@ -66,6 +66,10 @@ spec:
             homepage:
               enabled: true
               group: Arr
+              widget:
+                  enabled: true
+                  username: ${ADMIN_USER}
+                  password: ${ADMIN_PASSWORD}
           hosts:
             - host: dl.${DOMAIN_0}
               paths:
