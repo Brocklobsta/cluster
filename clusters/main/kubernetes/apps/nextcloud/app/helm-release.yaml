@@ -4,7 +4,7 @@ metadata:
     name: nextcloud
     namespace: nextcloud
 spec:
-    interval: 15m
+    interval: 5m
     chart:
         spec:
             chart: nextcloud
@@ -13,7 +13,7 @@ spec:
                 kind: HelmRepository
                 name: truecharts
                 namespace: flux-system
-            interval: 15m
+            interval: 5m
     timeout: 20m
     maxHistory: 3
     driftDetection:
@@ -23,7 +23,6 @@ spec:
         remediation:
             retries: 3
     upgrade:
-        cleanupOnFail: true
         remediation:
             retries: 3
     uninstall:
@@ -37,19 +36,22 @@ spec:
                 backups:
                     credentials: b2
                     enabled: true
-                    revision: "5"
+                    revision: "6"
+                    scheduledBackups:
+                      - name: daily-backup
+                        schedule: "0 5 0 * * *"
+                        backupOwnerReference: self
+                        immediate: true
+                        suspend: false
                 cluster:
                     singleNode: true
                 mode: recovery
-                monitoring:
-                    disableDefaultQueries: false
-                    enablePodMonitor: true
                 password: ${CNPG_PASSWORD}
                 pgVersion: 15
                 recovery:
                     credentials: b2
                     enabled: true
-                    revision: "4"
+                    revision: "5"
                 user: nextcloud
         credentials:
             b2:
@@ -74,28 +76,23 @@ spec:
                         certificateIssuer: domain-0-le-prod
                         enabled: true
                     homepage:
-                        description: ""
                         enabled: true
                         group: Apps
-                        icon: ""
-                        name: ""
-                        widget:
-                            custom:
-                                key: ""
-                            enabled: false
                     traefik:
                         enabled: true
                         entrypoints:
                             - websecure
         nextcloud:
+            collabora:
+                enabled: true
+                username: admin
+                password: "${ADMIN_PASSWORD}"
             credentials:
                 initialAdminPassword: ${ADMIN_PASSWORD}
                 initialAdminUser: admin
             general:
                 accessIP: ${TRUENAS_IP}
                 default_phone_region: US
-            notify_push:
-                enabled: true
         persistence:
             config:
                 volsync:
@@ -105,6 +102,8 @@ spec:
                       name: config
                       src:
                         enabled: true
+                        trigger:
+                            schedule: 10 1 * * *
                       type: restic
             data:
                 enabled: true
@@ -120,5 +119,7 @@ spec:
                       name: html
                       src:
                         enabled: true
+                        trigger:
+                            schedule: 20 1 * * *
                       type: restic
 
