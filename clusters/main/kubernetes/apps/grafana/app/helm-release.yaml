@@ -38,20 +38,11 @@ spec:
                     credentials: b2
                     enabled: true
                     revision: "6"
-                cluster:
-                    instances: 1
-                    singleNode: true
                 database: grafana
                 enabled: true
-                hibernate: false
                 mode: recovery
-                monitoring:
-                    disableDefaultQueries: false
-                    enablePodMonitor: true
                 password: ${CNPG_PASSWORD}
                 pgVersion: 16
-                pooler:
-                    enabled: false
                 recovery:
                     credentials: b2
                     enabled: true
@@ -81,32 +72,14 @@ spec:
                         certificateIssuer: domain-0-le-prod
                         enabled: true
                     homepage:
-                        description: ""
                         enabled: true
                         group: Utilities
-                        icon: ""
-                        name: ""
-                        widget:
-                            custom:
-                                key: ""
-                            enabled: false
                     traefik:
-                        allowCors: false
                         enabled: true
                         entrypoints:
                             - websecure
         persistence:
-            config:
-                enabled: true
-                mountPath: /etc/grafana/grafana.ini
-                objectName: config
-                subPath: grafana.ini
-                type: configmap
             data:
-                enabled: true
-                mountPath: /var/lib/grafana
-                readOnly: false
-                storageClass: ""
                 volsync:
                     - credentials: b2
                       dest:
@@ -130,28 +103,9 @@ spec:
                                 GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: contains(groups[*], 'Grafana Admins') && 'Admin' || contains(groups[*], 'Grafana Editors') && 'Editor' || 'Viewer'
                                 GF_AUTH_GENERIC_OAUTH_SCOPES: openid profile email
                                 GF_AUTH_GENERIC_OAUTH_TOKEN_URL: https://auth.${DOMAIN_0}/application/o/token/
-                                GF_AUTH_LDAP_ALLOW_SIGN_UP: false
-                                GF_AUTH_LDAP_CONFIG_FILE: /opt/bitnami/grafana/conf/ldap.toml
-                                GF_AUTH_LDAP_ENABLED: false
                                 GF_AUTH_OAUTH_ALLOW_INSECURE_EMAIL_LOOKUP: "true"
                                 GF_AUTH_OAUTH_AUTO_LOGIN: "true"
                                 GF_AUTH_SIGNOUT_REDIRECT_URL: https://auth.${DOMAIN_0}/application/o/grafana/end-session/
-                                GF_DATABASE_HOST:
-                                    secretKeyRef:
-                                        key: host
-                                        name: cnpg-main-urls
-                                GF_DATABASE_NAME: '{{ .Values.cnpg.main.user }}'
-                                GF_DATABASE_PASSWORD:
-                                    secretKeyRef:
-                                        key: password
-                                        name: cnpg-main-user
-                                GF_DATABASE_SSL_MODE: disable
-                                GF_DATABASE_TYPE: postgres
-                                GF_DATABASE_USER: '{{ .Values.cnpg.main.database }}'
-                                GF_DISABLE_SANITIZE_HTML: "true"
-                                GF_INSTALL_PLUGINS: ""
-                                GF_PANELS_DISABLE_SANITIZE_HTML: "true"
                                 GF_SECURITY_ADMIN_PASSWORD: ${ADMIN_PASSWORD}
                                 GF_SECURITY_ADMIN_USER: admin
-                                GF_SERVER_HTTP_PORT: 3000
                                 GF_SERVER_ROOT_URL: https://graph.${DOMAIN_0}
