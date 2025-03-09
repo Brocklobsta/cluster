@@ -35,6 +35,6 @@ spec:
         # Set to false to pick another CSI as default
         defaultClass: true
         # Increase to 3 for a multi-node cluster
-        defaultClassReplicaCount: 1
+        defaultClassReplicaCount: 2
       longhornUI:
         replicas: 1
