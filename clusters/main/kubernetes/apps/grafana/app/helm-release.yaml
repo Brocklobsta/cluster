@@ -37,7 +37,7 @@ spec:
                 backups:
                     credentials: b2
                     enabled: true
-                    revision: "5"
+                    revision: "6"
                 cluster:
                     instances: 1
                     singleNode: true
@@ -55,7 +55,7 @@ spec:
                 recovery:
                     credentials: b2
                     enabled: true
-                    revision: "4"
+                    revision: "5"
                 user: grafana
         credentials:
             b2:

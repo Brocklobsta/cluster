@@ -39,14 +39,14 @@ spec:
                 backups:
                     credentials: b2
                     enabled: true
-                    revision: "5"
+                    revision: "6"
                 mode: recovery
                 password: ${CNPG_PASSWORD}
                 pgVersion: 15
                 recovery:
                     credentials: b2
                     enabled: true
-                    revision: "4"
+                    revision: "5"
                 user: gitea
         credentials:
             b2:

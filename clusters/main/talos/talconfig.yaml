@@ -43,19 +43,6 @@ nodes:
       nodeLabels:
         # Node has zigbee dongle
         zigbee: "true"
-      patches:
-          - '@./patches/gpu.yaml'
-      schematic:
-          customization:
-              extraKernelArgs:
-                  - net.ifnames=0
-              systemExtensions:
-                  officialExtensions:
-                      - siderolabs/util-linux-tools
-                      - siderolabs/iscsi-tools
-                      - siderolabs/qemu-guest-agent
-                      - siderolabs/nonfree-kmod-nvidia-lts
-                      - siderolabs/nvidia-container-toolkit-lts
     - hostname: k8s-worker-1
       ipAddress: ${WORKER1IP_IP}
       controlPlane: false
@@ -64,6 +51,17 @@ nodes:
         - 8.8.8.8
       installDiskSelector:
         size: <= 1600GB
+      patches:
+          - '@./patches/gpu.yaml'
+      schematic:
+          customization:
+              systemExtensions:
+                  officialExtensions:
+                      - siderolabs/util-linux-tools
+                      - siderolabs/iscsi-tools
+                      - siderolabs/qemu-guest-agent
+                      - siderolabs/nonfree-kmod-nvidia-lts
+                      - siderolabs/nvidia-container-toolkit-lts
 controlPlane:
     patches:
         - '@./patches/controlplane.yaml'
