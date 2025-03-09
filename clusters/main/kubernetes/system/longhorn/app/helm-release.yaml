@@ -27,7 +27,7 @@ spec:
     values:
       defaultSettings:
         # Increase to 3 for a multi-node cluster
-        defaultReplicaCount: 1
+        defaultReplicaCount: 2
         # Overprovisioning might be needed when using volsync
         storageOverProvisioningPercentage: 100000
         # v2DataEngine: true
