@@ -69,7 +69,7 @@ spec:
                 volsync:
                     - credentials: b2
                       dest:
-                        enabled: false
+                        enabled: true
                       name: config
                       src:
                         enabled: true
