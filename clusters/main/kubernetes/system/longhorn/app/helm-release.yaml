@@ -27,7 +27,7 @@ spec:
     values:
       defaultSettings:
         # Increase to 3 for a multi-node cluster
-        defaultReplicaCount: 2
+        defaultReplicaCount: 3
         # Overprovisioning might be needed when using volsync
         storageOverProvisioningPercentage: 100000
         # v2DataEngine: true
@@ -35,6 +35,6 @@ spec:
         # Set to false to pick another CSI as default
         defaultClass: true
         # Increase to 3 for a multi-node cluster
-        defaultClassReplicaCount: 2
+        defaultClassReplicaCount: 3
       longhornUI:
         replicas: 1
