@@ -84,7 +84,7 @@ spec:
                             - websecure
         nextcloud:
             collabora:
-                enabled: true
+                enabled: false
                 username: admin
                 password: "${ADMIN_PASSWORD}"
             credentials:
