@@ -79,3 +79,10 @@ spec:
                       src:
                         enabled: true
                       type: restic
+        workload:
+            main:
+                podSpec:
+                    containers:
+                        main:
+                            env:
+                                HOMEPAGE_ALLOWED_HOSTS: "homepage.${DOMAIN_0}"
