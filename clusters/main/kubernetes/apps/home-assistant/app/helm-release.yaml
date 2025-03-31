@@ -42,9 +42,6 @@ spec:
                     credentials: b2
                     enabled: true
                     revision: "6"
-                cluster:
-                    instances: 1
-                    singleNode: true
                 mode: recovery
                 password: ${CNPG_PASSWORD}
                 pgVersion: 15

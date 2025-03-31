@@ -43,8 +43,6 @@ spec:
                         backupOwnerReference: self
                         immediate: true
                         suspend: false
-                cluster:
-                    singleNode: true
                 mode: recovery
                 password: ${CNPG_PASSWORD}
                 pgVersion: 15
