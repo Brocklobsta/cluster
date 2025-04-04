@@ -40,9 +40,6 @@ nodes:
               gateway: ${GATEWAY}
           vip:
             ip: ${VIP}
-      nodeLabels:
-        # Node has zigbee dongle
-        zigbee: "true"
     - hostname: k8s-control-2
       ipAddress: ${MASTER2IP_IP}
       controlPlane: true
@@ -61,6 +58,9 @@ nodes:
               gateway: ${GATEWAY}
           vip:
             ip: ${VIP}
+      nodeLabels:
+        # Node has zigbee dongle
+        zigbee: "true"
     - hostname: k8s-worker-1
       ipAddress: ${WORKER1IP_IP}
       controlPlane: false
