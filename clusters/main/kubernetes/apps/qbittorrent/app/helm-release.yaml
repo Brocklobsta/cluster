@@ -102,7 +102,7 @@ spec:
               protocol: "http"
               targetPort: 8888
       qbitportforward:
-        enabled: true
+        enabled: false
         QBT_USERNAME: "${ADMIN_USER}"
         QBT_PASSWORD: "${ADMIN_PASSWORD}"
       addons:
@@ -113,10 +113,10 @@ spec:
           - 192.168.1.0/24
           env:
             WIREGUARD_ENDPOINT_IP: ${VPN_ENDPOINT_IP}
-            WIREGUARD_ENDPOINT_PORT: 51820
+            # WIREGUARD_ENDPOINT_PORT: 51820
             VPN_PORT_FORWARDING: on
-            VPN_PORT_FORWARDING_PROVIDER: protonvpn
-            VPN_SERVICE_PROVIDER: custom
+            VPN_PORT_FORWARDING_UP_COMMAND: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{`{{PORTS}}`}}}" http://qbittorrent.qbittorrent.svc.cluster.local:10095/api/v2/app/setPreferences 2>&1'
+            VPN_SERVICE_PROVIDER: protonvpn
             VPN_TYPE: wireguard
             WIREGUARD_ADDRESSES: 10.2.0.2/32
             WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY}
