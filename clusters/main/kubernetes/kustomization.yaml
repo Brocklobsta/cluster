@@ -6,4 +6,5 @@ resources:
   - flux-entry.yaml
   - flux-system
   - kube-system
+  - networking
   - system

@@ -80,6 +80,11 @@ spec:
     ingress:
       main:
         enabled: true
+        ingressClassName: external
+        annotations:
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+          nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+          nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
         hosts:
           - host: auth.${DOMAIN_0}
             paths:
@@ -94,19 +99,14 @@ spec:
             certificateIssuer: domain-0-le-prod
             enabled: true
           homepage:
-            description: ""
             enabled: true
             group: Utilities
-            icon: ""
-            name: ""
             widget:
               custom:
                 key: ${HOMEPAGE_AUTHENTIK_KEY}
               enabled: true
           traefik:
-            enabled: true
-            entrypoints:
-              - websecure
+            enabled: false
     persistence:
       blueprints:
         volsync:

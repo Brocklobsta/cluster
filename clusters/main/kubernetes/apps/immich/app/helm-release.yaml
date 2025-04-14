@@ -60,6 +60,7 @@ spec:
     ingress:
       main:
         enabled: true
+        ingressClassName: external
         hosts:
           - host: pics.${DOMAIN_0}
             paths:
@@ -73,9 +74,7 @@ spec:
             enabled: true
             group: Apps
           traefik:
-            enabled: true
-            entrypoints:
-              - websecure
+            enabled: false
     persistence:
       library:
         enabled: true

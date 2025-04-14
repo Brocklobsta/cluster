@@ -48,6 +48,7 @@ spec:
     ingress:
       main:
         enabled: true
+        ingressClassName: external
         hosts:
           - host: chat.${DOMAIN_0}
             paths:
@@ -61,9 +62,7 @@ spec:
             enabled: true
             group: Apps
           traefik:
-            enabled: true
-            entrypoints:
-              - websecure
+            enabled: false
     persistence:
       config:
         volsync:

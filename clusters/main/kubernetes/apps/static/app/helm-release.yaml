@@ -42,6 +42,7 @@ spec:
     ingress:
       main:
         enabled: true
+        ingressClassName: external
         hosts:
           - host: resume.${DOMAIN_0}
             paths:
@@ -57,9 +58,7 @@ spec:
             group: Utilities
             name: Resume
           traefik:
-            enabled: true
-            entrypoints:
-              - websecure
+            enabled: false
     persistence:
       data:
         volsync:

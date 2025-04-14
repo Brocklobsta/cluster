@@ -66,9 +66,7 @@ spec:
                 key: ${HOMEPAGE_EMBY_KEY}
               enabled: true
           traefik:
-            enabled: true
-            entrypoints:
-              - websecure
+            enabled: false
     persistence:
       config:
         volsync:

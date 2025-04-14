@@ -61,12 +61,12 @@ spec:
     ingress:
       main:
         enabled: true
+        ingressClassName: external
         hosts:
           - host: graph.${DOMAIN_0}
             paths:
               - path: /
                 pathType: Prefix
-        ingressClassName: ""
         integrations:
           certManager:
             certificateIssuer: domain-0-le-prod
@@ -75,9 +75,7 @@ spec:
             enabled: true
             group: Utilities
           traefik:
-            enabled: true
-            entrypoints:
-              - websecure
+            enabled: false
     persistence:
       data:
         volsync:

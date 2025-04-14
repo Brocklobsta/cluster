@@ -79,6 +79,7 @@ spec:
     ingress:
       main:
         enabled: true
+        ingressClassName: external
         hosts:
           - host: git.${DOMAIN_0}
             paths:
@@ -96,9 +97,7 @@ spec:
                 key: ${HOMEPAGE_GITEA_KEY}
               enabled: true
           traefik:
-            enabled: true
-            entrypoints:
-              - websecure
+            enabled: false
     persistence:
       data:
         volsync:

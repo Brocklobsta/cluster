@@ -31,15 +31,13 @@ spec:
   values:
     ingress:
       main:
-        annotations:
-          traefik.frontend.passHostHeader: "false"
         enabled: true
+        ingressClassName: internal
         hosts:
           - host: nas.${DOMAIN_0}
             paths:
               - path: /
                 pathType: Prefix
-        ingressClassName: ""
         integrations:
           certManager:
             certificateIssuer: domain-0-le-prod
@@ -48,18 +46,9 @@ spec:
             description: Truenas Scale admin panel
             enabled: true
             group: Utilities
-            icon: ""
             name: Truenas Scale
-            widget:
-              custom:
-                key: ""
-              enabled: false
           traefik:
-            allowCors: false
-            enabled: true
-            entrypoints:
-              - websecure
-    release_name: truenas-gui
+            enabled: false
     service:
       main:
         enabled: true
@@ -70,10 +59,3 @@ spec:
             port: 444
             protocol: https
         type: ExternalIP
-        useSlice: false
-    workload:
-      main:
-        enabled: false
-        podSpec:
-          containers:
-            main: {}
