@@ -1,123 +1,122 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: nextcloud
-    namespace: nextcloud
+  name: nextcloud
+  namespace: nextcloud
 spec:
-    interval: 5m
-    chart:
-        spec:
-            chart: nextcloud
-            version: 33.0.6
-            sourceRef:
-                kind: HelmRepository
-                name: truecharts
-                namespace: flux-system
-            interval: 5m
-    timeout: 20m
-    maxHistory: 3
-    driftDetection:
-        mode: warn
-    install:
-        createNamespace: true
-        remediation:
-            retries: 3
-    upgrade:
-        remediation:
-            retries: 3
-    uninstall:
-        keepHistory: false
-    values:
-        global:
-            stopAll: false
-        TZ: America/Los_Angeles
-        cnpg:
-            main:
-                backups:
-                    credentials: b2
-                    enabled: true
-                    revision: "7"
-                    scheduledBackups:
-                      - name: daily-backup
-                        schedule: "0 5 0 * * *"
-                        backupOwnerReference: self
-                        immediate: true
-                        suspend: false
-                mode: recovery
-                password: ${CNPG_PASSWORD}
-                pgVersion: 15
-                recovery:
-                    credentials: b2
-                    enabled: true
-                    revision: "6"
-                user: nextcloud
-        credentials:
-            b2:
-                accessKey: ${S3_KEY_ID}
-                bucket: ${S3_BUCKET}
-                encrKey: ${S3_PASSWORD}
-                name: b2
-                path: ""
-                secretKey: ${S3_SECRET_KEY}
-                type: s3
-                url: ${S3_ENDPOINT}
-        ingress:
-            main:
-                enabled: true
-                hosts:
-                    - host: cloud.${DOMAIN_0}
-                      paths:
-                        - path: /
-                          pathType: Prefix
-                integrations:
-                    certManager:
-                        certificateIssuer: domain-0-le-prod
-                        enabled: true
-                    homepage:
-                        enabled: true
-                        group: Apps
-                    traefik:
-                        enabled: true
-                        entrypoints:
-                            - websecure
-        nextcloud:
-            collabora:
-                enabled: false
-                username: admin
-                password: "${ADMIN_PASSWORD}"
-            credentials:
-                initialAdminPassword: ${ADMIN_PASSWORD}
-                initialAdminUser: admin
-            general:
-                accessIP: ${TRUENAS_IP}
-                default_phone_region: US
-        persistence:
-            config:
-                volsync:
-                    - credentials: b2
-                      dest:
-                        enabled: true
-                      name: config
-                      src:
-                        enabled: true
-                        trigger:
-                            schedule: 10 1 * * *
-                      type: restic
-            data:
-                enabled: true
-                path: /mnt/Redwood/nextcloud
-                readOnly: false
-                server: ${TRUENAS_IP}
-                type: nfs
-            html:
-                volsync:
-                    - credentials: b2
-                      dest:
-                        enabled: true
-                      name: html
-                      src:
-                        enabled: true
-                        trigger:
-                            schedule: 20 1 * * *
-                      type: restic
-
+  interval: 5m
+  chart:
+    spec:
+      chart: nextcloud
+      version: 33.0.6
+      sourceRef:
+        kind: HelmRepository
+        name: truecharts
+        namespace: flux-system
+      interval: 5m
+  timeout: 20m
+  maxHistory: 3
+  driftDetection:
+    mode: warn
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    global:
+      stopAll: false
+    TZ: America/Los_Angeles
+    cnpg:
+      main:
+        backups:
+          credentials: b2
+          enabled: true
+          revision: "7"
+          scheduledBackups:
+            - name: daily-backup
+              schedule: "0 5 0 * * *"
+              backupOwnerReference: self
+              immediate: true
+              suspend: false
+        mode: recovery
+        password: ${CNPG_PASSWORD}
+        pgVersion: 15
+        recovery:
+          credentials: b2
+          enabled: true
+          revision: "6"
+        user: nextcloud
+    credentials:
+      b2:
+        accessKey: ${S3_KEY_ID}
+        bucket: ${S3_BUCKET}
+        encrKey: ${S3_PASSWORD}
+        name: b2
+        path: ""
+        secretKey: ${S3_SECRET_KEY}
+        type: s3
+        url: ${S3_ENDPOINT}
+    ingress:
+      main:
+        enabled: true
+        hosts:
+          - host: cloud.${DOMAIN_0}
+            paths:
+              - path: /
+                pathType: Prefix
+        integrations:
+          certManager:
+            certificateIssuer: domain-0-le-prod
+            enabled: true
+          homepage:
+            enabled: true
+            group: Apps
+          traefik:
+            enabled: true
+            entrypoints:
+              - websecure
+    nextcloud:
+      collabora:
+        enabled: false
+        username: admin
+        password: "${ADMIN_PASSWORD}"
+      credentials:
+        initialAdminPassword: ${ADMIN_PASSWORD}
+        initialAdminUser: admin
+      general:
+        accessIP: ${TRUENAS_IP}
+        default_phone_region: US
+    persistence:
+      config:
+        volsync:
+          - credentials: b2
+            dest:
+              enabled: true
+            name: config
+            src:
+              enabled: true
+              trigger:
+                schedule: 10 1 * * *
+            type: restic
+      data:
+        enabled: true
+        path: /mnt/Redwood/nextcloud
+        readOnly: false
+        server: ${TRUENAS_IP}
+        type: nfs
+      html:
+        volsync:
+          - credentials: b2
+            dest:
+              enabled: true
+            name: html
+            src:
+              enabled: true
+              trigger:
+                schedule: 20 1 * * *
+            type: restic

@@ -1,121 +1,121 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: gitea
-    namespace: gitea
+  name: gitea
+  namespace: gitea
 spec:
-    interval: 15m
-    chart:
-        spec:
-            chart: gitea
-            version: 20.12.16
-            sourceRef:
-                kind: HelmRepository
-                name: truecharts
-                namespace: flux-system
-            interval: 15m
-    timeout: 20m
-    maxHistory: 3
-    driftDetection:
-        mode: warn
-    install:
-        createNamespace: true
-        remediation:
-            retries: 3
-    upgrade:
-        cleanupOnFail: true
-        remediation:
-            retries: 3
-    uninstall:
-        keepHistory: false
-    values:
-        TZ: America/Los_Angeles
-        admin:
-            email: ${ADMIN_EMAIL}
-            password: ${ADMIN_PASSWORD}
-            username: brock
-        cnpg:
-            main:
-                backups:
-                    credentials: b2
-                    enabled: true
-                    revision: "6"
-                mode: recovery
-                password: ${CNPG_PASSWORD}
-                pgVersion: 15
-                recovery:
-                    credentials: b2
-                    enabled: true
-                    revision: "5"
-                user: gitea
-        credentials:
-            b2:
-                accessKey: ${S3_KEY_ID}
-                bucket: ${S3_BUCKET}
-                encrKey: ${S3_PASSWORD}
-                name: b2
-                secretKey: ${S3_SECRET_KEY}
-                type: s3
-                url: ${S3_ENDPOINT}
-        customConfig:
-            - keys:
-                - name: ENABLED
-                  value: "true"
-                - name: FROM
-                  value: gitea@${DOMAIN_0}
-                - name: PROTOCOL
-                  value: smtp+starttls
-                - name: SMTP_ADDR
-                  value: protonmail-bridge.protonmail-bridge.svc.cluster.local
-                - name: SMTP_PORT
-                  value: "25"
-                - name: FORCE_TRUST_SERVER_CERT
-                  value: "true"
-                - name: USER
-                  value: ${PROTONMAIL_EMAIL}
-                - name: PASSWD
-                  value: ${PROTONMAIL_PASSWORD}
-              name: mailer
-        ingress:
-            main:
-                enabled: true
-                hosts:
-                    - host: git.${DOMAIN_0}
-                      paths:
-                        - path: /
-                          pathType: Prefix
-                integrations:
-                    certManager:
-                        certificateIssuer: domain-0-le-prod
-                        enabled: true
-                    homepage:
-                        enabled: true
-                        group: Apps
-                        widget:
-                            custom:
-                                key: ${HOMEPAGE_GITEA_KEY}
-                            enabled: true
-                    traefik:
-                        enabled: true
-                        entrypoints:
-                            - websecure
-        persistence:
-            data:
-                volsync:
-                    - credentials: b2
-                      dest:
-                        enabled: true
-                      name: data
-                      src:
-                        enabled: true
-                      type: restic
-        service:
-            ssh:
-                enabled: true
-                loadBalancerIP: ${GITEA_IP}
-                ports:
-                    ssh:
-                        enabled: true
-                        port: 2222
-                        targetPort: 2222
-                type: LoadBalancer
+  interval: 15m
+  chart:
+    spec:
+      chart: gitea
+      version: 20.12.16
+      sourceRef:
+        kind: HelmRepository
+        name: truecharts
+        namespace: flux-system
+      interval: 15m
+  timeout: 20m
+  maxHistory: 3
+  driftDetection:
+    mode: warn
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    TZ: America/Los_Angeles
+    admin:
+      email: ${ADMIN_EMAIL}
+      password: ${ADMIN_PASSWORD}
+      username: brock
+    cnpg:
+      main:
+        backups:
+          credentials: b2
+          enabled: true
+          revision: "6"
+        mode: recovery
+        password: ${CNPG_PASSWORD}
+        pgVersion: 15
+        recovery:
+          credentials: b2
+          enabled: true
+          revision: "5"
+        user: gitea
+    credentials:
+      b2:
+        accessKey: ${S3_KEY_ID}
+        bucket: ${S3_BUCKET}
+        encrKey: ${S3_PASSWORD}
+        name: b2
+        secretKey: ${S3_SECRET_KEY}
+        type: s3
+        url: ${S3_ENDPOINT}
+    customConfig:
+      - keys:
+          - name: ENABLED
+            value: "true"
+          - name: FROM
+            value: gitea@${DOMAIN_0}
+          - name: PROTOCOL
+            value: smtp+starttls
+          - name: SMTP_ADDR
+            value: protonmail-bridge.protonmail-bridge.svc.cluster.local
+          - name: SMTP_PORT
+            value: "25"
+          - name: FORCE_TRUST_SERVER_CERT
+            value: "true"
+          - name: USER
+            value: ${PROTONMAIL_EMAIL}
+          - name: PASSWD
+            value: ${PROTONMAIL_PASSWORD}
+        name: mailer
+    ingress:
+      main:
+        enabled: true
+        hosts:
+          - host: git.${DOMAIN_0}
+            paths:
+              - path: /
+                pathType: Prefix
+        integrations:
+          certManager:
+            certificateIssuer: domain-0-le-prod
+            enabled: true
+          homepage:
+            enabled: true
+            group: Apps
+            widget:
+              custom:
+                key: ${HOMEPAGE_GITEA_KEY}
+              enabled: true
+          traefik:
+            enabled: true
+            entrypoints:
+              - websecure
+    persistence:
+      data:
+        volsync:
+          - credentials: b2
+            dest:
+              enabled: true
+            name: data
+            src:
+              enabled: true
+            type: restic
+    service:
+      ssh:
+        enabled: true
+        loadBalancerIP: ${GITEA_IP}
+        ports:
+          ssh:
+            enabled: true
+            port: 2222
+            targetPort: 2222
+        type: LoadBalancer

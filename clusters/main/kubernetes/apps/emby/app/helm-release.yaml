@@ -1,122 +1,122 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: emby
-    namespace: emby
+  name: emby
+  namespace: emby
 spec:
-    interval: 15m
-    chart:
-        spec:
-            chart: emby
-            version: 22.4.33
-            sourceRef:
-                kind: HelmRepository
-                name: truecharts
-                namespace: flux-system
-            interval: 15m
-    timeout: 20m
-    maxHistory: 3
-    driftDetection:
-        mode: warn
-    install:
-        createNamespace: true
-        remediation:
-            retries: 3
-    upgrade:
-        cleanupOnFail: true
-        remediation:
-            retries: 3
-    uninstall:
-        keepHistory: false
-    values:
-        global:
-            stopAll: false
-        TZ: America/Los_Angeles
-        credentials:
-            b2:
-                accessKey: ${S3_KEY_ID}
-                bucket: ${S3_BUCKET}
-                encrKey: ${S3_PASSWORD}
-                name: b2
-                path: ""
-                secretKey: ${S3_SECRET_KEY}
-                type: s3
-                url: ${S3_ENDPOINT}
-        ingress:
-            main:
-                enabled: true
-                hosts:
-                    - host: media.${DOMAIN_0}
-                      paths:
-                        - path: /
-                          pathType: Prefix
-                    - host: emby.${DOMAIN_0}
-                      paths:
-                        - path: /
-                          pathType: Prefix
-                integrations:
-                    certManager:
-                        certificateIssuer: domain-0-le-prod
-                        enabled: true
-                    homepage:
-                        enabled: true
-                        group: Apps
-                        widget:
-                            custom:
-                                key: ${HOMEPAGE_EMBY_KEY}
-                            enabled: true
-                    traefik:
-                        enabled: true
-                        entrypoints:
-                            - websecure
-        persistence:
-            config:
-                volsync:
-                    - credentials: b2
-                      dest:
-                        enabled: true
-                      name: config
-                      src:
-                        enabled: true
-                      type: restic
-            movies:
-                enabled: true
-                type: nfs
-                path: ${MOVIES_PATH}
-                server: ${TRUENAS_IP}
-                readOnly: false
-                mountPath: ${MOVIES_MOUNT_PATH}
-            series:
-                enabled: true
-                type: nfs
-                path: ${SERIES_PATH}
-                server: ${TRUENAS_IP}
-                readOnly: false
-                mountPath: ${SERIES_MOUNT_PATH}
-            music:
-                enabled: true
-                type: nfs
-                path: ${MUSIC_PATH}
-                server: ${TRUENAS_IP}
-                readOnly: false
-                mountPath: ${MUSIC_MOUNT_PATH}
-        service:
-            main:
-                enabled: true
-                loadBalancerIP: ${EMBY_IP}
-                ports:
-                    main:
-                        port: 8096
-                        targetPort: 8096
-                type: LoadBalancer
-        workload:
-            main:
-                podSpec:
-                    containers:
-                        main:
-                            resources:
-                                limits:
-                                    nvidia.com/gpu: 1
-                    runtimeClassName: "nvidia"
-        autodiscovery:
+  interval: 15m
+  chart:
+    spec:
+      chart: emby
+      version: 22.4.33
+      sourceRef:
+        kind: HelmRepository
+        name: truecharts
+        namespace: flux-system
+      interval: 15m
+  timeout: 20m
+  maxHistory: 3
+  driftDetection:
+    mode: warn
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    global:
+      stopAll: false
+    TZ: America/Los_Angeles
+    credentials:
+      b2:
+        accessKey: ${S3_KEY_ID}
+        bucket: ${S3_BUCKET}
+        encrKey: ${S3_PASSWORD}
+        name: b2
+        path: ""
+        secretKey: ${S3_SECRET_KEY}
+        type: s3
+        url: ${S3_ENDPOINT}
+    ingress:
+      main:
+        enabled: true
+        hosts:
+          - host: media.${DOMAIN_0}
+            paths:
+              - path: /
+                pathType: Prefix
+          - host: emby.${DOMAIN_0}
+            paths:
+              - path: /
+                pathType: Prefix
+        integrations:
+          certManager:
+            certificateIssuer: domain-0-le-prod
             enabled: true
+          homepage:
+            enabled: true
+            group: Apps
+            widget:
+              custom:
+                key: ${HOMEPAGE_EMBY_KEY}
+              enabled: true
+          traefik:
+            enabled: true
+            entrypoints:
+              - websecure
+    persistence:
+      config:
+        volsync:
+          - credentials: b2
+            dest:
+              enabled: true
+            name: config
+            src:
+              enabled: true
+            type: restic
+      movies:
+        enabled: true
+        type: nfs
+        path: ${MOVIES_PATH}
+        server: ${TRUENAS_IP}
+        readOnly: false
+        mountPath: ${MOVIES_MOUNT_PATH}
+      series:
+        enabled: true
+        type: nfs
+        path: ${SERIES_PATH}
+        server: ${TRUENAS_IP}
+        readOnly: false
+        mountPath: ${SERIES_MOUNT_PATH}
+      music:
+        enabled: true
+        type: nfs
+        path: ${MUSIC_PATH}
+        server: ${TRUENAS_IP}
+        readOnly: false
+        mountPath: ${MUSIC_MOUNT_PATH}
+    service:
+      main:
+        enabled: true
+        loadBalancerIP: ${EMBY_IP}
+        ports:
+          main:
+            port: 8096
+            targetPort: 8096
+        type: LoadBalancer
+    workload:
+      main:
+        podSpec:
+          containers:
+            main:
+              resources:
+                limits:
+                  nvidia.com/gpu: 1
+          runtimeClassName: "nvidia"
+    autodiscovery:
+      enabled: true

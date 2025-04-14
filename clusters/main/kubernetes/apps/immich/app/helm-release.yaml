@@ -1,130 +1,130 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: immich
-    namespace: immich
+  name: immich
+  namespace: immich
 spec:
-    interval: 15m
-    chart:
-        spec:
-            chart: immich
-            version: 17.54.3
-            sourceRef:
-                kind: HelmRepository
-                name: truecharts
-                namespace: flux-system
-            interval: 15m
-    timeout: 20m
-    maxHistory: 3
-    driftDetection:
-        mode: warn
-    install:
-        createNamespace: true
-        remediation:
-            retries: 3
-    upgrade:
-        cleanupOnFail: true
-        remediation:
-            retries: 3
-    uninstall:
-        keepHistory: false
-    values:
-        global:
-            stopAll: false
-        immich:
-            mlImageType: mlCudaImage
-        TZ: America/Los_Angeles
-        cnpg:
-            main:
-                backups:
-                    credentials: b2
-                    enabled: true
-                    revision: "6"
-                mode: recovery
-                password: ${CNPG_PASSWORD}
-                pgVersion: 16
-                recovery:
-                    credentials: b2
-                    enabled: true
-                    revision: "5"
-        credentials:
-            b2:
-                accessKey: ${S3_KEY_ID}
-                bucket: ${S3_BUCKET}
-                encrKey: ${S3_PASSWORD}
-                name: b2
-                path: ""
-                secretKey: ${S3_SECRET_KEY}
-                type: s3
-                url: ${S3_ENDPOINT}
-        ingress:
-            main:
-                enabled: true
-                hosts:
-                    - host: pics.${DOMAIN_0}
-                      paths:
-                        - path: /
-                          pathType: Prefix
-                integrations:
-                    certManager:
-                        certificateIssuer: domain-0-le-prod
-                        enabled: true
-                    homepage:
-                        enabled: true
-                        group: Apps
-                    traefik:
-                        enabled: true
-                        entrypoints:
-                            - websecure
-        persistence:
-            library:
-                enabled: true
-                path: ${IMMICH_LIBRARY_PATH}
-                readOnly: false
-                server: ${TRUENAS_IP}
-                type: nfs
-            profile:
-                volsync:
-                    - credentials: b2
-                      dest:
-                        enabled: true
-                      name: profiles
-                      src:
-                        enabled: true
-                      type: restic
-            thumbs:
-                volsync:
-                    - credentials: b2
-                      dest:
-                        enabled: true
-                      name: thumbnails
-                      src:
-                        enabled: true
-                      type: restic
-            uploads:
-                volsync:
-                    - credentials: b2
-                      dest:
-                        enabled: true
-                      name: uploads
-                      src:
-                        enabled: true
-                      type: restic
-            video:
-                volsync:
-                    - credentials: b2
-                      dest:
-                        enabled: true
-                      name: encoded-videio
-                      src:
-                        enabled: true
-                      type: restic
-        workload:
+  interval: 15m
+  chart:
+    spec:
+      chart: immich
+      version: 17.54.3
+      sourceRef:
+        kind: HelmRepository
+        name: truecharts
+        namespace: flux-system
+      interval: 15m
+  timeout: 20m
+  maxHistory: 3
+  driftDetection:
+    mode: warn
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    global:
+      stopAll: false
+    immich:
+      mlImageType: mlCudaImage
+    TZ: America/Los_Angeles
+    cnpg:
+      main:
+        backups:
+          credentials: b2
+          enabled: true
+          revision: "6"
+        mode: recovery
+        password: ${CNPG_PASSWORD}
+        pgVersion: 16
+        recovery:
+          credentials: b2
+          enabled: true
+          revision: "5"
+    credentials:
+      b2:
+        accessKey: ${S3_KEY_ID}
+        bucket: ${S3_BUCKET}
+        encrKey: ${S3_PASSWORD}
+        name: b2
+        path: ""
+        secretKey: ${S3_SECRET_KEY}
+        type: s3
+        url: ${S3_ENDPOINT}
+    ingress:
+      main:
+        enabled: true
+        hosts:
+          - host: pics.${DOMAIN_0}
+            paths:
+              - path: /
+                pathType: Prefix
+        integrations:
+          certManager:
+            certificateIssuer: domain-0-le-prod
+            enabled: true
+          homepage:
+            enabled: true
+            group: Apps
+          traefik:
+            enabled: true
+            entrypoints:
+              - websecure
+    persistence:
+      library:
+        enabled: true
+        path: ${IMMICH_LIBRARY_PATH}
+        readOnly: false
+        server: ${TRUENAS_IP}
+        type: nfs
+      profile:
+        volsync:
+          - credentials: b2
+            dest:
+              enabled: true
+            name: profiles
+            src:
+              enabled: true
+            type: restic
+      thumbs:
+        volsync:
+          - credentials: b2
+            dest:
+              enabled: true
+            name: thumbnails
+            src:
+              enabled: true
+            type: restic
+      uploads:
+        volsync:
+          - credentials: b2
+            dest:
+              enabled: true
+            name: uploads
+            src:
+              enabled: true
+            type: restic
+      video:
+        volsync:
+          - credentials: b2
+            dest:
+              enabled: true
+            name: encoded-videio
+            src:
+              enabled: true
+            type: restic
+    workload:
+      machinelearning:
+        podSpec:
+          containers:
             machinelearning:
-                podSpec:
-                    containers:
-                        machinelearning:
-                            resources:
-                                limits:
-                                    nvidia.com/gpu: 1
-                    runtimeClassName: "nvidia"
+              resources:
+                limits:
+                  nvidia.com/gpu: 1
+          runtimeClassName: "nvidia"

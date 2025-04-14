@@ -1,79 +1,79 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: truenas-gui
-    namespace: truenas-gui
+  name: truenas-gui
+  namespace: truenas-gui
 spec:
-    interval: 15m
-    chart:
-        spec:
-            chart: external-service
-            version: 15.6.2
-            sourceRef:
-                kind: HelmRepository
-                name: truecharts
-                namespace: flux-system
-            interval: 15m
-    timeout: 20m
-    maxHistory: 3
-    driftDetection:
-        mode: warn
-    install:
-        createNamespace: true
-        remediation:
-            retries: 3
-    upgrade:
-        cleanupOnFail: true
-        remediation:
-            retries: 3
-    uninstall:
-        keepHistory: false
-    values:
-        ingress:
-            main:
-                annotations:
-                    traefik.frontend.passHostHeader: "false"
-                enabled: true
-                hosts:
-                    - host: nas.${DOMAIN_0}
-                      paths:
-                        - path: /
-                          pathType: Prefix
-                ingressClassName: ""
-                integrations:
-                    certManager:
-                        certificateIssuer: domain-0-le-prod
-                        enabled: true
-                    homepage:
-                        description: Truenas Scale admin panel
-                        enabled: true
-                        group: Utilities
-                        icon: ""
-                        name: Truenas Scale
-                        widget:
-                            custom:
-                                key: ""
-                            enabled: false
-                    traefik:
-                        allowCors: false
-                        enabled: true
-                        entrypoints:
-                            - websecure
-        release_name: truenas-gui
-        service:
-            main:
-                enabled: true
-                externalIP: ${TRUENAS_IP}
-                ports:
-                    main:
-                        enabled: true
-                        port: 444
-                        protocol: https
-                type: ExternalIP
-                useSlice: false
-        workload:
-            main:
-                enabled: false
-                podSpec:
-                    containers:
-                        main: {}
+  interval: 15m
+  chart:
+    spec:
+      chart: external-service
+      version: 15.6.2
+      sourceRef:
+        kind: HelmRepository
+        name: truecharts
+        namespace: flux-system
+      interval: 15m
+  timeout: 20m
+  maxHistory: 3
+  driftDetection:
+    mode: warn
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    ingress:
+      main:
+        annotations:
+          traefik.frontend.passHostHeader: "false"
+        enabled: true
+        hosts:
+          - host: nas.${DOMAIN_0}
+            paths:
+              - path: /
+                pathType: Prefix
+        ingressClassName: ""
+        integrations:
+          certManager:
+            certificateIssuer: domain-0-le-prod
+            enabled: true
+          homepage:
+            description: Truenas Scale admin panel
+            enabled: true
+            group: Utilities
+            icon: ""
+            name: Truenas Scale
+            widget:
+              custom:
+                key: ""
+              enabled: false
+          traefik:
+            allowCors: false
+            enabled: true
+            entrypoints:
+              - websecure
+    release_name: truenas-gui
+    service:
+      main:
+        enabled: true
+        externalIP: ${TRUENAS_IP}
+        ports:
+          main:
+            enabled: true
+            port: 444
+            protocol: https
+        type: ExternalIP
+        useSlice: false
+    workload:
+      main:
+        enabled: false
+        podSpec:
+          containers:
+            main: {}

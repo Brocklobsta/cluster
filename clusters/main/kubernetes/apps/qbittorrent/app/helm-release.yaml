@@ -1,10 +1,10 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: qbittorrent
-    namespace: qbittorrent
+  name: qbittorrent
+  namespace: qbittorrent
 spec:
-    postRenderers:
+  postRenderers:
     - kustomize:
         patches:
           - target:
@@ -15,69 +15,69 @@ spec:
               - op: add
                 path: /spec/template/spec/containers/1/resources/limits/truecharts.org~1tun
                 value: 1
-    interval: 5m
-    chart:
-        spec:
-            # renovate: registryUrl=https://charts.truechartsoci.org
-            chart: qbittorrent
-            version: 22.4.9
-            sourceRef:
-                kind: HelmRepository
-                name: truecharts
-                namespace: flux-system
-            interval: 5m
-    install:
-        createNamespace: true
-        crds: CreateReplace
-        remediation:
-            retries: 3
-    upgrade:
-        crds: CreateReplace
-        remediation:
-            retries: 3
-    values:
-      portal:
-        open:
-          enabled: false
-      global:
-        stopAll: false
-      credentials:
-        b2:
-          type: s3
-          url: ${S3_ENDPOINT}
-          bucket: ${S3_BUCKET}
-          accessKey: ${S3_KEY_ID}
-          secretKey: ${S3_SECRET_KEY}
-          encrKey: ${S3_PASSWORD}
-      ingress:
-        main:
-          enabled: true
-          integrations:
-            traefik:
-              enabled: true
-              entrypoints:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://charts.truechartsoci.org
+      chart: qbittorrent
+      version: 22.4.9
+      sourceRef:
+        kind: HelmRepository
+        name: truecharts
+        namespace: flux-system
+      interval: 5m
+  install:
+    createNamespace: true
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  values:
+    portal:
+      open:
+        enabled: false
+    global:
+      stopAll: false
+    credentials:
+      b2:
+        type: s3
+        url: ${S3_ENDPOINT}
+        bucket: ${S3_BUCKET}
+        accessKey: ${S3_KEY_ID}
+        secretKey: ${S3_SECRET_KEY}
+        encrKey: ${S3_PASSWORD}
+    ingress:
+      main:
+        enabled: true
+        integrations:
+          traefik:
+            enabled: true
+            entrypoints:
               - websecure
-              middlewares:
+            middlewares:
               - name: auth
                 namespace: 'traefik'
-            certManager:
+          certManager:
+            enabled: true
+            certificateIssuer: domain-0-le-prod
+          homepage:
+            enabled: true
+            group: Arr
+            widget:
               enabled: true
-              certificateIssuer: domain-0-le-prod
-            homepage:
-              enabled: true
-              group: Arr
-              widget:
-                  enabled: true
-                  username: ${ADMIN_USER}
-                  password: ${ADMIN_PASSWORD}
-          hosts:
-            - host: dl.${DOMAIN_0}
-              paths:
-                - path: /
-                  pathType: Prefix
-      persistence:
-        config:
-          volsync:
+              username: ${ADMIN_USER}
+              password: ${ADMIN_PASSWORD}
+        hosts:
+          - host: dl.${DOMAIN_0}
+            paths:
+              - path: /
+                pathType: Prefix
+    persistence:
+      config:
+        volsync:
           - name: config
             type: restic
             credentials: b2
@@ -85,41 +85,41 @@ spec:
               enabled: true
             src:
               enabled: true
-        downloads:
-          enabled: true
-          type: nfs
-          path: /mnt/Redwood/media/downloads
-          server: ${TRUENAS_IP}
-          readOnly: false
-          mountPath: /downloads
-      service:
-        proxy:
-          enabled: true
-          ports:
-            proxy:
-              enabled: true
-              port: 8888
-              protocol: "http"
-              targetPort: 8888
-      qbitportforward:
-        enabled: false
-        QBT_USERNAME: "${ADMIN_USER}"
-        QBT_PASSWORD: "${ADMIN_PASSWORD}"
-      addons:
-        vpn:
-          type: gluetun
-          killSwitch: true
-          excludedNetworks_IPv4:
+      downloads:
+        enabled: true
+        type: nfs
+        path: /mnt/Redwood/media/downloads
+        server: ${TRUENAS_IP}
+        readOnly: false
+        mountPath: /downloads
+    service:
+      proxy:
+        enabled: true
+        ports:
+          proxy:
+            enabled: true
+            port: 8888
+            protocol: "http"
+            targetPort: 8888
+    qbitportforward:
+      enabled: false
+      QBT_USERNAME: "${ADMIN_USER}"
+      QBT_PASSWORD: "${ADMIN_PASSWORD}"
+    addons:
+      vpn:
+        type: gluetun
+        killSwitch: true
+        excludedNetworks_IPv4:
           - 192.168.1.0/24
-          env:
-            WIREGUARD_ENDPOINT_IP: ${VPN_ENDPOINT_IP}
-            # WIREGUARD_ENDPOINT_PORT: 51820
-            VPN_PORT_FORWARDING: on
-            VPN_PORT_FORWARDING_UP_COMMAND: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{`{{PORTS}}`}}}" http://qbittorrent.qbittorrent.svc.cluster.local:10095/api/v2/app/setPreferences 2>&1'
-            VPN_SERVICE_PROVIDER: protonvpn
-            VPN_TYPE: wireguard
-            WIREGUARD_ADDRESSES: 10.2.0.2/32
-            WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY}
-            WIREGUARD_PUBLIC_KEY: ${WIREGUARD_PUBLIC_KEY}
-            FIREWALL_INPUT_PORTS: 10095,8888,8000
-            HTTPPROXY: "on"
+        env:
+          WIREGUARD_ENDPOINT_IP: ${VPN_ENDPOINT_IP}
+          # WIREGUARD_ENDPOINT_PORT: 51820
+          VPN_PORT_FORWARDING: on
+          VPN_PORT_FORWARDING_UP_COMMAND: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{`{{PORTS}}`}}}" http://qbittorrent.qbittorrent.svc.cluster.local:10095/api/v2/app/setPreferences 2>&1'
+          VPN_SERVICE_PROVIDER: protonvpn
+          VPN_TYPE: wireguard
+          WIREGUARD_ADDRESSES: 10.2.0.2/32
+          WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY}
+          WIREGUARD_PUBLIC_KEY: ${WIREGUARD_PUBLIC_KEY}
+          FIREWALL_INPUT_PORTS: 10095,8888,8000
+          HTTPPROXY: "on"
