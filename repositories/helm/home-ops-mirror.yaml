@@ -3,8 +3,9 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: postfinance
+  name: home-ops-mirror
   namespace: flux-system
 spec:
+  type: oci
   interval: 2h
-  url: https://postfinance.github.io/kubelet-csr-approver
+  url: oci://ghcr.io/home-operations/charts-mirror
