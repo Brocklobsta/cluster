@@ -45,6 +45,7 @@ spec:
     ingress:
       main:
         enabled: true
+        ingressClassName: external
         hosts:
           - host: media.${DOMAIN_0}
             paths:
