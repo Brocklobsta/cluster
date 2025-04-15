@@ -13,7 +13,6 @@ resources:
   - lidarr/ks.yaml
   - nextcloud/ks.yaml
   - ombi/ks.yaml
-  - prometheus/ks.yaml
   - protonmail-bridge/ks.yaml
   - prowlarr/ks.yaml
   - radarr/ks.yaml
