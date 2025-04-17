@@ -56,6 +56,6 @@ spec:
         ports:
           main:
             enabled: true
-            port: 444
-            protocol: https
+            port: 81
+            protocol: http
         type: ExternalIP
