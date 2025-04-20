@@ -90,6 +90,10 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+          - host: '*.${DOMAIN_0}'
+            paths:
+              - path: /outpost.goauthentik.io
+                pathType: Prefix
         integrations:
           certManager:
             certificateIssuer: domain-0-le-prod
