@@ -86,6 +86,13 @@ spec:
             src:
               enabled: true
             type: restic
+    configmap:
+      dashboard-certmanager:
+        enabled: true
+      dashboard-traefik:
+        enabled: false
+      dashboard-nginx:
+        enabled: true
     workload:
       main:
         podSpec:
