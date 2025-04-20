@@ -24,3 +24,4 @@ resources:
   - qbittorrent/ks.yaml
   - ollama/ks.yaml
   - proxmox-gui/ks.yaml
+  - truenas-exporter/ks.yaml
