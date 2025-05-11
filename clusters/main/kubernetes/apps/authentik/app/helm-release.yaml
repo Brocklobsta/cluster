@@ -87,13 +87,10 @@ spec:
           nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
         hosts:
           - host: auth.${DOMAIN_0}
-            paths:
-              - path: /
-                pathType: Prefix
-          - host: '*.${DOMAIN_0}'
+          - host: "*.${DOMAIN_0}"
             paths:
               - path: /outpost.goauthentik.io
-                pathType: Prefix
+                pathType: ImplementationSpecific
         integrations:
           certManager:
             certificateIssuer: domain-0-le-prod
