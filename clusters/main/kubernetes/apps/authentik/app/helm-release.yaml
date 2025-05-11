@@ -87,7 +87,7 @@ spec:
           nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
         hosts:
           - host: auth.${DOMAIN_0}
-          - host: "*.${DOMAIN_0}"
+          - host: "request.${DOMAIN_0}"
             paths:
               - path: /outpost.goauthentik.io
                 pathType: ImplementationSpecific
