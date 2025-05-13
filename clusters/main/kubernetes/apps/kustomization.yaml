@@ -25,6 +25,5 @@ resources:
   - ollama/ks.yaml
   - proxmox-gui/ks.yaml
   - truenas-exporter/ks.yaml
-  - kitchenowl/ks.yaml
   - unpoller/ks.yaml
   - nvidia-gpu-exporter/ks.yaml
