@@ -38,3 +38,6 @@ spec:
       main:
         podSpec:
           runtimeClassName: "nvidia"
+    securityContext:
+      container:
+        readOnlyRootFilesystem: false
