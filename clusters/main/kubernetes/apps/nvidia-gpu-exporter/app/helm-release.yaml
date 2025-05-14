@@ -31,13 +31,25 @@ spec:
   values:
     global:
       stopAll: false
+    # disable all persistence options as they don't work on talos.
+    persistence:
+      nviaictl:
+        enabled: false
+      nvidia0:
+        enabled: false
+      nvidiasmi:
+        enabled: false
+      libnvidiamlso:
+        enabled: false
+      libnvidiamlso1:
+        enabled: false
     resources:
       limits:
         nvidia.com/gpu: 1
-    workload:
+    metrics:
       main:
-        podSpec:
-          runtimeClassName: "nvidia"
-    securityContext:
-      container:
-        readOnlyRootFilesystem: false
+        endpoints:
+          - port: main
+            relabelings:
+              - sourceLabels: [__meta_kubernetes_endpoint_node_name]
+                targetLabel: instance
