@@ -22,8 +22,8 @@ patches:
     - '@./patches/all.yaml'
 nodes:
     # We would adivce to always stick to a "k8s-something-1" style naming scheme
-    - hostname: k8s-control-2
-      ipAddress: ${MASTER2IP_IP}
+    - hostname: k8s-control-1
+      ipAddress: ${MASTER1IP_IP}
       controlPlane: true
       nameservers:
         - 1.1.1.1
@@ -34,7 +34,7 @@ nodes:
         # suffix is the adapter mac adres.
         - interface: eth0
           addresses:
-            - ${MASTER2IP_CIDR}
+            - ${MASTER1IP_CIDR}
           routes:
             - network: 0.0.0.0/0
               gateway: ${GATEWAY}
@@ -43,14 +43,6 @@ nodes:
       nodeLabels:
         # Node has zigbee dongle
         zigbee: "true"
-    - hostname: k8s-worker-1
-      ipAddress: ${WORKER1IP_IP}
-      controlPlane: false
-      nameservers:
-        - 1.1.1.1
-        - 8.8.8.8
-      installDiskSelector:
-        size: <= 1600GB
       patches:
           - '@./patches/nvidia.yaml'
       schematic:

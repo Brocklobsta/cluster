@@ -36,7 +36,7 @@ spec:
         backups:
           credentials: b2
           enabled: true
-          revision: "7"
+          revision: "8"
           scheduledBackups:
             - name: daily-backup
               schedule: "0 5 0 * * *"
@@ -49,7 +49,7 @@ spec:
         recovery:
           credentials: b2
           enabled: true
-          revision: "6"
+          revision: "7"
         user: nextcloud
     credentials:
       b2:

@@ -58,14 +58,14 @@ spec:
         backups:
           credentials: b2
           enabled: true
-          revision: "7"
+          revision: "8"
         mode: recovery
         password: ${CNPG_PASSWORD}
         pgVersion: 15
         recovery:
           credentials: b2
           enabled: true
-          revision: "6"
+          revision: "7"
         user: authentik
     credentials:
       b2:
