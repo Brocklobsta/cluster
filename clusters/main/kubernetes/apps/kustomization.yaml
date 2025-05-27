@@ -10,12 +10,19 @@ resources:
   - homepage/ks.yaml
   - immich/ks.yaml
   - kubernetes-dashboard/ks.yaml
+  - lidarr/ks.yaml
   - nextcloud/ks.yaml
+  - ombi/ks.yaml
   - protonmail-bridge/ks.yaml
+  - prowlarr/ks.yaml
+  - radarr/ks.yaml
+  - recyclarr/ks.yaml
+  - sonarr/ks.yaml
   - static/ks.yaml
   - truenas-gui/ks.yaml
   - vaultwarden/ks.yaml
   - qbittorrent/ks.yaml
+  - ollama/ks.yaml
   - proxmox-gui/ks.yaml
   - truenas-exporter/ks.yaml
   - unpoller/ks.yaml
