@@ -71,6 +71,7 @@ spec:
             src:
               enabled: true
             type: restic
+            name: config
     resources:
       limits:
         nvidia.com/gpu: 1

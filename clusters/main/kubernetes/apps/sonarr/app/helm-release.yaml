@@ -76,6 +76,7 @@ spec:
             src:
               enabled: true
             type: restic
+            name: config
       series:
         enabled: true
         type: nfs
