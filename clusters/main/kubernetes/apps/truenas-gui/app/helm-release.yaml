@@ -32,7 +32,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: internal
+        ingressClassName: external
         hosts:
           - host: nas.${DOMAIN_0}
             paths:

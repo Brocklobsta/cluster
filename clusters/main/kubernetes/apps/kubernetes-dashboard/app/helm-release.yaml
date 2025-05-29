@@ -40,7 +40,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: internal
+        ingressClassName: external
         annotations:
             nginx.ingress.kubernetes.io/auth-method: 'GET'
             nginx.ingress.kubernetes.io/auth-url: http://authentik-http.authentik.svc.cluster.local:10230/outpost.goauthentik.io/auth/nginx
