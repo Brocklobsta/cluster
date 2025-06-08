@@ -27,3 +27,4 @@ resources:
   - truenas-exporter/ks.yaml
   - unpoller/ks.yaml
   - nvidia-gpu-exporter/ks.yaml
+  - kitchenowl/ks.yaml
