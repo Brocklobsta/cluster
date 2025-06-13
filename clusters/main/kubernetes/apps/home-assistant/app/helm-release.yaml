@@ -38,25 +38,29 @@ spec:
     TZ: America/Los_Angeles
     cnpg:
       main:
+        annotations:
+          cnpg.io/skipEmptyWalArchiveCheck: "enabled"
+        cluster:
+          singleNode: true
+        mode: standalone
         backups:
-          credentials: b2
           enabled: true
-          revision: "7"
-        mode: recovery
-        password: ${CNPG_PASSWORD}
-        pgVersion: 15
+          credentials: b2
+          scheduledBackups:
+            - name: daily-backup
+              schedule: "0 5 0 * * *"
+              backupOwnerReference: self
+              immediate: true
+              suspend: false
         recovery:
+          method: object_store
           credentials: b2
-          enabled: true
-          revision: "6"
-        user: home-assistant
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}
         bucket: ${S3_BUCKET}
         encrKey: ${S3_PASSWORD}
         name: b2
-        path: ""
         secretKey: ${S3_SECRET_KEY}
         type: s3
         url: ${S3_ENDPOINT}
@@ -91,6 +95,8 @@ spec:
             name: config
             src:
               enabled: true
+              trigger:
+                schedule: 50 0 * * *
             type: restic
       matter:
         enabled: true
@@ -105,6 +111,8 @@ spec:
             name: matter
             src:
               enabled: true
+              trigger:
+                schedule: 45 0 * * *
             type: restic
       zigbee:
         enabled: true
