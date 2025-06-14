@@ -5,8 +5,9 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m
-  path: clusters/main/kubernetes/general/kitchenowl/app
+  path: clusters/main/kubernetes/apps/kitchenowl/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: cluster
+
