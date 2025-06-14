@@ -50,6 +50,10 @@ spec:
       main:
         podSpec:
           runtimeClassName: "nvidia"
+          # Limit pods to k8s-control-1 by using the zigbee label
+          # TODO: Figure out how to limit pods to nodes with nvidia gpu
+          nodeSelector:
+            zigbee: "true"
     metrics:
       main:
         endpoints:
