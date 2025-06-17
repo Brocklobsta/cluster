@@ -107,6 +107,8 @@ spec:
             name: data
             src:
               enabled: true
+              trigger:
+                schedule: 25 8 * * *
             type: restic
     service:
       ssh:

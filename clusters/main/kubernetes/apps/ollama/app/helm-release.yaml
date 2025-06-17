@@ -70,6 +70,8 @@ spec:
               enabled: true
             src:
               enabled: true
+              trigger:
+                schedule: 10 9 * * *
             type: restic
             name: config
     resources:

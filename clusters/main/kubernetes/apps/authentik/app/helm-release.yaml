@@ -113,6 +113,8 @@ spec:
             name: blueprints
             src:
               enabled: true
+              trigger:
+                schedule: 0 8 * * *
             type: restic
       certs:
         volsync:
@@ -122,6 +124,8 @@ spec:
             name: certs
             src:
               enabled: true
+              trigger:
+                schedule: 5 8 * * *
             type: restic
       geoip:
         volsync:
@@ -131,6 +135,8 @@ spec:
             name: geo-ip
             src:
               enabled: true
+              trigger:
+                schedule: 10 8 * * *
             type: restic
       media:
         volsync:
@@ -140,6 +146,8 @@ spec:
             name: media
             src:
               enabled: true
+              trigger:
+                schedule: 15 8 * * *
             type: restic
       templates:
         volsync:
@@ -149,4 +157,6 @@ spec:
             name: templates
             src:
               enabled: true
+              trigger:
+                schedule: 3 8 * * *
             type: restic

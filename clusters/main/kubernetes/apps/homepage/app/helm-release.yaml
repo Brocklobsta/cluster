@@ -83,6 +83,8 @@ spec:
             name: storage
             src:
               enabled: true
+              trigger:
+                schedule: 35 8 * * *
             type: restic
     workload:
       main:

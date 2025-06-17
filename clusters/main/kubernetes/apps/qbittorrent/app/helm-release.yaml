@@ -90,6 +90,8 @@ spec:
               enabled: true
             src:
               enabled: true
+              trigger:
+                schedule: 40 9 * * *
       downloads:
         enabled: true
         type: nfs

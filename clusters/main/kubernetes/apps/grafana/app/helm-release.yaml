@@ -85,6 +85,8 @@ spec:
             name: data
             src:
               enabled: true
+              trigger:
+                schedule: 30 8 * * *
             type: restic
     configmap:
       dashboard-certmanager:

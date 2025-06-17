@@ -90,6 +90,8 @@ spec:
             name: profiles
             src:
               enabled: true
+              trigger:
+                schedule: 40 8 * * *
             type: restic
       thumbs:
         volsync:
@@ -99,6 +101,8 @@ spec:
             name: thumbnails
             src:
               enabled: true
+              trigger:
+                schedule: 45 8 * * *
             type: restic
       uploads:
         volsync:
@@ -108,6 +112,8 @@ spec:
             name: uploads
             src:
               enabled: true
+              trigger:
+                schedule: 50 8 * * *
             type: restic
       video:
         volsync:
@@ -117,6 +123,8 @@ spec:
             name: encoded-videio
             src:
               enabled: true
+              trigger:
+                schedule: 55 8 * * *
             type: restic
     workload:
       machinelearning:

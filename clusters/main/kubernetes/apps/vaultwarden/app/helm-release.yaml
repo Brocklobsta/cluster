@@ -81,6 +81,8 @@ spec:
             name: config
             src:
               enabled: true
+              trigger:
+                schedule: 0 10 * * *
             type: restic
     vaultwarden:
       admin:
