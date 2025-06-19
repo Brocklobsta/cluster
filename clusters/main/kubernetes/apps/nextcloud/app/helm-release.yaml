@@ -119,3 +119,14 @@ spec:
               trigger:
                 schedule: 20 1 * * *
             type: restic
+    workload:
+      nginx:
+        strategy: Recreate
+      notify:
+        strategy: Recreate
+      imaginary:
+        strategy: Recreate
+      collabora:
+        strategy: Recreate
+      clamav:
+        stategy: Recreate
