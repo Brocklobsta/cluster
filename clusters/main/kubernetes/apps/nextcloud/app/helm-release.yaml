@@ -129,4 +129,4 @@ spec:
       collabora:
         strategy: Recreate
       clamav:
-        stategy: Recreate
+        strategy: Recreate
