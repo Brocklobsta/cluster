@@ -29,3 +29,4 @@ resources:
   - nvidia-gpu-exporter/ks.yaml
   - kitchenowl/ks.yaml
   - it-tools/ks.yaml
+  - teslamate/ks.yaml
