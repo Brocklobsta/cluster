@@ -88,7 +88,7 @@ spec:
         initialAdminPassword: ${ADMIN_PASSWORD}
         initialAdminUser: admin
       general:
-        accessIP: ${TRUENAS_IP}
+        accessIP: ${NGINX_EXTERNAL_IP}
         default_phone_region: US
     persistence:
       config:
