@@ -81,7 +81,7 @@ spec:
             enabled: false
     nextcloud:
       collabora:
-        enabled: false
+        enabled: true
         username: admin
         password: "${ADMIN_PASSWORD}"
       credentials:
