@@ -18,7 +18,7 @@ spec:
     TZ: America/Los_Angeles
     cnpg:
       main:
-        mode: standalone
+        mode: recovery
         backups:
           enabled: true
           credentials: b2
