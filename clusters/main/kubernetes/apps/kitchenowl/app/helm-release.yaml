@@ -63,9 +63,7 @@ spec:
               schedule: 20 0 * * *
     cnpg:
       main:
-        annotations:
-          cnpg.io/skipEmptyWalArchiveCheck: "enabled"
-        mode: standalone
+        mode: recovery
         backups:
           enabled: true
           credentials: b2
