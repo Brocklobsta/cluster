@@ -18,8 +18,6 @@ spec:
     TZ: America/Los_Angeles
     cnpg:
       main:
-        annotations:
-          cnpg.io/skipEmptyWalArchiveCheck: "enabled"
         mode: standalone
         backups:
           enabled: true
