@@ -30,13 +30,6 @@ spec:
     keepHistory: false
   values:
     TZ: America/Los_Angeles
-    addons:
-      codeserver:
-        enabled: false
-      netshoot:
-        enabled: false
-      vpn:
-        type: disabled
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}
