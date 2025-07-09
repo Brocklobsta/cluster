@@ -30,23 +30,26 @@ spec:
     keepHistory: false
   values:
     global:
-      stopAll: false
+      stopAll: true
     immich:
       mlImageType: mlCudaImage
     TZ: America/Los_Angeles
     cnpg:
       main:
         backups:
-          credentials: b2
           enabled: true
-          revision: "7"
+          credentials: b2
+          scheduledBackups:
+            - name: daily-backup
+              schedule: "0 6 0 * * *"
+              backupOwnerReference: self
+              immediate: true
+              suspend: false
         mode: recovery
-        password: ${CNPG_PASSWORD}
-        pgVersion: 16
         recovery:
           credentials: b2
           enabled: true
-          revision: "6"
+          revision: "7"
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}
