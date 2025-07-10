@@ -129,12 +129,10 @@ spec:
               trigger:
                 schedule: 55 8 * * *
             type: restic
+    resources:
+      limits:
+        nvidia.com/gpu: 1
     workload:
       machinelearning:
         podSpec:
-          containers:
-            machinelearning:
-              resources:
-                limits:
-                  nvidia.com/gpu: 1
           runtimeClassName: "nvidia"
