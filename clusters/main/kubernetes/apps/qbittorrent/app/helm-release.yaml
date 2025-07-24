@@ -111,12 +111,14 @@ spec:
           env:
             FIREWALL: "on"
             FIREWALL_OUTBOUND_SUBNETS: "192.168.1.0/24"
+            WIREGUARD_ENDPOINT_IP: "${VPN_ENDPOINT_IP}"
+            # WIREGUARD_ENDPOINT_PORT: 51820
             VPN_PORT_FORWARDING: "on"
-            VPN_PORT_FORWARDING_UP_COMMAND: /bin/sh -c 'sleep 10; wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{`{{PORTS}}`}}}" http://qbittorrent.qbittorrent.svc.cluster.local:10095/api/v2/app/setPreferences 2>&1'
+            VPN_PORT_FORWARDING_UP_COMMAND: /bin/sh -c 'sleep 5; wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{`{{PORTS}}`}}}" http://qbittorrent.qbittorrent.svc.cluster.local:10095/api/v2/app/setPreferences 2>&1'
             VPN_SERVICE_PROVIDER: "protonvpn"
             VPN_TYPE: "wireguard"
+            WIREGUARD_ADDRESSES: "10.2.0.2/32"
             WIREGUARD_PRIVATE_KEY: "${WIREGUARD_PRIVATE_KEY}"
+            WIREGUARD_PUBLIC_KEY: "${WIREGUARD_PUBLIC_KEY}"
             FIREWALL_INPUT_PORTS: "10095,8888,8000"
             HTTPPROXY: "on"
-            SERVER_COUNTRIES: "Switzerland"
-            SECURE_CORE_ONLY: "on"
