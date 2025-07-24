@@ -39,8 +39,8 @@ spec:
         enabled: true
         ingressClassName: external
         integrations:
-          traefik:
-            enabled: false
+          nginx:
+            enabled: true
           certManager:
             enabled: true
             certificateIssuer: domain-0-le-prod
