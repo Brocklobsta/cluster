@@ -69,8 +69,8 @@ spec:
           homepage:
             enabled: true
             group: Apps
-          nginx:
-            enabled: true
+          traefik:
+            enabled: false
         required: true
     persistence:
       data:

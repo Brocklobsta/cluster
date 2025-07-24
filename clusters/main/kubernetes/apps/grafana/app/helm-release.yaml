@@ -74,8 +74,8 @@ spec:
           homepage:
             enabled: true
             group: Utilities
-          nginx:
-            enabled: true
+          traefik:
+            enabled: false
     persistence:
       data:
         volsync:

@@ -60,8 +60,8 @@ spec:
           homepage:
             enabled: true
             group: Apps
-          nginx:
-            enabled: true
+          traefik:
+            enabled: false
     persistence:
       config:
         volsync:
