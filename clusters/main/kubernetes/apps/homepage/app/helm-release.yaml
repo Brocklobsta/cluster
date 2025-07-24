@@ -67,8 +67,6 @@ spec:
               type: "authentik"
               internalHost: "authentik-http.authentik.svc.cluster.local:10230"
               externalHost: "auth.${DOMAIN_0}"
-              # Can be left default in most cases
-              responseHeaders: []
     persistence:
       config:
         volsync:
