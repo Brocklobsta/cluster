@@ -77,8 +77,8 @@ spec:
           homepage:
             enabled: true
             group: Apps
-          traefik:
-            enabled: false
+          nginx:
+            enabled: true
     nextcloud:
       collabora:
         enabled: true

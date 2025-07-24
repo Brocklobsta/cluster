@@ -96,8 +96,8 @@ spec:
               custom:
                 key: ${HOMEPAGE_GITEA_KEY}
               enabled: true
-          traefik:
-            enabled: false
+          nginx:
+            enabled: true
     persistence:
       data:
         volsync:

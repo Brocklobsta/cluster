@@ -57,8 +57,8 @@ spec:
             enabled: true
             group: Utilities
             name: Resume
-          traefik:
-            enabled: false
+          nginx:
+            enabled: true
     persistence:
       data:
         volsync:

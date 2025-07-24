@@ -102,8 +102,8 @@ spec:
               custom:
                 key: ${HOMEPAGE_AUTHENTIK_KEY}
               enabled: true
-          traefik:
-            enabled: false
+          nginx:
+            enabled: true
     persistence:
       blueprints:
         volsync:
