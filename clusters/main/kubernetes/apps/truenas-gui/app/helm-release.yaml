@@ -47,8 +47,8 @@ spec:
             enabled: true
             group: Utilities
             name: Truenas Scale
-          traefik:
-            enabled: false
+          nginx:
+            enabled: true
     service:
       main:
         enabled: true
