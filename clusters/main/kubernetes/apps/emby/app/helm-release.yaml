@@ -66,8 +66,8 @@ spec:
               custom:
                 key: ${HOMEPAGE_EMBY_KEY}
               enabled: true
-          nginx:
-            enabled: true
+          traefik:
+            enabled: false
     persistence:
       config:
         volsync:
