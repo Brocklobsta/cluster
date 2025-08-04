@@ -30,7 +30,7 @@ spec:
     keepHistory: false
   values:
     global:
-      stopAll: false
+      stopAll: true
     immich:
       mlImageType: mlCudaImage
     TZ: America/Los_Angeles
