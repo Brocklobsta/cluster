@@ -111,6 +111,9 @@ worker:
                     - siderolabs/util-linux-tools
                     - siderolabs/iscsi-tools
                     - siderolabs/qemu-guest-agent
+                    - siderolabs/i915
+                    - siderolabs/intel-ucode
+                    - siderolabs/mei
     machineFiles:
     - content: |
         [plugins."io.containerd.cri.v1.images"]
