@@ -36,3 +36,6 @@ spec:
       main:
         type: LoadBalancer
         loadBalancerIP: ${TRUENAS_EXPORTER_IP}
+        integrations:
+          metallb:
+            enabled: true

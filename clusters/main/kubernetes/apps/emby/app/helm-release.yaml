@@ -110,6 +110,9 @@ spec:
             port: 8096
             targetPort: 8096
         type: LoadBalancer
+        integrations:
+          metallb:
+            enabled: true
     workload:
       main:
         podSpec:

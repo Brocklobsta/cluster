@@ -49,10 +49,3 @@ spec:
             src:
               enabled: true
             type: restic
-    service:
-      main:
-        type: LoadBalancer
-        loadBalancerIP: ${PROTONMAIL_IP}
-        ports:
-          main:
-            port: 25
