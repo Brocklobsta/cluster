@@ -49,7 +49,6 @@ spec:
         recovery:
           credentials: b2
           enabled: true
-          revision: "7"
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}
