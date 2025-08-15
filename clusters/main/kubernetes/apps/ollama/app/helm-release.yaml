@@ -86,6 +86,11 @@ spec:
       main:
         podSpec:
           runtimeClassName: "nvidia"
+          containers:
+            main:
+              env:
+                OLLAMA_FLASH_ATTENTION: 1
+                OLLAMA_KV_CACHE_TYPE: q8_0
       ui:
         podSpec:
           containers:
