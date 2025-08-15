@@ -72,13 +72,24 @@ spec:
         volsync:
           - credentials: b2
             dest:
+              enabled: false
+            src:
+              enabled: false
+              trigger:
+                schedule: 10 9 * * *
+            type: restic
+            name: config
+      data:
+        volsync:
+          - credentials: b2
+            dest:
               enabled: true
             src:
               enabled: true
               trigger:
                 schedule: 10 9 * * *
             type: restic
-            name: config
+            name: data
     resources:
       limits:
         nvidia.com/gpu: 1
