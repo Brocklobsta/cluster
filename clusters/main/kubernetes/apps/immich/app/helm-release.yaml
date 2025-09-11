@@ -4,6 +4,7 @@ metadata:
   name: immich
   namespace: immich
 spec:
+  suspend: true
   interval: 15m
   chart:
     spec:
