@@ -5,6 +5,7 @@
         "mitchdenny.ecdc",
         "signageos.signageos-vscode-sops",
         "EditorConfig.editorconfig",
+        "PKief.material-icon-theme",
         "usernamehw.errorlens",
         "redhat.vscode-yaml",
         "weaveworks.vscode-gitops-tools",
