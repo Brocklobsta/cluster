@@ -30,7 +30,7 @@ spec:
     keepHistory: false
   values:
     global:
-      stopAll: true
+      stopAll: false
     immich:
       mlImageType: mlCudaImage
     TZ: America/Los_Angeles
@@ -45,7 +45,7 @@ spec:
               backupOwnerReference: self
               immediate: true
               suspend: false
-        mode: recovery
+        mode: standalone
         recovery:
           credentials: b2
           enabled: true
@@ -84,50 +84,6 @@ spec:
         readOnly: false
         server: ${TRUENAS_IP}
         type: nfs
-      profile:
-        volsync:
-          - credentials: b2
-            dest:
-              enabled: true
-            name: profiles
-            src:
-              enabled: true
-              trigger:
-                schedule: 40 8 * * *
-            type: restic
-      thumbs:
-        volsync:
-          - credentials: b2
-            dest:
-              enabled: true
-            name: thumbnails
-            src:
-              enabled: true
-              trigger:
-                schedule: 45 8 * * *
-            type: restic
-      uploads:
-        volsync:
-          - credentials: b2
-            dest:
-              enabled: true
-            name: uploads
-            src:
-              enabled: true
-              trigger:
-                schedule: 50 8 * * *
-            type: restic
-      video:
-        volsync:
-          - credentials: b2
-            dest:
-              enabled: true
-            name: encoded-videio
-            src:
-              enabled: true
-              trigger:
-                schedule: 55 8 * * *
-            type: restic
     resources:
       limits:
         nvidia.com/gpu: 1
