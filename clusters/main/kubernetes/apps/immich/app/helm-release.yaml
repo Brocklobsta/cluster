@@ -45,7 +45,7 @@ spec:
               backupOwnerReference: self
               immediate: true
               suspend: false
-        mode: standalone
+        mode: recovery
         recovery:
           credentials: b2
           enabled: true

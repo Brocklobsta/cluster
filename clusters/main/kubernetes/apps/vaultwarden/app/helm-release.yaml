@@ -35,7 +35,6 @@ spec:
         backups:
           credentials: b2
           enabled: true
-          revision: "7"
         mode: recovery
         password: ${CNPG_PASSWORD}
         pgVersion: 15
@@ -43,7 +42,6 @@ spec:
           method: object_store
           credentials: b2
           enabled: true
-          revision: "6"
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}
