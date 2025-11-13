@@ -91,3 +91,10 @@ spec:
         path: ${DOWNLOADS_PATH}
         server: ${TRUENAS_IP}
         mountPath: ${DOWNLOADS_MOUNT_PATH}
+    workload:
+      main:
+        podSpec:
+          containers:
+            main:
+              env:
+                SONARR__AUTH__METHOD: "External"
