@@ -68,17 +68,6 @@ spec:
           nginx:
             enabled: true
     persistence:
-      config:
-        volsync:
-          - credentials: b2
-            dest:
-              enabled: false
-            src:
-              enabled: false
-              trigger:
-                schedule: 10 9 * * *
-            type: restic
-            name: config
       data:
         volsync:
           - credentials: b2
