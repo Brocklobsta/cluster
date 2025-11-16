@@ -120,7 +120,6 @@ spec:
             main:
               resources:
                 limits:
-                  nvidia.com/gpu: 1
-          runtimeClassName: "nvidia"
+                  gpu.intel.com/i915: 1
     autodiscovery:
       enabled: true
