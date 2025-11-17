@@ -79,11 +79,9 @@ spec:
                 schedule: 10 9 * * *
             type: restic
             name: data
-    resources:
-      limits:
-        nvidia.com/gpu: 1
     workload:
       main:
+        enabled: false
         podSpec:
           runtimeClassName: "nvidia"
           containers:
