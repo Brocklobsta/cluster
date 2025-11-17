@@ -68,6 +68,12 @@ spec:
           nginx:
             enabled: true
     persistence:
+      config:
+        volsync:
+          - dest:
+              enabled: false
+            src:
+              enabled: false
       data:
         volsync:
           - credentials: b2
