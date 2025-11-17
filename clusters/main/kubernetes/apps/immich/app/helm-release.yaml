@@ -31,8 +31,6 @@ spec:
   values:
     global:
       stopAll: false
-    immich:
-      mlImageType: mlCudaImage
     TZ: America/Los_Angeles
     cnpg:
       main:
@@ -84,10 +82,3 @@ spec:
         readOnly: false
         server: ${TRUENAS_IP}
         type: nfs
-    resources:
-      limits:
-        nvidia.com/gpu: 1
-    workload:
-      machinelearning:
-        podSpec:
-          runtimeClassName: "nvidia"
