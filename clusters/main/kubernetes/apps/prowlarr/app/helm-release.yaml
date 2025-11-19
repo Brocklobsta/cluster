@@ -81,3 +81,10 @@ spec:
                 schedule: 35 9 * * *
             type: restic
             name: config
+    workload:
+      main:
+        podSpec:
+          containers:
+            main:
+              env:
+                PROWLARR__AUTH__METHOD: "External"
