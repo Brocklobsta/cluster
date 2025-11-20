@@ -91,10 +91,10 @@ spec:
         path: ${DOWNLOADS_PATH}
         server: ${TRUENAS_IP}
         mountPath: ${DOWNLOADS_MOUNT_PATH}
-  workload:
-    main:
-      podSpec:
-        containers:
-          main:
-            env:
-              LIDARR__AUTH__METHOD: "External"
+    workload:
+      main:
+        podSpec:
+          containers:
+            main:
+              env:
+                LIDARR__AUTH__METHOD: "External"
