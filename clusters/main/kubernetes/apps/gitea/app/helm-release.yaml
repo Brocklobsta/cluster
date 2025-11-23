@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: gitea
-      version: 22.23.9
+      version: 22.23.10
       sourceRef:
         kind: HelmRepository
         name: truecharts
