@@ -86,13 +86,6 @@ spec:
               trigger:
                 schedule: 30 8 * * *
             type: restic
-    configmap:
-      dashboard-certmanager:
-        enabled: true
-      dashboard-traefik:
-        enabled: false
-      dashboard-nginx:
-        enabled: true
     workload:
       main:
         podSpec:
