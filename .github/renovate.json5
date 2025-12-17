@@ -3,5 +3,15 @@
   "extends": [
     "config:recommended",
     "github>truecharts/public//.github/renovate/main.json5"
-  ]
+  ],
+  "minor": {
+    "packageRules": [
+      {
+        "matchPackageNames": ["ghcr.io/siderolabs/kubelet", "ghcr.io/siderolabs/installer"],
+        "labels": ["type/minor", "system-upgrade"],
+        "addLabels": [],
+        "automerge": false
+      }
+    ]
+  }
 }
