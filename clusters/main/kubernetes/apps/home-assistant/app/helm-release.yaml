@@ -29,6 +29,9 @@ spec:
   uninstall:
     keepHistory: false
   values:
+    image:
+      repository: docker.io/homeassistant/home-assistant
+      tag: "2025.12.1"
     global:
       stopAll: false
     matterServerImage:
