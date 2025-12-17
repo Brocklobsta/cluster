@@ -1,17 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "schedule": ["before 06:00 AM"],
   "extends": [
     "config:recommended",
-    "github>truecharts/public//.github/renovate/main.json5"
-  ],
-  "minor": {
-    "packageRules": [
-      {
-        "matchPackageNames": ["ghcr.io/siderolabs/kubelet", "ghcr.io/siderolabs/installer"],
-        "labels": ["type/minor", "system-upgrade"],
-        "addLabels": [],
-        "automerge": false
-      }
-    ]
-  }
+    "github>trueforge-org/truecharts//.github/renovate/main.json5",
+    "github>Brocklobsta/cluster//.github/kubectl.json5"
+  ]
 }
