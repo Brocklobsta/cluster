@@ -31,7 +31,7 @@ spec:
   values:
     image:
       repository: docker.io/homeassistant/home-assistant
-      tag: "2025.12.1"
+      tag: "2025.12.3"
     global:
       stopAll: false
     matterServerImage:
