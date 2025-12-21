@@ -40,22 +40,13 @@ nodes:
               gateway: ${GATEWAY}
           vip:
             ip: ${VIP}
+        - interface: eth1
+          dhcp: false
+          addresses:
+            - 172.30.0.5/24
       nodeLabels:
         # Node has zigbee dongle
         zigbee: "true"
-      patches:
-          - '@./patches/nvidia.yaml'
-      schematic:
-          customization:
-              extraKernelArgs:
-                  - net.ifnames=0
-              systemExtensions:
-                  officialExtensions:
-                      - siderolabs/util-linux-tools
-                      - siderolabs/iscsi-tools
-                      - siderolabs/qemu-guest-agent
-                      - siderolabs/nonfree-kmod-nvidia-lts
-                      - siderolabs/nvidia-container-toolkit-lts
     - hostname: k8s-worker-1
       ipAddress: ${WORKER1IP_IP}
       controlPlane: false
@@ -63,7 +54,18 @@ nodes:
         - 1.1.1.1
         - 8.8.8.8
       installDiskSelector:
-        size: <= 1600GB
+        size: <= 2900GB
+      networkInterfaces:
+        - interface: eth0
+          addresses:
+            - ${WORKER1IP_CIDR}
+          routes:
+            - network: 0.0.0.0/0
+              gateway: ${GATEWAY}
+        - interface: eth1
+          dhcp: false
+          addresses:
+            - 172.30.0.7/24
 controlPlane:
     patches:
         - '@./patches/controlplane.yaml'
@@ -80,6 +82,9 @@ controlPlane:
                     - siderolabs/util-linux-tools
                     - siderolabs/iscsi-tools
                     - siderolabs/qemu-guest-agent
+                    - siderolabs/i915
+                    - siderolabs/intel-ucode
+                    - siderolabs/mei
     machineFiles:
     - content: |
         [plugins."io.containerd.cri.v1.images"]
