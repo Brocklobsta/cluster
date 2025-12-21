@@ -40,10 +40,6 @@ nodes:
               gateway: ${GATEWAY}
           vip:
             ip: ${VIP}
-        - interface: eth1
-          dhcp: false
-          addresses:
-            - 172.30.0.1/24
       nodeLabels:
         # Node has zigbee dongle
         zigbee: "true"
@@ -55,12 +51,6 @@ nodes:
         - 8.8.8.8
       installDiskSelector:
         size: <= 2900GB
-      networkInterfaces:
-        # suffix is the adapter mac adres.
-        - interface: eth1
-          dhcp: false
-          addresses:
-            - 172.30.0.2/24
 controlPlane:
     patches:
         - '@./patches/controlplane.yaml'
@@ -106,8 +96,6 @@ worker:
      - name: uio_pci_generic
     schematic:
         customization:
-            extraKernelArgs:
-                - net.ifnames=0
             systemExtensions:
                 officialExtensions:
                     - siderolabs/util-linux-tools
