@@ -4,7 +4,7 @@ metadata:
   name: immich
   namespace: immich
 spec:
-  interval: 15m
+  interval: 30m
   chart:
     spec:
       chart: immich
@@ -13,8 +13,8 @@ spec:
         kind: HelmRepository
         name: truecharts
         namespace: flux-system
-      interval: 15m
-  timeout: 20m
+      interval: 30m
+  timeout: 30m
   maxHistory: 3
   driftDetection:
     mode: warn
