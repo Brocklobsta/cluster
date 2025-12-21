@@ -63,7 +63,6 @@ spec:
         proxy-busy-buffers-size: 32k
         ssl-protocols: TLSv1.3 TLSv1.2
         use-forwarded-headers: "true"
-        strict-validate-path-type: "false"
       metrics:
         enabled: true
         # serviceMonitor:
@@ -78,7 +77,7 @@ spec:
         enabled: false
       resources:
         requests:
-          cpu: 100m
+          cpu: 75m
         limits:
           memory: 500Mi
     defaultBackend:
