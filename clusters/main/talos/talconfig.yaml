@@ -55,6 +55,12 @@ nodes:
         size: <= 2900GB
       networkInterfaces:
         # suffix is the adapter mac adres.
+        - interface: eth0
+          addresses:
+            - ${WORKER1IP_CIDR}
+          routes:
+            - network: 0.0.0.0/0
+              gateway: ${GATEWAY}
         - interface: eth1
           dhcp: false
 controlPlane:
