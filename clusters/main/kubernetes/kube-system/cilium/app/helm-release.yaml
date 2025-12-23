@@ -38,6 +38,8 @@ spec:
     # routingMode: native
     hubble:
       enabled: false
+    cni:
+      exclusive: false
     cluster:
       name: ${CLUSTERNAME}
       id: 1
