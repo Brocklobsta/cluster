@@ -43,7 +43,7 @@ nodes:
         - interface: eth1
           dhcp: false
           addresses:
-            - 172.30.0.1/24
+            - 172.30.0.5/24
           vlans:
             - vlanId: 1
       nodeLabels:
@@ -68,7 +68,7 @@ nodes:
         - interface: eth1
           dhcp: false
           addresses:
-            - 172.30.0.2/24
+            - 172.30.0.6/24
           vlans:
             - vlanId: 1
 controlPlane:
