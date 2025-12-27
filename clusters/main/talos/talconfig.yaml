@@ -44,6 +44,8 @@ nodes:
           dhcp: false
           addresses:
             - 172.30.0.1/24
+          vlans:
+            - vlanId: 5
       nodeLabels:
         # Node has zigbee dongle
         zigbee: "true"
@@ -67,6 +69,8 @@ nodes:
           dhcp: false
           addresses:
             - 172.30.0.2/24
+          vlans:
+            - vlanId: 5
 controlPlane:
     patches:
         - '@./patches/controlplane.yaml'
