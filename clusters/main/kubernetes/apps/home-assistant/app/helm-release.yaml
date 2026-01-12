@@ -29,9 +29,6 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    image:
-      repository: docker.io/homeassistant/home-assistant
-      tag: "2026.1.0"
     global:
       stopAll: false
     matterServerImage:
@@ -118,6 +115,25 @@ spec:
         type: device
         mountPath: /dev/ttyUSB0
         hostPath: /dev/ttyUSB0
+#--------------------------Temp psycopg2 fix---------------------------------------
+      init-script:
+        enabled: true
+        type: configmap
+        objectName: init-script
+        mountPath: "/docker-entrypoint.d/99-install-psycopg2.sh"
+        subPath: install-psycopg2.sh
+        defaultMode: "0777"
+        readOnly: true     
+
+    configmap:
+      init-script:
+        enabled: true
+        data: 
+          install-psycopg2.sh: |-
+            #!/bin/bash
+            echo "Installing psycopg2-binary for PostgreSQL support..."
+            pip install psycopg2-binary 
+#---------------------------------------------------------------------------------- 
     workload:
       main:
         podSpec:
