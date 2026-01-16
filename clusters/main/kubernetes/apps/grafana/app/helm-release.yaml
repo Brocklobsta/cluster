@@ -107,3 +107,17 @@ spec:
                 GF_SECURITY_ADMIN_PASSWORD: ${ADMIN_PASSWORD}
                 GF_SECURITY_ADMIN_USER: admin
                 GF_SERVER_ROOT_URL: https://graph.${DOMAIN_0}
+    dashboards:
+      grafana:
+        cnpg:
+          enabled: true
+        flux-cluster:
+          enabled: true
+        flux-control-plane:
+          enabled: true
+        metallb:
+          enabled: true
+        nginx:
+          enabled: true
+        node-feature-discovery:
+          enabled: true
