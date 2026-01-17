@@ -43,7 +43,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: internal
+        ingressClassName: external
         hosts:
           - host: www.${DOMAIN_0}
             paths:
@@ -87,4 +87,4 @@ spec:
           containers:
             main:
               env:
-                HOMEPAGE_ALLOWED_HOSTS: "homepage.${DOMAIN_0}"
+                HOMEPAGE_ALLOWED_HOSTS: "${DOMAIN_0},www.${DOMAIN_0},homepage.${DOMAIN_0}"
