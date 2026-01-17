@@ -107,6 +107,13 @@ spec:
                 GF_SECURITY_ADMIN_PASSWORD: ${ADMIN_PASSWORD}
                 GF_SECURITY_ADMIN_USER: admin
                 GF_SERVER_ROOT_URL: https://graph.${DOMAIN_0}
+                GF_SMTP_ENABLED: "true"
+                GF_SMTP_HOST: protonmail-bridge.protonmail-bridge.svc.cluster.local:25
+                GF_SMTP_USER: ${PROTONMAIL_EMAIL}
+                GF_SMTP_PASSWORD: ${PROTONMAIL_PASSWORD}
+                GF_SMTP_FROM_ADDRESS: ${ADMIN_EMAIL}
+                GF_SMTP_FROM_NAME: "Grafana Notifications"
+                GF_SMTP_SKIP_VERIFY: "true"
     dashboards:
       grafana:
         cnpg:
