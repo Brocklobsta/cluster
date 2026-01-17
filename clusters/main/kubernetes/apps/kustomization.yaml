@@ -29,3 +29,4 @@ resources:
   - kitchenowl/ks.yaml
   - it-tools/ks.yaml
   - teslamate/ks.yaml
+  - gatus/ks.yaml

@@ -57,6 +57,9 @@ spec:
           - secretName: alertmanager-general-tls
             hosts:
             - alerts.${DOMAIN_0}
+      alertmanagerSpec:
+        alertmanagerConfiguration:
+          name: alertmanager
         externalUrl: https://alerts.${DOMAIN_0}
         storage:
           volumeClaimTemplate:

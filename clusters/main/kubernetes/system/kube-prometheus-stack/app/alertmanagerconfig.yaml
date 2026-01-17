@@ -1,86 +1,116 @@
-# ---
+---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/monitoring.coreos.com/alertmanagerconfig_v1alpha1.json
-# apiVersion: monitoring.coreos.com/v1alpha1
-# kind: AlertmanagerConfig
-# metadata:
-#   name: alertmanager
-# spec:
-#   route:
-#     groupBy: ["alertname", "job"]
-#     groupInterval: 10m
-#     groupWait: 1m
-#     receiver: pushover
-#     repeatInterval: 12h
-#     routes:
-#       - receiver: "null"
-#         matchers:
-#           - name: alertname
-#             value: InfoInhibitor
-#             matchType: =
-#       - receiver: heartbeat
-#         groupInterval: 5m
-#         groupWait: 0s
-#         repeatInterval: 5m
-#         matchers:
-#           - name: alertname
-#             value: Watchdog
-#             matchType: =
-#       - receiver: pushover
-#         matchers:
-#           - name: severity
-#             value: critical
-#             matchType: =
-#   inhibitRules:
-#     - equal: ["alertname", "namespace"]
-#       sourceMatch:
-#         - name: severity
-#           value: critical
-#           matchType: =
-#       targetMatch:
-#         - name: severity
-#           value: warning
-#           matchType: =
-#   receivers:
-#     - name: "null"
-#     - name: heartbeat
-#       webhookConfigs:
-#         - urlSecret:
-#             name: &secret alertmanager-secret
-#             key: ALERTMANAGER_HEARTBEAT_URL
-#     - name: pushover
-#       pushoverConfigs:
-#         - html: true
-#           message: |-
-#             {{- range .Alerts }}
-#               {{- if ne .Annotations.description "" }}
-#                 {{ .Annotations.description }}
-#               {{- else if ne .Annotations.summary "" }}
-#                 {{ .Annotations.summary }}
-#               {{- else if ne .Annotations.message "" }}
-#                 {{ .Annotations.message }}
-#               {{- else }}
-#                 Alert description not available
-#               {{- end }}
-#               {{- if gt (len .Labels.SortedPairs) 0 }}
-#                 <small>
-#                   {{- range .Labels.SortedPairs }}
-#                     <b>{{ .Name }}:</b> {{ .Value }}
-#                   {{- end }}
-#                 </small>
-#               {{- end }}
-#             {{- end }}
-#           priority: |-
-#             {{ if eq .Status "firing" }}1{{ else }}0{{ end }}
-#           sendResolved: true
-#           sound: gamelan
-#           title: >-
-#             [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]
-#             {{ .CommonLabels.alertname }}
-#           ttl: 86400s
-#           token:
-#             name: *secret
-#             key: ALERTMANAGER_PUSHOVER_TOKEN
-#           userKey:
-#             name: *secret
-#             key: PUSHOVER_USER_KEY
-#           urlTitle: View in Alertmanager
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: alertmanager
+  namespace: kube-prometheus-stack
+spec:
+  route:
+    groupBy: ["alertname", "job"]
+    groupInterval: 5m
+    groupWait: 1m
+    receiver: discord
+    repeatInterval: 12h
+    routes:
+      - receiver: blackhole
+        matchers:
+          - name: alertname
+            value: InfoInhibitor
+            matchType: =
+      - receiver: discord
+        matchers:
+          - name: severity
+            value: critical
+            matchType: =
+  inhibitRules:
+    - equal: ["alertname", "namespace"]
+      sourceMatch:
+        - name: severity
+          value: critical
+          matchType: =
+      targetMatch:
+        - name: severity
+          value: warning
+          matchType: =
+
+  receivers:
+    - name: blackhole
+    - name: discord
+      discordConfigs:
+        - apiURL: 
+            name: alertmanager-secret
+            key: DISCORD_WEBHOOK_URL
+          username: Alertmanager
+          title: |-
+            {{- if eq .Status "firing" }}🚨 **ALERT FIRING** 🚨{{- else }}✅ **ALERT RESOLVED** ✅{{- end }}
+          message: |-
+            {{- range .Alerts }}
+
+            {{- if eq .Labels.severity "critical" }}
+            🚨 **Severity:** `CRITICAL`
+            {{- else if eq .Labels.severity "warning" }}
+            ⚠️ **Severity:** `WARNING`
+            {{- else if eq .Labels.severity "info" }}
+            ℹ️ **Severity:** `INFO`
+            {{- else }}
+            > 📊 **Severity:** `{{ .Labels.severity }}`
+            {{- end }}
+
+            {{- if ne .Annotations.description "" }}
+            📝 **Description:**
+
+            ```
+            {{ .Annotations.description }}
+            ```
+            {{- else if ne .Annotations.summary "" }}
+            📋 **Summary:**
+            ```
+            {{ .Annotations.summary }}
+            ```
+            {{- else if ne .Annotations.message "" }}
+            💬 **Message:**
+            ```
+            {{ .Annotations.message }}
+            ```
+            {{- else }}
+            🔔 Alert has been triggered
+            {{- end }}
+
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+            **Alert Details:**
+            {{- if .Labels.alertname }}
+            Alertname: `{{ .Labels.alertname }}`
+            {{- end }}
+            {{- if .Labels.node }}
+            🖥️ **Node:** `{{ .Labels.node }}`
+            {{- end }}
+            {{- if .Labels.namespace }}
+            Namespace: `{{ .Labels.namespace }}`
+            {{- end }}
+            {{- if .Labels.pod }}
+            Pod: `{{ .Labels.pod }}`
+            {{- end }}
+            {{- if .Labels.job }}
+            Job: `{{ .Labels.job }}`
+            {{- end }}
+            {{- if .Labels.instance }}
+            Instance: `{{ .Labels.instance }}`
+            {{- end }}
+            {{- if .Labels.container }}
+            Container: `{{ .Labels.container }}`
+            {{- end }}
+            {{- if .Labels.service }}
+            Service: `{{ .Labels.service }}`
+            {{- end }}
+
+            ⏰ **Timeline:**
+            {{- if eq .Status "firing" }}
+            🔥 Started: <t:{{ .StartsAt.Unix }}:F> (<t:{{ .StartsAt.Unix }}:R>)
+            {{- else }}
+            ✅ Resolved: <t:{{ .EndsAt.Unix }}:F> (<t:{{ .EndsAt.Unix }}:R>)
+            🕐 Duration: {{ .StartsAt | since | humanizeDuration }}
+            {{- end }}
+
+            {{- end }}
