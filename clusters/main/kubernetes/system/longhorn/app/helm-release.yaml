@@ -38,3 +38,6 @@ spec:
       defaultClassReplicaCount: 2
     longhornUI:
       replicas: 1
+    metrics:
+      serviceMonitor:
+        enabled: true

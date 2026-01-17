@@ -128,3 +128,5 @@ spec:
           enabled: true
         node-feature-discovery:
           enabled: true
+        longhorn:
+          enabled: true
