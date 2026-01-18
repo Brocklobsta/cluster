@@ -4,3 +4,4 @@ components:
   - ../../../../components/notifications/discord
 resources:
   - helm-release.yaml  
+  - namespace.yaml
