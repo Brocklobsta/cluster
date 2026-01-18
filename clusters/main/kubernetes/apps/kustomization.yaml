@@ -30,3 +30,4 @@ resources:
   - it-tools/ks.yaml
   - teslamate/ks.yaml
   - gatus/ks.yaml
+  - ralph/ks.yaml
