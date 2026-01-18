@@ -60,12 +60,27 @@ spec:
         podSpec:
           containers:
             main:
+              probes:
+                liveness:
+                  enabled: false
+                readiness:
+                  enabled: false
+                startup:
+                  enabled: false
               env:
                 CLAUDE_CONFIG_DIR: "/home/node/.claude"
+    service:
+      main:
+        enabled: false
+        ports:
+          main:
+            enabled: false
     persistence:
       claude:
         enabled: true
         mountPath: /home/node/.claude
+        targetSelectAll: true
       workspace:
         enabled: true
         mountPath: /home/node/workspace
+        targetSelectAll: true
