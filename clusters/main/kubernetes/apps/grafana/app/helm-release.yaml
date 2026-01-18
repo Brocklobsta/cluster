@@ -130,3 +130,10 @@ spec:
           enabled: true
         longhorn:
           enabled: true
+          datasource:
+            - name: "$${DS_PROMETHEUS}"
+              value: Prometheus
+          marketplace:
+            # renovate: depName="Longhorn"
+            id: 23521
+            revision: 2
