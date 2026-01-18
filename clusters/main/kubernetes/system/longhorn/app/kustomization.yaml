@@ -6,3 +6,5 @@ resources:
   - volumeSnapshotClass.yaml
   - ingress.yaml
   - storage-nad.yaml
+components:
+  - ../../../../components/notifications/discord
