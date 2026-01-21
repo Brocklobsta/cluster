@@ -32,6 +32,8 @@ spec:
     resources:
       limits:
         memory: 32Gi
+    global:
+      stopAll: false
     TZ: America/Los_Angeles
     admin:
       email: ${ADMIN_EMAIL}
@@ -59,7 +61,8 @@ spec:
         type: s3
         url: ${S3_ENDPOINT}
     customConfig:
-      - keys:
+      - name: mailer
+        keys:
           - name: ENABLED
             value: "true"
           - name: FROM
@@ -76,7 +79,12 @@ spec:
             value: ${PROTONMAIL_EMAIL}
           - name: PASSWD
             value: ${PROTONMAIL_PASSWORD}
-        name: mailer
+      - name: service
+        keys:
+          - name: DISABLE_REGISTRATION
+            value: "true"
+          - name: REGISTER_EMAIL_CONFIRM
+            value: "true"
     ingress:
       main:
         enabled: true
