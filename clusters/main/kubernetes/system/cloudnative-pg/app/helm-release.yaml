@@ -24,6 +24,9 @@ spec:
     remediation:
       retries: 3
   values:
+    resources:
+      limits:
+        memory: 32Gi
     crds:
       create: true
     replicaCount: 2
