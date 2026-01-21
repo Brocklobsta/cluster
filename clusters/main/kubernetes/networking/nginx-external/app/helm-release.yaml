@@ -31,7 +31,7 @@ spec:
   values:
     resources:
       limits:
-        memory: 4Gi
+        memory: 8Gi
     controller:
       replicaCount: 2
       service:
