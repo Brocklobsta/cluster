@@ -29,6 +29,9 @@ spec:
   uninstall:
     keepHistory: false
   values:
+    resources:
+      limits:
+        memory: 32Gi
     TZ: America/Los_Angeles
     admin:
       email: ${ADMIN_EMAIL}
