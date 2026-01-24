@@ -33,7 +33,7 @@ spec:
     codeserverImage:
       repository: git.brocklobsta.net/brock/claude-code
       tag: latest
-      pullPolicy: IfNotPresent
+      pullPolicy: Always
     addons:
       codeserver:
         enabled: true
