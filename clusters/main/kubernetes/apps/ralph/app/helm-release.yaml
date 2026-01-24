@@ -88,3 +88,7 @@ spec:
         enabled: true
         mountPath: /config/workspace
         targetSelectAll: true
+      ssh:
+        enabled: true
+        mountPath: /config/.ssh
+        targetSelectAll: true
