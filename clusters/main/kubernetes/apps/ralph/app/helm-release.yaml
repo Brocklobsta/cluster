@@ -90,7 +90,7 @@ spec:
         targetSelectAll: true
       ssh:
         enabled: true
-        mountPath: /config/.ssh
+        mountPath: /root/.ssh
         targetSelectAll: true
       kube:
         enabled: true
