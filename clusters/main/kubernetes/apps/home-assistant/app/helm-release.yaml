@@ -123,17 +123,17 @@ spec:
         mountPath: "/docker-entrypoint.d/99-install-psycopg2.sh"
         subPath: install-psycopg2.sh
         defaultMode: "0777"
-        readOnly: true     
+        readOnly: true
 
     configmap:
       init-script:
         enabled: true
-        data: 
+        data:
           install-psycopg2.sh: |-
             #!/bin/bash
             echo "Installing psycopg2-binary for PostgreSQL support..."
-            pip install psycopg2-binary 
-#---------------------------------------------------------------------------------- 
+            pip install psycopg2-binary
+#----------------------------------------------------------------------------------
     workload:
       main:
         podSpec:
