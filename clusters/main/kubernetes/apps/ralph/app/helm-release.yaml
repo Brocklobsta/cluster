@@ -30,13 +30,17 @@ spec:
     keepHistory: false
   values:
     TZ: America/Los_Angeles
-    image:
+    codeserverImage:
       repository: git.brocklobsta.net/brock/claude-code
       tag: latest
       pullPolicy: IfNotPresent
     addons:
       codeserver:
         enabled: true
+        container:
+          env:
+            DEFAULT_WORKSPACE: /config/workspace/
+            CLAUDE_CONFIG_DIR: /config/.claude
         ingress:
           enabled: true
           ingressClassName: external
@@ -49,12 +53,14 @@ spec:
             certManager:
               certificateIssuer: domain-0-le-prod
               enabled: true
-            auth:
-              type: "authentik"
-              internalHost: "authentik-http.authentik.svc.cluster.local:10230"
-              externalHost: "auth.${DOMAIN_0}"
-              # Can be left default in most cases
-              responseHeaders: []
+            nginx:
+              enabled: true
+              auth:
+                type: "authentik"
+                internalHost: "authentik-http.authentik.svc.cluster.local:10230"
+                externalHost: "auth.${DOMAIN_0}"
+                # Can be left default in most cases
+                responseHeaders: []
     workload:
       main:
         podSpec:
@@ -67,8 +73,6 @@ spec:
                   enabled: false
                 startup:
                   enabled: false
-              env:
-                CLAUDE_CONFIG_DIR: "/home/node/.claude"
     service:
       main:
         enabled: false
@@ -78,9 +82,9 @@ spec:
     persistence:
       claude:
         enabled: true
-        mountPath: /home/node/.claude
+        mountPath: /config/.claude
         targetSelectAll: true
       workspace:
         enabled: true
-        mountPath: /home/node/workspace
+        mountPath: /config/workspace
         targetSelectAll: true
