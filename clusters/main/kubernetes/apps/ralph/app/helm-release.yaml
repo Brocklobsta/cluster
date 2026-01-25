@@ -79,6 +79,9 @@ spec:
         ports:
           main:
             enabled: false
+    resources:
+      limits:
+        memory: 16Gi
     persistence:
       claude:
         enabled: true
