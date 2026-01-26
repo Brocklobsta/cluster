@@ -14,4 +14,5 @@ resources:
   - spegel.yaml
   - truecharts.yaml
   - nvdp.yaml
+  - grafana.yaml
 # more goes here!
