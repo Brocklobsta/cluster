@@ -86,6 +86,23 @@ spec:
               trigger:
                 schedule: 30 8 * * *
             type: restic
+    configmap:
+      datasource-loki:
+        enabled: true
+        labels:
+          grafana_datasource: "1"
+        data:
+          datasource-loki.yaml: |-
+            apiVersion: 1
+            datasources:
+              - name: Loki
+                type: loki
+                uid: loki
+                url: http://loki-headless.loki.svc.cluster.local:3100
+                access: proxy
+                isDefault: false
+                jsonData:
+                  maxLines: 250 
     workload:
       main:
         podSpec:
