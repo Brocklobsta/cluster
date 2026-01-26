@@ -7,8 +7,8 @@ spec:
   interval: 15m
   chart:
     spec:
-      chart: app-template
-      version: 15.29.73
+      chart: code-server
+      version: 14.19.15
       sourceRef:
         kind: HelmRepository
         name: truecharts
@@ -30,72 +30,48 @@ spec:
     keepHistory: false
   values:
     TZ: America/Los_Angeles
-    codeserverImage:
+    image:
       repository: git.brocklobsta.net/brock/claude-code
       tag: latest
       pullPolicy: Always
-    addons:
-      codeserver:
+    securityContext:
+      runAsUser: 568
+      runAsGroup: 568
+      runAsNonRoot: true
+    ingress:
+      main:
         enabled: true
-        container:
-          env:
-            DEFAULT_WORKSPACE: /config/workspace/
-            CLAUDE_CONFIG_DIR: /config/.claude
-        ingress:
-          enabled: true
-          ingressClassName: external
-          hosts:
-            - host: ralph.${DOMAIN_0}
-              paths:
-                - path: /
-                  pathType: Prefix
-          integrations:
-            certManager:
-              certificateIssuer: domain-0-le-prod
-              enabled: true
-            nginx:
-              enabled: true
-              auth:
-                type: "authentik"
-                internalHost: "authentik-http.authentik.svc.cluster.local:10230"
-                externalHost: "auth.${DOMAIN_0}"
-                # Can be left default in most cases
-                responseHeaders: []
+        ingressClassName: external
+        hosts:
+          - host: ralph.${DOMAIN_0}
+            paths:
+              - path: /
+                pathType: Prefix
+        integrations:
+          certManager:
+            certificateIssuer: domain-0-le-prod
+            enabled: true
+          nginx:
+            enabled: true
+            auth:
+              type: "authentik"
+              internalHost: "authentik-http.authentik.svc.cluster.local:10230"
+              externalHost: "auth.${DOMAIN_0}"
+              # Can be left default in most cases
+              responseHeaders: []
     workload:
       main:
         podSpec:
           containers:
             main:
-              probes:
-                liveness:
-                  enabled: false
-                readiness:
-                  enabled: false
-                startup:
-                  enabled: false
-    service:
-      main:
-        enabled: false
-        ports:
-          main:
-            enabled: false
+              env:
+                DEFAULT_WORKSPACE: /home/apps/workspace/
+                CLAUDE_CONFIG_DIR: /home/apps/.claude
     resources:
       limits:
         memory: 16Gi
     persistence:
-      claude:
+      home:
         enabled: true
-        mountPath: /config/.claude
-        targetSelectAll: true
-      workspace:
-        enabled: true
-        mountPath: /config/workspace
-        targetSelectAll: true
-      ssh:
-        enabled: true
-        mountPath: /root/.ssh
-        targetSelectAll: true
-      kube:
-        enabled: true
-        mountPath: /config/.kube
+        mountPath: /home/apps
         targetSelectAll: true
