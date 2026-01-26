@@ -31,3 +31,4 @@ resources:
   - teslamate/ks.yaml
   - gatus/ks.yaml
   - ralph/ks.yaml
+  - loki/ks.yaml
