@@ -34,10 +34,6 @@ spec:
       repository: git.brocklobsta.net/brock/claude-code
       tag: latest
       pullPolicy: Always
-    securityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      runAsNonRoot: true
     ingress:
       main:
         enabled: true
@@ -65,13 +61,14 @@ spec:
           containers:
             main:
               env:
-                DEFAULT_WORKSPACE: /home/apps/workspace/
-                CLAUDE_CONFIG_DIR: /home/apps/.claude
+                DEFAULT_WORKSPACE: /root/workspace/
+                CLAUDE_CONFIG_DIR: /root/.claude
+                HOME: /root
     resources:
       limits:
         memory: 16Gi
     persistence:
       home:
         enabled: true
-        mountPath: /home/apps
+        mountPath: /root
         targetSelectAll: true
