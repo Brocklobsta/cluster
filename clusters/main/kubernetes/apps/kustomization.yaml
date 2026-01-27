@@ -33,3 +33,4 @@ resources:
   - ralph/ks.yaml
   - loki/ks.yaml
   - alloy/ks.yaml
+  - kromgo/ks.yaml
