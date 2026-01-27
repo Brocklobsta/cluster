@@ -15,4 +15,5 @@ resources:
   - truecharts.yaml
   - nvdp.yaml
   - grafana.yaml
+  - openebs.yaml
 # more goes here!
