@@ -38,3 +38,4 @@ spec:
                 UP_UNIFI_DEFAULT_URL: "https://${GATEWAY}"
                 UP_UNIFI_DEFAULT_USER: "${UNPOLLER_USER}"
                 UP_UNIFI_DEFAULT_PASS: "${UNPOLLER_PASSWORD}"
+                UP_INFLUXDB_DISABLE: "true"
