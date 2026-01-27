@@ -32,3 +32,4 @@ resources:
   - gatus/ks.yaml
   - ralph/ks.yaml
   - loki/ks.yaml
+  - alloy/ks.yaml
