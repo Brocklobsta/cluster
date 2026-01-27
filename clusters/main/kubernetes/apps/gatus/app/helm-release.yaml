@@ -75,6 +75,9 @@ spec:
                 default-alert:
                   description: "health check failed"
                   send-on-resolved: true
+                overrides:
+                  - group: "buddy"
+                    webhook-url: ${GATUS_DISCORD_WEBHOOK}
             endpoints:
               - name: Cloudflare
                 group: connectivity
@@ -108,3 +111,38 @@ spec:
                   - "[STATUS] == 200"
                 alerts:
                   - type: discord
+            ### BUDDY ENDPOINTS
+              - name: Status Page (Buddy)
+                group: buddy
+                url: https://status.${DOMAIN_0}
+                interval: 60s
+                ui:
+                  hide-url: true
+                  hide-hostname: true
+                conditions:
+                  - "[STATUS] == 200"
+                  - "[BODY].status == UP"
+                alerts:
+                  - type: discord
+                  - minimum-reminder-interval: 12h
+              - name: Ping (Buddy)
+                group: buddy
+                url: icmp://${DOMAIN_0}
+                interval: 1m
+                ui:
+                  hide-url: true
+                  hide-hostname: true
+                conditions:
+                  - "[CONNECTED] == true"
+                alerts:
+                  - type: discord
+                  - minimum-reminder-interval: 12h
+            external-endpoints:
+              - name: Heartbeat (Buddy)
+                group: buddy
+                token: ${GATUS_BUDDY_HEARTBEAT_TOKEN}
+                heartbeat:
+                  interval: 5m
+                alerts:
+                  - type: discord
+                  - minimum-reminder-interval: 12h
