@@ -11,7 +11,6 @@ A GitOps-managed Kubernetes cluster powered by [TrueCharts ClusterTool](https://
 [![Flux](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.brocklobsta.net%2Fflux_version&style=for-the-badge&logo=flux&logoColor=white&color=blue&label=%20)](https://fluxcd.io)&nbsp;&nbsp;
 
 [![Home-Internet](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus.brocklobsta.net%2Fapi%2Fv1%2Fendpoints%2Fbuddy_ping-(buddy)%2Fhealth%2Fbadge.shields&style=for-the-badge&logo=ubiquiti&logoColor=white&label=Home%20Internet)](https://status.brocklobsta.net)&nbsp;&nbsp;
-[![Status-Page](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus.brocklobsta.net%2Fapi%2Fv1%2Fendpoints%2Fbuddy_status-page-(buddy)%2Fhealth%2Fbadge.shields&style=for-the-badge&logo=statuspage&logoColor=white&label=Status%20Page)](https://status.brocklobsta.net)&nbsp;&nbsp;
 [![Alertmanager](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus.brocklobsta.net%2Fapi%2Fv1%2Fendpoints%2Fbuddy_heartbeat-(buddy)%2Fhealth%2Fbadge.shields&style=for-the-badge&logo=prometheus&logoColor=white&label=Alertmanager)](https://status.brocklobsta.net)
 
 [![Age-Days](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.brocklobsta.net%2Fcluster_age_days&style=flat-square&label=Age)](https://github.com/kashalls/kromgo)&nbsp;&nbsp;
