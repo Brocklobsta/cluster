@@ -90,6 +90,8 @@ spec:
       allowInvitation: true
       allowSignups: false
       showPasswordHint: true
+      log:
+        level: "info"
       smtp:
         authMechanism: Login
         enabled: true
