@@ -85,6 +85,14 @@ spec:
             value: "true"
           - name: REGISTER_EMAIL_CONFIRM
             value: "true"
+      - name: oauth2_client
+        keys:
+          - name: ENABLE_AUTO_REGISTRATION
+            value: "true"
+      - name: openid
+        keys:
+          - name: ENABLE_OPENID_SIGNUP
+            value: "true"
     ingress:
       main:
         enabled: true
