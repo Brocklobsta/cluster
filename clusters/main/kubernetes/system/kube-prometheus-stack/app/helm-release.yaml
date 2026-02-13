@@ -72,7 +72,7 @@ spec:
       forceDeployDatasources: true
       forceDeployDashboards: true
       defaultDashboardsEnabled: true
-      defaultDashboardsTimezone: Europe/Berlin
+      defaultDashboardsTimezone: America/Los_Angeles
     kubeEtcd:
       service:
         selector:
