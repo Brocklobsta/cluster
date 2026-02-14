@@ -30,7 +30,7 @@ spec:
     keepHistory: false
   values:
     global:
-      stopAll: true
+      stopAll: false
     TZ: America/Los_Angeles
     authentik:
       credentials:
