@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: code-server
-      version: 14.19.19
+      version: 14.19.20
       sourceRef:
         kind: HelmRepository
         name: truecharts
