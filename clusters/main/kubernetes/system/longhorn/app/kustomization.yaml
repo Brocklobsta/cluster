@@ -8,4 +8,3 @@ resources:
   - jobs
 components:
   - ../../../../components/notifications/discord
-  - storage-nad.yaml
