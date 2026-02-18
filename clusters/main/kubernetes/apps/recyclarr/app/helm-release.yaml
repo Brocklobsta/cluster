@@ -62,6 +62,12 @@ spec:
         secretKey: ${S3_SECRET_KEY}
         type: s3
         url: ${S3_ENDPOINT}
+    workload:
+      main:
+        podSpec:
+          initContainers:
+            initconfig:
+              enabled: false # needs to be disabled on restore
     persistence:
       config:
         volsync:
