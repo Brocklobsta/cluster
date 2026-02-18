@@ -32,7 +32,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: internal
+        ingressClassName: external
         hosts:
           - host: nas.${DOMAIN_0}
             paths:
@@ -49,6 +49,12 @@ spec:
             name: Truenas Scale
           nginx:
             enabled: true
+            auth:
+              type: "authentik"
+              internalHost: "authentik-http.authentik.svc.cluster.local:10230"
+              externalHost: "auth.${DOMAIN_0}"
+              # Can be left default in most cases
+              responseHeaders: []
     service:
       main:
         enabled: true
