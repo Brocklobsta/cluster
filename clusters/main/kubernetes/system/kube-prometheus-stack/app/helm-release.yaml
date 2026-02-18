@@ -76,7 +76,7 @@ spec:
     kubeEtcd:
       service:
         selector:
-          component: kube-apiserver # etcd runs on control plane nodes
+          component: kube-apiserver
     kubeProxy:
       enabled: false
     kube-state-metrics:
@@ -122,13 +122,12 @@ spec:
       prometheus:
         monitor:
           enabled: true
-          metrics:
-            relabelings:
-              - action: replace
-                regex: (.*)
-                replacement: $1
-                sourceLabels: ["__meta_kubernetes_pod_node_name"]
-                targetLabel: kubernetes_node
+          relabelings:
+            - action: replace
+              regex: (.*)
+              replacement: $1
+              sourceLabels: ["__meta_kubernetes_pod_node_name"]
+              targetLabel: kubernetes_node
       rbac:
         extraRules:
           - apiGroups:
@@ -438,6 +437,7 @@ spec:
             hosts:
             - metrics.${DOMAIN_0}
       prometheusSpec:
+        disableCompaction: true
         scrapeClasses:
           - default: true
             fallbackScrapeProtocol: PrometheusText0.0.4
@@ -452,8 +452,16 @@ spec:
         serviceDiscoveryRole: EndpointSlice
         enableFeatures:
           - memory-snapshot-on-shutdown
-        retention: 30d
-        retentionSize: 75GB
+        # Prometheus metrics retention time in PV
+        retention: 14d
+        retentionSize: 50GB
+        # External labels to add to any time series or
+        # alerts when communicating with external systems
+        externalLabels:
+          cluster: cluster_main
+          env: prod
+        # High availability
+        replicas: 1
         resources:
           requests:
             cpu: 100m

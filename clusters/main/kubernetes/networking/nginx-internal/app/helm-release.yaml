@@ -29,9 +29,6 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    resources:
-      limits:
-        memory: 32Gi
     controller:
       replicaCount: 2
       service:
