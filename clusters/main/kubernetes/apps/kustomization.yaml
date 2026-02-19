@@ -34,3 +34,4 @@ resources:
   - loki/ks.yaml
   - alloy/ks.yaml
   - kromgo/ks.yaml
+  - flaresolverr/ks.yaml
