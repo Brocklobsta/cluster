@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: jellyfin
-      version: 26.4.2
+      version: 22.3.4
       sourceRef:
         kind: HelmRepository
         name: truecharts
@@ -90,6 +90,18 @@ spec:
         server: ${TRUENAS_IP}
         readOnly: false
         mountPath: ${MUSIC_MOUNT_PATH}
+    service:
+      main:
+        enabled: true
+        loadBalancerIP: ${JELLYFIN_IP}
+        ports:
+          main:
+            port: 8096
+            targetPort: 8096
+        type: LoadBalancer
+        integrations:
+          metallb:
+            enabled: true
     workload:
       main:
         podSpec:
@@ -98,6 +110,7 @@ spec:
               resources:
                 limits:
                   gpu.intel.com/i915: 1
-                  memory: 5Gi
+                  memory: 8Gi
+                  cpu: 4000m
     autodiscovery:
       enabled: true
