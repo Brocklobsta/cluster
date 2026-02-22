@@ -92,7 +92,7 @@ spec:
         mountPath: ${MUSIC_MOUNT_PATH}
     service:
       main:
-        enabled: true
+        enabled: enabled
         loadBalancerIP: ${JELLYFIN_IP}
         ports:
           main:
