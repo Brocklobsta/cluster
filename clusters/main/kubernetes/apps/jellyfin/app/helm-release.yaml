@@ -90,18 +90,6 @@ spec:
         server: ${TRUENAS_IP}
         readOnly: false
         mountPath: ${MUSIC_MOUNT_PATH}
-    service:
-      main:
-        enabled: enabled
-        loadBalancerIP: ${JELLYFIN_IP}
-        ports:
-          main:
-            port: 8096
-            targetPort: 8096
-        type: LoadBalancer
-        integrations:
-          metallb:
-            enabled: true
     workload:
       main:
         podSpec:
