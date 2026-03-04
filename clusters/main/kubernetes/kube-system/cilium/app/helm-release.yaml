@@ -34,9 +34,24 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    # autoDirectNodeRoutes: true
-    # routingMode: native
+    ######################## MULTUS RELEVANT CONFIG ##############################
+    cni:
+      exclusive: false
+      # Make sure there isnt a lingering `/etc/cni/net.d/05-cilium.conflist` file 
+      # left on any of the nodes. See multus chart troubleshooting docs for more info
+      confPath: /etc/cni/net.d/cilium
+    socketLB:
+      # Do not perform SVC IP DNAT at the socket level, instead defer DNAT until
+      # the packet hits the veth pair on the host
+      #
+      # This is needed for 2 reasons:
+      # - Allow SVC connectivity in multi-homed pods (see https://github.com/cilium/cilium/issues/43896)
+      # - Prevent leaking DNS traffic from client pods which route KubeDNS service IPs through an app gateway
+      hostNamespaceOnly: true
+    ##############################################################################
     hubble:
+      enabled: false
+    envoy:
       enabled: false
     cluster:
       name: ${CLUSTERNAME}
@@ -77,9 +92,17 @@ spec:
     localRedirectPolicy: true
     operator:
       rollOutPods: true
+      prometheus:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+      dashboards:
+        enabled: true
     rollOutCiliumPods: true
     prometheus:
       enabled: true
       serviceMonitor:
         enabled: true
         trustCRDsExist: true
+    dashboards:
+      enabled: true

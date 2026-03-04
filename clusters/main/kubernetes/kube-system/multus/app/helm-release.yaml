@@ -1,0 +1,97 @@
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: multus-cni
+  namespace: kube-system
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: multus-cni
+      version: 1.1.1
+      sourceRef:
+        kind: HelmRepository
+        name: truecharts
+        namespace: flux-system
+      interval: 15m
+  timeout: 20m
+  maxHistory: 3
+  install:
+    crds: CreateReplace
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    multus:
+      # Primary CNI value can be:
+      # - "", in which case the aphabetically first file in the CNI JSON
+      #   configuration directory (pointed to by `persistence.cniconf.mountPath`)
+      #   will be used
+      # - The relative path to a CNI config file inside the CNI JSON configuration
+      #   directory (pointed to by `persistence.cniconf.mountPath`). For example
+      #   `05-cilium.conflist`
+      primaryCniConfigFile: "cilium/05-cilium.conflist"
+      # Set to true to make Multus wait for the primary CNI to be ready before
+      # it starts attaching extra networks to pods. This can help with pods
+      # crash-looping when primary CNI is not ready
+      readinessIndicatorEnabled: false
+      logLevel: verbose  # "debug", "error", "verbose", or "panic"
+      # Whether to isolate `NetworkAttachmentDefinition`s by namespace.
+      # Setting this to `true` will prevent sharing NAD resources across namespaces
+      namespaceIsolation: true
+      # A list of namespaces for which the `namespaceIsolation` (when set to `true`)
+      # does not apply. `NetworkAttachmentDefinition`s defined in these namespaces
+      # can be used across all namespaces. Note Multus treats the `default` namespace
+      # as global by default (when `globalNamespaces` is empty)
+      globalNamespaces:
+        - longhorn-system
+      # A list of additional networks to attach to every pod
+      # The items of this list can be the names of `NetworkAttachmentDefinition`s,
+      # names of CNI configuration files, paths to CNI configuation files and more.
+      # See Multus documentation for more information
+      defaultNetworks: []
+      # A list namespaces, which are excluded from attaching networks from the
+      # `defaultNetworks` list. By default, this chart's namespace is excluded.
+      systemNamespaces: []
+      # A map of capabilities, that are supported by at least one of the used CNI
+      # plugins. See Multus documentation for more information
+      capabilities: {}
+      # You should not need to change the Multus CNI config version, however,
+      # if you get an error about version incompatibility with the primary CNI it
+      # might help to match the multus CNI version to your primary CNI version
+      cniVersion: 0.3.1
+      integrations:
+        talos:
+          enabled: true  # Must be enabled when installing on a Talos cluster
+          # Select extra reference CNIs to be installed
+          # Note:
+          # - If you are installing any of the reference CNIs, it is strongly
+          #   recommended to override the `talosCniImage.tag` to match your
+          #   Talos version
+          # - To install CNIs that are present in the `talosCniImage` but not listed
+          #   below, simply add them below in the form of `<binary_name>: true`
+          installCni:
+            macvlan: true
+            ipvlan: false
+            sbr: true
+            dhcp: true
+            static: true
+            tuning: true
+      # Enable the chart's uninstall mode. This will clean up leftover chart
+      # configuration data and CNI plugins, allowing for a cleaner uninstall.
+      #
+      # Note:
+      # If the Talos integration is enabled, this chart assumes it has full control
+      # over all CNIs listed in `integrations.talos.installCni`(and set to `true`).
+      # During uninstall, it will remove all CNIs that are enabled (`true`). If this
+      # is undesired, set the keys of the relevant CNI names to `false` before
+      # enabling the uninstall mode.
+      uninstall: false
