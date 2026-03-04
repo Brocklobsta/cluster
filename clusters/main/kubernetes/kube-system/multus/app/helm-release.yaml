@@ -30,6 +30,14 @@ spec:
   uninstall:
     keepHistory: false
   values:
+    workload:
+      main:
+        podSpec:
+          containers:
+            cleanup:
+              imageSelector: alpineImage
+            dhcp-daemon:
+              imageSelector: alpineImage
     multus:
       # Primary CNI value can be:
       # - "", in which case the aphabetically first file in the CNI JSON
@@ -38,7 +46,7 @@ spec:
       # - The relative path to a CNI config file inside the CNI JSON configuration
       #   directory (pointed to by `persistence.cniconf.mountPath`). For example
       #   `05-cilium.conflist`
-      primaryCniConfigFile: ""
+      primaryCniConfigFile: "cilium/05-cilium.conflist"
       # Set to true to make Multus wait for the primary CNI to be ready before
       # it starts attaching extra networks to pods. This can help with pods
       # crash-looping when primary CNI is not ready
@@ -94,4 +102,4 @@ spec:
       # During uninstall, it will remove all CNIs that are enabled (`true`). If this
       # is undesired, set the keys of the relevant CNI names to `false` before
       # enabling the uninstall mode.
-      uninstall: true
+      uninstall: false
