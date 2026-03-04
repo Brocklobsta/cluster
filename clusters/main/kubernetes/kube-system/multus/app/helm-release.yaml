@@ -94,4 +94,4 @@ spec:
       # During uninstall, it will remove all CNIs that are enabled (`true`). If this
       # is undesired, set the keys of the relevant CNI names to `false` before
       # enabling the uninstall mode.
-      uninstall: false
+      uninstall: true
