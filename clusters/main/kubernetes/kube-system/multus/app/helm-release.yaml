@@ -88,7 +88,7 @@ spec:
           #   below, simply add them below in the form of `<binary_name>: true`
           installCni:
             macvlan: true
-            ipvlan: false
+            ipvlan: true
             sbr: true
             dhcp: true
             static: true
