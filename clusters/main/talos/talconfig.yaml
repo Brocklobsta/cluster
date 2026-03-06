@@ -40,12 +40,14 @@ nodes:
               gateway: ${GATEWAY}
           vip:
             ip: ${VIP}
-        - interface: eth1
-          dhcp: false
+        - interface: br-storage
           addresses:
             - 172.30.0.1/24
-          vlans:
-            - vlanId: 1
+          bridge:
+            stp:
+              enabled: false
+            interfaces:
+              - eth1
       nodeLabels:
         # Node has zigbee dongle
         zigbee: "true"
@@ -65,12 +67,14 @@ nodes:
           routes:
             - network: 0.0.0.0/0
               gateway: ${GATEWAY}
-        - interface: eth1
-          dhcp: false
+        - interface: br-storage
           addresses:
             - 172.30.0.2/24
-          vlans:
-            - vlanId: 1
+          bridge:
+            stp:
+              enabled: false
+            interfaces:
+              - eth1
 controlPlane:
     patches:
         - '@./patches/controlplane.yaml'
