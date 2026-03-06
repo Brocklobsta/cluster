@@ -43,11 +43,16 @@ nodes:
         - interface: br-storage
           addresses:
             - 172.30.0.1/24
+          mtu: 9000
+          vlans:
+            - vlanId: 7
           bridge:
             stp:
               enabled: false
             interfaces:
               - eth1
+        - interface: eth1
+          mtu: 9000
       nodeLabels:
         # Node has zigbee dongle
         zigbee: "true"
@@ -70,11 +75,16 @@ nodes:
         - interface: br-storage
           addresses:
             - 172.30.0.2/24
+          mtu: 9000
+          vlans:
+            - vlanId: 7
           bridge:
             stp:
               enabled: false
             interfaces:
               - eth1
+        - interface: eth1
+          mtu: 9000
 controlPlane:
     patches:
         - '@./patches/controlplane.yaml'
