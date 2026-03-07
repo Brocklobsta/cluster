@@ -16,5 +16,6 @@ resources:
   - prometheus-community.yaml
   - spegel.yaml
   - truecharts.yaml
+  - whereabouts.yaml
 # more goes here!
   - grafana.yaml
