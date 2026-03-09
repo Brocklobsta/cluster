@@ -30,10 +30,6 @@ spec:
     keepHistory: false
   values:
     TZ: America/Los_Angeles
-    image:
-      repository: git.brocklobsta.net/brock/claude-code
-      tag: latest
-      pullPolicy: Always
     ingress:
       main:
         enabled: true
@@ -72,3 +68,49 @@ spec:
         enabled: true
         mountPath: /root
         targetSelectAll: true
+#--------------------------Add Claude Code---------------------------------------
+      init-script:
+        enabled: true
+        type: configmap
+        objectName: init-script
+        mountPath: "/docker-entrypoint.d/99-install-claude.sh"
+        subPath: install-claude.sh
+        defaultMode: "0777"
+        readOnly: true
+
+    configmap:
+      init-script:
+        enabled: true
+        data:
+          install-claude.sh: |-
+            #!/bin/bash
+            echo "Installing claude code..."
+            apt-get update && apt-get install -y --no-install-recommends \
+              less \
+              git-all \
+              procps \
+              sudo \
+              fzf \
+              zsh \
+              man-db \
+              unzip \
+              gnupg2 \
+              gh \
+              iptables \
+              ipset \
+              iproute2 \
+              dnsutils \
+              aggregate \
+              jq \
+              nano \
+              vim \
+              nodejs \
+              npm \
+              ssh
+            # Install kubectl
+            curl -fsSL -o /usr/local/bin/kubectl \
+              https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl \
+              && chmod +x /usr/local/bin/kubectl
+            # Install claude code
+            npm install -g @anthropic-ai/claude-code@
+#----------------------------------------------------------------------------------
