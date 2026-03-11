@@ -437,7 +437,6 @@ spec:
             hosts:
             - metrics.${DOMAIN_0}
       prometheusSpec:
-        evaluationInterval: 5m
         disableCompaction: false
         scrapeClasses:
           - default: true
