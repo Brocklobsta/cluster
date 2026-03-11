@@ -438,7 +438,7 @@ spec:
             - metrics.${DOMAIN_0}
       prometheusSpec:
         evaluationInterval: 5m
-        disableCompaction: true
+        disableCompaction: false
         scrapeClasses:
           - default: true
             fallbackScrapeProtocol: PrometheusText0.0.4
