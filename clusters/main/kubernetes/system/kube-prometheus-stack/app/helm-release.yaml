@@ -38,7 +38,7 @@ spec:
       enabled: true
       ingress:
         enabled: true
-        ingressClassName: external
+        ingressClassName: internal
         annotations:
           cert-manager.io/cluster-issuer: domain-0-le-prod
           cert-manager.io/private-key-rotation-policy: Always
@@ -418,7 +418,7 @@ spec:
     prometheus:
       ingress:
         enabled: true
-        ingressClassName: external
+        ingressClassName: internal
         annotations:
           cert-manager.io/cluster-issuer: domain-0-le-prod
           cert-manager.io/private-key-rotation-policy: Always
