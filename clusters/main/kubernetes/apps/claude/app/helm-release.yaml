@@ -1,8 +1,8 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: ralph
-  namespace: ralph
+  name: claude
+  namespace: claude
 spec:
   interval: 15m
   chart:
@@ -35,7 +35,7 @@ spec:
         enabled: true
         ingressClassName: external
         hosts:
-          - host: ralph.${DOMAIN_0}
+          - host: claude.${DOMAIN_0}
             paths:
               - path: /
                 pathType: Prefix
