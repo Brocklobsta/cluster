@@ -131,6 +131,7 @@ spec:
                 GF_SMTP_FROM_ADDRESS: ${ADMIN_EMAIL}
                 GF_SMTP_FROM_NAME: "Grafana Notifications"
                 GF_SMTP_SKIP_VERIFY: "true"
+                GF_PANELS_DISABLE_SANITIZE_HTML: "true"
     dashboards:
       grafana:
         cnpg:
