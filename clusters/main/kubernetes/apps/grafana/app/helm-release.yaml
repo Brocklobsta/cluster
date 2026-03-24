@@ -31,9 +31,6 @@ spec:
   values:
     global:
       stopAll: false
-    resources:
-      limits:
-        cpu: 1000m
     TZ: America/Los_Angeles
     cnpg:
       main:
@@ -110,6 +107,10 @@ spec:
       main:
         podSpec:
           containers:
+            dashboards:
+              resources:
+                limits:
+                  cpu: 1000m
             main:
               env:
                 GF_AUTH_GENERIC_OAUTH_API_URL: https://auth.${DOMAIN_0}/application/o/userinfo/
