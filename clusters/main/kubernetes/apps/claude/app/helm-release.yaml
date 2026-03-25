@@ -84,7 +84,8 @@ spec:
         data:
           install-claude.sh: |-
             #!/bin/bash
-            echo "Installing claude code..."
+            echo "Installing custom packages..."
+            cp /etc/skel/.* /root/
             apt-get update && apt-get install -y --no-install-recommends \
               less \
               git-all \
@@ -106,11 +107,20 @@ spec:
               vim \
               nodejs \
               npm \
-              ssh
+              ssh \
+              build-essential
+
             # Install kubectl
             curl -fsSL -o /usr/local/bin/kubectl \
               https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl \
               && chmod +x /usr/local/bin/kubectl
+
             # Install claude code
             npm install -g @anthropic-ai/claude-code@
+
+            # Install codex
+            npm install -g @openai/codex
+
+            # Install opencode
+            curl -fsSL https://opencode.ai/install | bash
 #----------------------------------------------------------------------------------
