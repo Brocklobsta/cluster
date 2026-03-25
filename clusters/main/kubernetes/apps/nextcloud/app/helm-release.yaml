@@ -118,9 +118,20 @@ spec:
                 schedule: 20 1 * * *
             type: restic
     workload:
+      main:
+        podSpec:
+          nodeSelector:
+            kubernetes.io/hostname: k8s-worker-1
+        strategy: Recreate
       nginx:
+        podSpec:
+          nodeSelector:
+            kubernetes.io/hostname: k8s-worker-1
         strategy: Recreate
       notify:
+        podSpec:
+          nodeSelector:
+            kubernetes.io/hostname: k8s-worker-1
         strategy: Recreate
       imaginary:
         strategy: Recreate
