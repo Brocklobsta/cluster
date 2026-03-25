@@ -158,3 +158,12 @@ spec:
               trigger:
                 schedule: 3 8 * * *
             type: restic
+    workload:
+      main:
+        podSpec:
+          nodeSelector:
+            kubernetes.io/hostname: k8s-control-1
+      worker:
+        podSpec:
+          nodeSelector:
+            kubernetes.io/hostname: k8s-control-1
