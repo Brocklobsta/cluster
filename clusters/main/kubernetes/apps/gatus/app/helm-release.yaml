@@ -109,19 +109,6 @@ spec:
                 alerts:
                   - type: discord
             ### BUDDY ENDPOINTS
-              - name: Status Page (Buddy)
-                group: buddy
-                url: https://status.${DOMAIN_0}
-                interval: 60s
-                ui:
-                  hide-url: true
-                  hide-hostname: true
-                conditions:
-                  - "[STATUS] == 200"
-                  - "[BODY].status == UP"
-                alerts:
-                  - type: discord
-                  - minimum-reminder-interval: 12h
               - name: Ping (Buddy)
                 group: buddy
                 url: icmp://${DOMAIN_0}
