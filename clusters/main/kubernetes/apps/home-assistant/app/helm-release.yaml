@@ -36,6 +36,8 @@ spec:
       pullPolicy: IfNotPresent
       tag: stable
     TZ: America/Los_Angeles
+    homeassistant:
+      trusted_proxies: ["172.16.0.0/16"]
     cnpg:
       main:
         mode: recovery
