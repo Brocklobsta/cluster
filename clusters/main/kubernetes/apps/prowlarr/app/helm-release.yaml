@@ -44,7 +44,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: external
+        ingressClassName: internal
         hosts:
           - host: prowl.${DOMAIN_0}
             paths:
