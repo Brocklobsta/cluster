@@ -174,7 +174,7 @@ spec:
           marketplace:
             # renovate: depName="Node Exporter Full"
             id: 1860
-            revision: 43
+            revision: 44
         arrs:
           enabled: true
           datasource:
