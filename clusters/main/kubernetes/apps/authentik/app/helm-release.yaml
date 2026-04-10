@@ -93,13 +93,6 @@ spec:
           certManager:
             certificateIssuer: domain-0-le-prod
             enabled: true
-          homepage:
-            enabled: true
-            group: Utilities
-            widget:
-              custom:
-                key: ${HOMEPAGE_AUTHENTIK_KEY}
-              enabled: true
           nginx:
             enabled: true
     persistence:

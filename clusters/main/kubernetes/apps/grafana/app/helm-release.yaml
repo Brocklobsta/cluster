@@ -69,9 +69,6 @@ spec:
           certManager:
             certificateIssuer: domain-0-le-prod
             enabled: true
-          homepage:
-            enabled: true
-            group: Utilities
           nginx:
             enabled: true
     persistence:

@@ -106,13 +106,6 @@ spec:
           certManager:
             certificateIssuer: domain-0-le-prod
             enabled: true
-          homepage:
-            enabled: true
-            group: Apps
-            widget:
-              custom:
-                key: ${HOMEPAGE_GITEA_KEY}
-              enabled: true
           nginx:
             enabled: true
     persistence:
