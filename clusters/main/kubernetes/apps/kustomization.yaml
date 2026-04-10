@@ -30,7 +30,7 @@ resources:
   - it-tools/ks.yaml
   - teslamate/ks.yaml
   - gatus/ks.yaml
-  - claude/ks.yaml
+  - code-server/ks.yaml
   - loki/ks.yaml
   - alloy/ks.yaml
   - kromgo/ks.yaml
