@@ -9,7 +9,7 @@ spec:
     spec:
       # renovate: registryUrl=https://charts.truechartsoci.org
       chart: qbittorrent
-      version: 25.0.6
+      version: 25.1.0
       sourceRef:
         kind: HelmRepository
         name: truecharts
