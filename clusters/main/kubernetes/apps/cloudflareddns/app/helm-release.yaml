@@ -30,13 +30,6 @@ spec:
     keepHistory: false
   values:
     TZ: America/Los_Angeles
-    cloudflareddns:
-      api_token: ${DOMAIN_0_CLOUDFLARE_TOKEN}
-      detect_mode: dig-whoami.cloudflare
-      host_zone_record:
-        - domain: ${DOMAIN_0}
-          record: A
-          zone: ${CLOUDFLARE_ZONE}
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}
@@ -47,3 +40,12 @@ spec:
         secretKey: ${S3_SECRET_KEY}
         type: s3
         url: ${S3_ENDPOINT}
+    workload:
+      main:
+        podSpec:
+          containers:
+            main:
+              env:
+                CF_APITOKEN: ${DOMAIN_0_CLOUDFLARE_TOKEN}
+                CF_HOSTS: ${DOMAIN_0}
+
