@@ -4,7 +4,7 @@ metadata:
   name: gatus
   namespace: gatus
 spec:
-  interval: 5m
+  interval: 15m
   chart:
     spec:
       chart: gatus
@@ -13,8 +13,10 @@ spec:
         kind: HelmRepository
         name: truecharts
         namespace: flux-system
-      interval: 5m
+      interval: 15m
+  timeout: 20m
   install:
+    timeout: 30m
     createNamespace: true
     crds: CreateReplace
     remediation:

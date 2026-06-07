@@ -4,7 +4,7 @@ metadata:
   name: home-assistant
   namespace: home-assistant
 spec:
-  interval: 30m
+  interval: 15m
   chart:
     spec:
       chart: home-assistant
@@ -13,12 +13,13 @@ spec:
         kind: HelmRepository
         name: truecharts
         namespace: flux-system
-      interval: 30m
-  timeout: 30m
+      interval: 15m
+  timeout: 20m
   maxHistory: 3
   driftDetection:
     mode: warn
   install:
+    timeout: 30m
     createNamespace: true
     remediation:
       retries: 3

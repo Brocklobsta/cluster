@@ -4,7 +4,7 @@ metadata:
   name: alloy
   namespace: alloy
 spec:
-  interval: 5m
+  interval: 15m
   chart:
     spec:
       chart: alloy
@@ -13,8 +13,10 @@ spec:
         kind: HelmRepository
         name: home-ops-mirror
         namespace: flux-system
-      interval: 5m
+      interval: 15m
+  timeout: 20m
   install:
+    timeout: 30m
     createNamespace: true
     crds: CreateReplace
     remediation:

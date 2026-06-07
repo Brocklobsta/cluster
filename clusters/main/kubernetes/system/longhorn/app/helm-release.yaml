@@ -4,7 +4,7 @@ metadata:
   name: longhorn
   namespace: longhorn-system
 spec:
-  interval: 5m
+  interval: 15m
   releaseName: longhorn
   chart:
     spec:
@@ -14,7 +14,9 @@ spec:
         kind: HelmRepository
         name: home-ops-mirror
         namespace: flux-system
+  timeout: 20m
   install:
+    timeout: 30m
     createNamespace: true
     crds: CreateReplace
     remediation:

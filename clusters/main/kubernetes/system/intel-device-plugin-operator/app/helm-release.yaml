@@ -6,7 +6,7 @@ metadata:
   name: intel-device-plugin-operator
   namespace: intel-device-plugin
 spec:
-  interval: 30m
+  interval: 15m
   chart:
     spec:
       chart: intel-device-plugins-operator
@@ -15,7 +15,9 @@ spec:
         kind: HelmRepository
         name: home-ops-mirror
         namespace: flux-system
+  timeout: 20m
   install:
+    timeout: 30m
     crds: CreateReplace
     remediation:
       retries: 3

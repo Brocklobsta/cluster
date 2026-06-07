@@ -6,7 +6,7 @@ metadata:
   name: intel-device-plugin-gpu
   namespace: intel-device-plugin
 spec:
-  interval: 30m
+  interval: 15m
   chart:
     spec:
       chart: intel-device-plugins-gpu
@@ -15,7 +15,9 @@ spec:
         kind: HelmRepository
         name: home-ops-mirror
         namespace: flux-system
+  timeout: 20m
   install:
+    timeout: 30m
     remediation:
       retries: 3
   upgrade:

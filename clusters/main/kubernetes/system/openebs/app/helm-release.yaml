@@ -4,7 +4,7 @@ metadata:
   name: openebs
   namespace: openebs
 spec:
-  interval: 5m
+  interval: 15m
   releaseName: openebs
   chart:
     spec:
@@ -14,7 +14,9 @@ spec:
         kind: HelmRepository
         name: openebs
         namespace: flux-system
+  timeout: 20m
   install:
+    timeout: 30m
     createNamespace: true
     crds: CreateReplace
     remediation:

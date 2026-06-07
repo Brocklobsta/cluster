@@ -4,7 +4,7 @@ metadata:
   name: kitchenowl
   namespace: kitchenowl
 spec:
-  interval: 20m
+  interval: 15m
   chart:
     spec:
       chart: kitchenowl
@@ -13,8 +13,10 @@ spec:
         kind: HelmRepository
         name: truecharts
         namespace: flux-system
-      interval: 20m
+      interval: 15m
+  timeout: 20m
   install:
+    timeout: 30m
     createNamespace: true
     crds: CreateReplace
     remediation:

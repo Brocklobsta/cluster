@@ -6,7 +6,7 @@ metadata:
   name: spegel
   namespace: spegel
 spec:
-  interval: 30m
+  interval: 15m
   chart:
     spec:
       chart: spegel
@@ -15,7 +15,9 @@ spec:
         kind: HelmRepository
         name: truecharts
         namespace: flux-system
+  timeout: 20m
   install:
+    timeout: 30m
     remediation:
       retries: 3
   upgrade:

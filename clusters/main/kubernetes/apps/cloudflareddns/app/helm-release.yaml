@@ -19,6 +19,7 @@ spec:
   driftDetection:
     mode: warn
   install:
+    timeout: 30m
     createNamespace: true
     remediation:
       retries: 3

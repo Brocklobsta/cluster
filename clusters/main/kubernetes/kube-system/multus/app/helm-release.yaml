@@ -22,6 +22,7 @@ spec:
     createNamespace: true
     remediation:
       retries: 3
+    timeout: 30m
   upgrade:
     crds: CreateReplace
     cleanupOnFail: true
@@ -46,7 +47,7 @@ spec:
       # - The relative path to a CNI config file inside the CNI JSON configuration
       #   directory (pointed to by `persistence.cniconf.mountPath`). For example
       #   `05-cilium.conflist`
-      primaryCniConfigFile: "cilium/05-cilium.conflist"
+      primaryCniConfigFile: "05-cilium.conflist"
       # Set to true to make Multus wait for the primary CNI to be ready before
       # it starts attaching extra networks to pods. This can help with pods
       # crash-looping when primary CNI is not ready

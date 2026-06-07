@@ -6,7 +6,7 @@ metadata:
   name: node-feature-discovery
   namespace: kube-system
 spec:
-  interval: 30m
+  interval: 15m
   chart:
     spec:
       chart: node-feature-discovery
@@ -15,7 +15,9 @@ spec:
         kind: HelmRepository
         name: node-feature-discovery
         namespace: flux-system
+  timeout: 20m
   install:
+    timeout: 30m
     crds: CreateReplace
     remediation:
       retries: 3

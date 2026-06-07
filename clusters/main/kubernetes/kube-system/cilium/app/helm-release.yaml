@@ -26,6 +26,7 @@ spec:
   install:
     remediation:
       retries: 3
+    timeout: 30m
   upgrade:
     cleanupOnFail: true
     remediation:
@@ -37,9 +38,7 @@ spec:
     ######################## MULTUS RELEVANT CONFIG ##############################
     cni:
       exclusive: false
-      # Make sure there isnt a lingering `/etc/cni/net.d/05-cilium.conflist` file 
-      # left on any of the nodes. See multus chart troubleshooting docs for more info
-      confPath: /etc/cni/net.d/cilium
+      confPath: /etc/cni/net.d
     socketLB:
       # Do not perform SVC IP DNAT at the socket level, instead defer DNAT until
       # the packet hits the veth pair on the host
