@@ -50,3 +50,22 @@ spec:
             src:
               enabled: true
             type: restic
+      init-script:
+        enabled: true
+        type: configmap
+        objectName: init-script
+        mountPath: "/docker-entrypoint.d/99-install-fido.sh"
+        subPath: install-fido.sh
+        defaultMode: "0777"
+        readOnly: true
+
+    configmap:
+      init-script:
+        enabled: true
+        data:
+          install-fido.sh: |-
+            #!/bin/bash
+            echo "Installing custom packages..."
+            cp /etc/skel/.* /root/
+            apt-get update && apt-get install -y --no-install-recommends \
+              libfido2-1
