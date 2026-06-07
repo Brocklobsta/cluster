@@ -438,7 +438,7 @@ spec:
             hosts:
               - metrics.${DOMAIN_0}
       prometheusSpec:
-        disableCompaction: false
+        disableCompaction: true
         scrapeClasses:
           - default: true
             fallbackScrapeProtocol: PrometheusText0.0.4
