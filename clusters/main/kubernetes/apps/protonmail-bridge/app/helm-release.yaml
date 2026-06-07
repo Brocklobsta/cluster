@@ -31,6 +31,18 @@ spec:
     keepHistory: false
   values:
     TZ: America/Los_Angeles
+    workload:
+      main:
+        podSpec:
+          containers:
+            main:
+              command:
+                - /bin/bash
+                - -ec
+              args:
+                - |
+                  bash /docker-entrypoint.d/99-install-fido.sh
+                  exec bash /protonmail/entrypoint.sh
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}
