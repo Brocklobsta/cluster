@@ -31,9 +31,6 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    resources:
-      limit:
-        cpu: 500m
     workload:
       main:
         podSpec:
