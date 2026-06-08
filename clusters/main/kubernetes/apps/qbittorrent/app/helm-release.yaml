@@ -112,8 +112,16 @@ spec:
             FIREWALL_OUTBOUND_SUBNETS: "192.168.1.0/24"
             WIREGUARD_ENDPOINT_IP: "${VPN_ENDPOINT_IP}"
             # WIREGUARD_ENDPOINT_PORT: 51820
+            QBT_USERNAME: "${ADMIN_USER}"
+            QBT_PASSWORD: "${ADMIN_PASSWORD}"
             VPN_PORT_FORWARDING: "on"
-            VPN_PORT_FORWARDING_UP_COMMAND: /bin/sh -c 'sleep 5; wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{`{{PORTS}}`}}}" http://qbittorrent.qbittorrent.svc.cluster.local:10095/api/v2/app/setPreferences 2>&1'
+            VPN_PORT_FORWARDING_UP_COMMAND: >-
+              /bin/sh -c 'set -e;
+              sleep 5;
+              QBT_URL="http://qbittorrent.qbittorrent.svc.cluster.local:10095";
+              COOKIE_FILE="/tmp/qbittorrent.cookies";
+              wget -O- --retry-connrefused --keep-session-cookies --save-cookies "$COOKIE_FILE" --post-data "username=$QBT_USERNAME&password=$QBT_PASSWORD" "$QBT_URL/api/v2/auth/login" >/dev/null;
+              wget -O- --retry-connrefused --load-cookies "$COOKIE_FILE" --post-data "json={\"listen_port\":{{`{{PORTS}}`}}}" "$QBT_URL/api/v2/app/setPreferences" 2>&1'
             VPN_SERVICE_PROVIDER: "protonvpn"
             VPN_TYPE: "wireguard"
             WIREGUARD_ADDRESSES: "10.2.0.2/32"
