@@ -31,9 +31,6 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    resources:
-      limits:
-        cpu: 500m
     workload:
       main:
         podSpec:
@@ -42,6 +39,9 @@ spec:
               imageSelector: alpineImage
             dhcp-daemon:
               imageSelector: alpineImage
+              resources:
+                limits:
+                  cpu: 500m
     multus:
       # Primary CNI value can be:
       # - "", in which case the aphabetically first file in the CNI JSON
