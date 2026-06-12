@@ -9,3 +9,4 @@ sopssecret.yaml
 sopssecret*
 *sopssecret*
 mounts/
+.envrc
