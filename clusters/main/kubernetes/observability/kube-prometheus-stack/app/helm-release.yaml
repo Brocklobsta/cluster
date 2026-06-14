@@ -438,7 +438,7 @@ spec:
             hosts:
               - metrics.${DOMAIN_0}
       prometheusSpec:
-        disableCompaction: true
+        disableCompaction: false
         scrapeClasses:
           - default: true
             fallbackScrapeProtocol: PrometheusText0.0.4
@@ -454,8 +454,8 @@ spec:
         enableFeatures:
           - memory-snapshot-on-shutdown
         # Prometheus metrics retention time in PV
-        retention: 30d
-        retentionSize: 50GB
+        retention: 7d
+        retentionSize: 10GB
         # External labels to add to any time series or
         # alerts when communicating with external systems
         externalLabels:
