@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
   "name": "ForgeTool",
-  "image": "oci.trueforge.org/containerforge/devcontainer:4.1.1@sha256:ce3ae1ba4517082df8f42afc0e4a0b78ca7c7eb2b0ed9c8f00b8d0ab8422af16",
+  "image": "oci.trueforge.org/containerforge/devcontainer:4.1.1@sha256:a7d550042289aebad35e86354e4b2ea64d1a5e05d76ed5b009691faa04f4cfd2",
   "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
   "customizations": {
     "vscode": {
