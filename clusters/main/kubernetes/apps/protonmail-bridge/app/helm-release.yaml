@@ -61,6 +61,7 @@ spec:
             name: config
             src:
               enabled: true
+              storageClassName: longhorn-volsync
             type: restic
       init-script:
         enabled: true

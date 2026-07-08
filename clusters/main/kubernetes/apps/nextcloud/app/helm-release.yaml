@@ -112,6 +112,7 @@ spec:
             name: html
             src:
               enabled: true
+              storageClassName: longhorn-volsync
               trigger:
                 schedule: 20 1 * * *
             type: restic

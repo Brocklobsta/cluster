@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - helm-release.yaml
+  - storageclass-volsync.yaml
   - volumeSnapshotClass.yaml
   - ingress.yaml
   - jobs

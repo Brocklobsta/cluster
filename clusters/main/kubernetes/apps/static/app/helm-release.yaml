@@ -64,4 +64,5 @@ spec:
             name: storage
             src:
               enabled: true
+              storageClassName: longhorn-volsync
             type: restic
