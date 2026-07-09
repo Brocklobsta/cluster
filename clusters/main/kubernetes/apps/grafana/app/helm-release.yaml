@@ -136,16 +136,100 @@ spec:
                 GF_PANELS_DISABLE_SANITIZE_HTML: "true"
     dashboards:
       grafana:
+        cert-manager:
+          enabled: true
+          datasource:
+            - name: "$${DS_PROMETHEUS}"
+              value: Prometheus
+          marketplace:
+            # renovate: depName="Cert-manager-Kubernetes"
+            id: 20842
+            revision: 3
         cnpg:
           enabled: true
+          datasource:
+            - name: "$${DS_PROMETHEUS}"
+              value: Prometheus
+          marketplace:
+            # renovate: depName="CloudNativePG"
+            id: 20417
+            revision: 4
         flux-cluster:
           enabled: true
+          datasource:
+            - name: "$${DS_PROMETHEUS}"
+              value: Prometheus
+          url: https://raw.githubusercontent.com/fluxcd/flux2-monitoring-example/refs/heads/main/monitoring/configs/dashboards/cluster.json
         flux-control-plane:
           enabled: true
+          datasource:
+            - name: "$${DS_PROMETHEUS}"
+              value: Prometheus
+          url: https://raw.githubusercontent.com/fluxcd/flux2-monitoring-example/refs/heads/main/monitoring/configs/dashboards/control-plane.json
+        node-feature-discovery:
+          enabled: true
+          datasource:
+            - name: "$${DS_PROMETHEUS}"
+              value: Prometheus
+          url: https://github.com/kubernetes-sigs/node-feature-discovery/raw/refs/tags/v0.18.3/examples/grafana-dash
         metallb:
           enabled: true
+          datasource:
+            - name: "$${DS_PROMETHEUS}"
+              value: Prometheus
+          marketplace:
+            # renovate: depName="Metallb"
+            id: 20162
+            revision: 6
         nginx:
           enabled: true
+          datasource:
+            - name: "$${DS_PROMETHEUS}"
+              value: Prometheus
+          url: https://github.com/kubernetes/ingress-nginx/raw/refs/tags/ingress-nginx-3.15.2/deploy/grafana/dashboards/nginx.json
+        blocky:
+          enabled: true
+          datasource:
+            - name: "$${DS_PROMETHEUS}"
+              value: Prometheus
+            - name: "$${VAR_BLOCKY_URL}"
+              value: "https://blocky.${DOMAIN_1}"
+          url: https://raw.githubusercontent.com/0xERR0R/blocky/refs/heads/main/docs/blocky-grafana.json
+        volsync:
+          enabled: true
+          datasource:
+            - name: "$${DS_PROMETHEUS}"
+              value: Prometheus
+            - name: "$${VAR_REPLICATIONDESTNAME}"
+              value: '.*-dest|.*-bootstrap'
+          marketplace:
+            # renovate: depName="VolSync Dashboard"
+            id: 21356
+            revision: 3        
+        logs-container:
+          enabled: true
+          datasource:
+            - name: "$${DS_LOKI}"
+              value: loki
+          marketplace:
+            # renovate: depName="Container Log Dashboard"
+            id: 16966
+            revision: 1
+        arrs:
+          enabled: true
+          datasource:
+            - name: "$${DS_PROMETHEUS}"
+              value: Prometheus
+          url: https://raw.githubusercontent.com/onedr0p/exportarr/refs/heads/master/examples/grafana/dashboard2.json
+        cilium:
+          enabled: true
+          datasource:
+            - name: "$${DS_PROMETHEUS}"
+              value: Prometheus
+          marketplace:
+            # renovate: depName="Cilium"
+            id: 21431
+            revision: 6
         longhorn:
           enabled: true
           datasource:
@@ -173,9 +257,3 @@ spec:
             # renovate: depName="Node Exporter Full"
             id: 1860
             revision: 45
-        arrs:
-          enabled: true
-          datasource:
-            - name: "$${DS_PROMETHEUS}"
-              value: Prometheus
-          url: https://raw.githubusercontent.com/onedr0p/exportarr/refs/heads/master/examples/grafana/dashboard2.json
