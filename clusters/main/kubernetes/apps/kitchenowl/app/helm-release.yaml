@@ -61,7 +61,6 @@ spec:
             enabled: true
           src:
             enabled: true
-            storageClassName: longhorn-volsync
             trigger:
               schedule: 20 0 * * *
     cnpg:
