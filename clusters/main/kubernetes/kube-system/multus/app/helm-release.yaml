@@ -55,7 +55,7 @@ spec:
       # it starts attaching extra networks to pods. This can help with pods
       # crash-looping when primary CNI is not ready
       readinessIndicatorEnabled: false
-      logLevel: verbose  # "debug", "error", "verbose", or "panic"
+      logLevel: error  # "debug", "error", "verbose", or "panic"
       # Whether to isolate `NetworkAttachmentDefinition`s by namespace.
       # Setting this to `true` will prevent sharing NAD resources across namespaces
       namespaceIsolation: true
