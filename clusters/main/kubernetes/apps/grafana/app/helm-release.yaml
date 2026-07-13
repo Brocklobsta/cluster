@@ -193,17 +193,6 @@ spec:
             - name: "$${DS_PROMETHEUS}"
               value: Prometheus
           url: https://raw.githubusercontent.com/0xERR0R/blocky/refs/heads/main/docs/blocky-grafana.json
-        volsync:
-          enabled: true
-          datasource:
-            - name: "$${DS_PROMETHEUS}"
-              value: Prometheus
-            - name: "$${VAR_REPLICATIONDESTNAME}"
-              value: '.*-dest|.*-bootstrap'
-          marketplace:
-            # renovate: depName="VolSync Dashboard"
-            id: 21356
-            revision: 3        
         logs-container:
           enabled: true
           datasource:
