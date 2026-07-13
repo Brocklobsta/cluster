@@ -14,3 +14,15 @@ spec:
     rebootMode: default  # Optional, default|powercycle
     placement: soft      # Optional, hard|soft
     timeout: 1h          # Allow slow post-upgrade node reboots to complete
+    # Let TUPPR own the drain so failures roll back the cordon, and wait for
+    # Longhorn CSI attachments to detach before Talos reboots the node.
+    waitForVolumeDetach: true
+
+  # A degraded attached Longhorn volume can make its instance-manager PDB
+  # unevictable. Do not begin an upgrade until every attached volume is healthy.
+  healthChecks:
+    - apiVersion: longhorn.io/v1beta2
+      kind: Volume
+      namespace: longhorn-system
+      expr: status.state != "attached" || status.robustness == "healthy"
+      timeout: 10m
