@@ -33,6 +33,7 @@ spec:
       # Overprovisioning might be needed when using volsync
       storageOverProvisioningPercentage: "100000"
       v2DataEngine: false
+      nodeDrainPolicy: allow-if-replica-is-stopped
     persistence:
       # Set to false to pick another CSI as default
       defaultClass: true
