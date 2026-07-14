@@ -25,4 +25,4 @@ spec:
       kind: Volume
       namespace: longhorn-system
       expr: status.state != "attached" || status.robustness == "healthy"
-      timeout: 10m
+      timeout: 30m
