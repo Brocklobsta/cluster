@@ -13,3 +13,4 @@ spec:
     force: false         # Optional, skip etcd health checks
     rebootMode: default  # Optional, default|powercycle
     placement: soft      # Optional, hard|soft
+    timeout: 1h          # Allow slow post-upgrade node reboots to complete
