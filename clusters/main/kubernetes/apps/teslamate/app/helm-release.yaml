@@ -14,6 +14,20 @@ spec:
         name: truecharts
         namespace: flux-system
 
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              group: postgresql.cnpg.io
+              version: v1
+              kind: Cluster
+            patch: |-
+              - op: add
+                path: /spec/affinity
+                value:
+                  enablePodAntiAffinity: true
+                  topologyKey: kubernetes.io/hostname
+                  podAntiAffinityType: required
   values:
     TZ: America/Los_Angeles
     cnpg:
