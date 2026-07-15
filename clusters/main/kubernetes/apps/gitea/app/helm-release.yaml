@@ -42,6 +42,8 @@ spec:
       username: brock
     cnpg:
       main:
+        monitoring:
+          enablePodMonitor: true
         backups:
           credentials: b2
           enabled: true

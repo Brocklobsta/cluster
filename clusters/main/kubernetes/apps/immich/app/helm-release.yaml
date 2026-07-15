@@ -35,6 +35,8 @@ spec:
     TZ: America/Los_Angeles
     cnpg:
       main:
+        monitoring:
+          enablePodMonitor: true
         backups:
           enabled: true
           credentials: b2
