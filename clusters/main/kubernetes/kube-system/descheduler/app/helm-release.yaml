@@ -40,6 +40,26 @@ spec:
                 evictFailedBarePods: true
                 evictLocalStoragePods: true
                 evictSystemCriticalPods: true
+            - name: LowNodeUtilization
+              args:
+                thresholds:
+                  cpu: 20
+                  memory: 20
+                  pods: 20
+                targetThresholds:
+                  cpu: 50
+                  memory: 50
+                  pods: 50
+                # Move at most one pod from an overloaded node per 5-minute
+                # descheduler cycle to avoid a burst of Longhorn detach/attach operations.
+                evictionLimits:
+                  node: 1
+                evictableNamespaces:
+                  exclude:
+                    - flux-system
+                    - kube-system
+                    - longhorn-system
+                    - system-upgrade
             - name: RemoveFailedPods
               args:
                 reasons:
@@ -62,6 +82,7 @@ spec:
           plugins:
             balance:
               enabled:
+                - LowNodeUtilization
                 - RemovePodsViolatingTopologySpreadConstraint
             deschedule:
               enabled:
