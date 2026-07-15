@@ -65,6 +65,8 @@ spec:
               schedule: 20 0 * * *
     cnpg:
       main:
+        monitoring:
+          enablePodMonitor: true
         mode: recovery
         backups:
           enabled: true

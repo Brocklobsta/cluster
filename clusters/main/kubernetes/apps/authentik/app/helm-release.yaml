@@ -56,6 +56,8 @@ spec:
           token: ${AUTHENTIK_LDAP_TOKEN}
     cnpg:
       main:
+        monitoring:
+          enablePodMonitor: true
         backups:
           credentials: b2
           enabled: true
