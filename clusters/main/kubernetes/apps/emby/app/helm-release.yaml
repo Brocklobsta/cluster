@@ -43,6 +43,31 @@ spec:
         secretKey: ${S3_SECRET_KEY}
         type: s3
         url: ${S3_ENDPOINT}
+    configmap:
+      start-script:
+        enabled: true
+        data:
+          start.sh: |-
+            #!/usr/bin/env bash
+
+            APP_DIR="/app/bin"
+
+            export AMDGPU_IDS="$APP_DIR/share/libdrm/amdgpu.ids"
+            export FONTCONFIG_PATH="$APP_DIR/etc/fonts"
+            export LD_LIBRARY_PATH="$APP_DIR/lib"
+            export OCL_ICD_VENDORS="$APP_DIR/etc/OpenCL/vendors"
+            export PCI_IDS_PATH="$APP_DIR/share/hwdata/pci.ids"
+            export SSL_CERT_FILE="$APP_DIR/etc/ssl/certs/ca-certificates.crt"
+            export LIBVA_DRIVERS_PATH="$APP_DIR/lib/dri"
+
+            exec \
+                /app/bin/system/EmbyServer \
+                    -programdata /config \
+                    -ffdetect /app/bin/bin/ffdetect \
+                    -ffmpeg /app/bin/bin/ffmpeg \
+                    -ffprobe /app/bin/bin/ffprobe \
+                    -restartexitcode 3 \
+                    "$@"
     ingress:
       main:
         enabled: true
@@ -81,6 +106,14 @@ spec:
               trigger:
                 schedule: 20 8 * * *
             type: restic
+      start-script:
+        enabled: true
+        type: configmap
+        objectName: start-script
+        mountPath: /start.sh
+        subPath: start.sh
+        defaultMode: "0555"
+        readOnly: true
       movies:
         enabled: true
         type: nfs
@@ -119,8 +152,6 @@ spec:
         podSpec:
           containers:
             main:
-              env:
-                LIBVA_DRIVERS_PATH: /app/bin/lib/dri
               resources:
                 limits:
                   gpu.intel.com/i915: 1
