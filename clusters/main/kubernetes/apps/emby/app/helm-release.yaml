@@ -119,6 +119,8 @@ spec:
         podSpec:
           containers:
             main:
+              env:
+                LIBVA_DRIVERS_PATH: /app/bin/lib/dri
               resources:
                 limits:
                   gpu.intel.com/i915: 1
