@@ -24,3 +24,5 @@ spec:
   eventSources:
     - kind: Kustomization
       name: '*'
+      matchLabels:
+        notification.toolkit.fluxcd.io/github-status: enabled
