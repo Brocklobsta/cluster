@@ -47,8 +47,12 @@ spec:
               - op: add
                 path: /spec/affinity
                 value:
+                  enablePodAntiAffinity: true
                   podAntiAffinityType: required
                   topologyKey: kubernetes.io/hostname
+              - op: replace
+                path: /spec/enableSuperuserAccess
+                value: false
   values:
     global:
       stopAll: false
@@ -106,6 +110,12 @@ spec:
                 LOCAL_STORAGE_PATH: /app/data
                 PORT: "3000"
                 REDIS_URL: 'redis://:{{ .Values.redis.password }}@reactive-resume-redis:6379/0'
+                SMTP_FROM: "Reactive Resume <${PROTONMAIL_EMAIL}>"
+                SMTP_HOST: protonmail-bridge.protonmail-bridge.svc.cluster.local
+                SMTP_PASS: "${PROTONMAIL_PASSWORD}"
+                SMTP_PORT: "25"
+                SMTP_SECURE: "false"
+                SMTP_USER: "${PROTONMAIL_EMAIL}"
               probes:
                 liveness:
                   enabled: true
@@ -196,6 +206,34 @@ spec:
           retentionPolicy: 30d
     redis:
       enabled: true
+      credentials:
+        b2:
+          type: s3
+          url: "${S3_ENDPOINT}"
+          bucket: "${S3_BUCKET}"
+          accessKey: "${S3_KEY_ID}"
+          secretKey: "${S3_SECRET_KEY}"
+          encrKey: "${S3_PASSWORD}"
+      persistence:
+        data:
+          enabled: true
+          type: pvc
+          storageClass: longhorn
+          accessModes:
+            - ReadWriteOnce
+          size: 2Gi
+          mountPath: /bitnami/valkey
+          targetSelectAll: true
+          volsync:
+            - name: data
+              type: restic
+              credentials: b2
+              dest:
+                enabled: true
+              src:
+                enabled: true
+                trigger:
+                  schedule: "45 2 * * *"
       securityContext:
         container:
           runAsNonRoot: true
