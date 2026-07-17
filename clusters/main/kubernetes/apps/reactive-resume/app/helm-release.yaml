@@ -53,6 +53,30 @@ spec:
               - op: replace
                 path: /spec/enableSuperuserAccess
                 value: false
+          - target:
+              group: volsync.backube
+              version: v1alpha1
+              kind: ReplicationDestination
+            patch: |-
+              - op: add
+                path: /spec/restic/moverSecurityContext/runAsNonRoot
+                value: true
+              - op: add
+                path: /spec/restic/moverSecurityContext/seccompProfile
+                value:
+                  type: RuntimeDefault
+          - target:
+              group: volsync.backube
+              version: v1alpha1
+              kind: ReplicationSource
+            patch: |-
+              - op: add
+                path: /spec/restic/moverSecurityContext/runAsNonRoot
+                value: true
+              - op: add
+                path: /spec/restic/moverSecurityContext/seccompProfile
+                value:
+                  type: RuntimeDefault
   values:
     global:
       stopAll: false
@@ -60,6 +84,10 @@ spec:
     image:
       repository: ghcr.io/amruthpillai/reactive-resume
       tag: v5.2.3@sha256:bfacee69faad04a8b785854d02cb078fb223824e8b07a07ff21fa39ebfa9fe8c
+      pullPolicy: IfNotPresent
+    smtpProxyImage:
+      repository: docker.io/alpine/socat
+      tag: 1.8.0.3@sha256:beb4a68d9e4fe6b0f21ea774a0fde6c31f580dde6368939ed70100c5385b015e
       pullPolicy: IfNotPresent
     securityContext:
       container:
@@ -111,9 +139,10 @@ spec:
                 PORT: "3000"
                 REDIS_URL: 'redis://:{{ .Values.redis.password }}@reactive-resume-redis:6379/0'
                 SMTP_FROM: "Reactive Resume <${PROTONMAIL_EMAIL}>"
-                SMTP_HOST: protonmail-bridge.protonmail-bridge.svc.cluster.local
+                NODE_EXTRA_CA_CERTS: /etc/ssl/certs/protonmail-bridge.pem
+                SMTP_HOST: 127.0.0.1
                 SMTP_PASS: "${PROTONMAIL_PASSWORD}"
-                SMTP_PORT: "25"
+                SMTP_PORT: "2525"
                 SMTP_SECURE: "false"
                 SMTP_USER: "${PROTONMAIL_EMAIL}"
               probes:
@@ -132,6 +161,25 @@ spec:
                   type: http
                   port: 3000
                   path: /api/health
+            smtp-proxy:
+              enabled: true
+              imageSelector: smtpProxyImage
+              args:
+                - TCP-LISTEN:2525,bind=127.0.0.1,reuseaddr,fork
+                - TCP:protonmail-bridge.protonmail-bridge.svc.cluster.local:25
+              probes:
+                liveness:
+                  enabled: true
+                  type: tcp
+                  port: 2525
+                readiness:
+                  enabled: true
+                  type: tcp
+                  port: 2525
+                startup:
+                  enabled: true
+                  type: tcp
+                  port: 2525
     service:
       main:
         ports:
@@ -160,7 +208,20 @@ spec:
               internalHost: authentik-http.authentik.svc.cluster.local:10230
               externalHost: auth.${DOMAIN_0}
               responseHeaders: []
+    configmap:
+      smtp-ca:
+        enabled: true
+        data:
+          protonmail-bridge.pem: "-----BEGIN CERTIFICATE-----\nMIIDkzCCAnugAwIBAgIRALJbRosNcRUwIVzdFkr5ulswDQYJKoZIhvcNAQELBQAw\nSzELMAkGA1UEBhMCQ0gxEjAQBgNVBAoTCVByb3RvbiBBRzEUMBIGA1UECxMLUHJv\ndG9uIE1haWwxEjAQBgNVBAMTCTEyNy4wLjAuMTAeFw0yNDA1MDkyMzUxMTlaFw00\nNDA1MDQyMzUxMTlaMEsxCzAJBgNVBAYTAkNIMRIwEAYDVQQKEwlQcm90b24gQUcx\nFDASBgNVBAsTC1Byb3RvbiBNYWlsMRIwEAYDVQQDEwkxMjcuMC4wLjEwggEiMA0G\nCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDRMxtqLDXAb8pbwLfMQWXxBYfQk8Uu\nHwm7uTgkCT89N8Z0vd9PiBQEBRI4BIHlQEIQB+7QY+owdf5k95F2jwm6wulDku0l\ng1ueXEJIyWoYFTm60MCVwsiCL3C66hwwFCkdiCyp2yJSYgC+p10aG1GMHiKqbMXX\nHRXqrPqDTpS1mGFu+NXUQutNtWhij5CheUEM0nVbeHU95oCD3hC/ZyVPDr1ATU0j\nmuRwW5Fz/wN/rFWVO8yMpxqrRCMi6c5M3h7ki0+WWJsMbGtPtnbDK5ZXTL3bX/v1\ndFlRFljxiaMcT0PTK7sQGbmj08MiXNQsUhFgzpPk3nVnatl+ZEkLHUClAgMBAAGj\ncjBwMA4GA1UdDwEB/wQEAwICpDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUH\nAwIwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUK5844nKvMxtLcXeEptWDs1f6\nYWowDwYDVR0RBAgwBocEfwAAATANBgkqhkiG9w0BAQsFAAOCAQEARUYbTFE7Zz6D\n7yAT3UqepXkjBuR1Qq6HFTjv13AhuC75I/fbpjS35et+GJK42BVgwkwcXPtYzlMe\n/UTx6abzViziAipbt4bQgPbEZGpNkDVwO4q3Nnc1QvF6enzCsOHoS1/rUyMXkL4m\nmVe84nBJO4dSGvTvk/bPME7nzYowZ2D1HaCWLj7wMtwiZLUGCCX7YSh/PnO3qTNO\nITv+wAL/uy7raHRNzrblsbkkqefdK0Q4aeRrmJWQWF2jicsepydBO2u2kyU7D1KR\nyeO/1wmvfd/dliZroAsDGQ6bmWaGyuZaBJ2LSe3kkdsDq5kznleYQpTg33RlZYIk\nqIAy9t4Fog==\n-----END CERTIFICATE-----\n"
     persistence:
+      smtp-ca:
+        enabled: true
+        type: configmap
+        objectName: smtp-ca
+        mountPath: /etc/ssl/certs/protonmail-bridge.pem
+        subPath: protonmail-bridge.pem
+        readOnly: true
+        targetSelectAll: true
       data:
         enabled: true
         type: pvc
@@ -225,7 +286,7 @@ spec:
           mountPath: /bitnami/valkey
           targetSelectAll: true
           volsync:
-            - name: data
+            - name: valkey
               type: restic
               credentials: b2
               dest:
