@@ -3,36 +3,18 @@ kind: Kustomization
 resources:
   - authentik/ks.yaml
   - cloudflareddns/ks.yaml
-  - emby/ks.yaml
+  - code-server/ks.yaml
   - gitea/ks.yaml
-  - grafana/ks.yaml
   - home-assistant/ks.yaml
   - homepage/ks.yaml
-  - immich/ks.yaml
+  - it-tools/ks.yaml
+  - kitchenowl/ks.yaml
   - kubernetes-dashboard/ks.yaml
-  - lidarr/ks.yaml
   - nextcloud/ks.yaml
-  - ombi/ks.yaml
+  - ollama/ks.yaml
   - protonmail-bridge/ks.yaml
-  - prowlarr/ks.yaml
-  - radarr/ks.yaml
-  - recyclarr/ks.yaml
-  - sonarr/ks.yaml
+  - proxmox-gui/ks.yaml
   - static/ks.yaml
+  - teslamate/ks.yaml
   - truenas-gui/ks.yaml
   - vaultwarden/ks.yaml
-  - qbittorrent/ks.yaml
-  - ollama/ks.yaml
-  - proxmox-gui/ks.yaml
-  - truenas-exporter/ks.yaml
-  - unpoller/ks.yaml
-  - kitchenowl/ks.yaml
-  - it-tools/ks.yaml
-  - teslamate/ks.yaml
-  - gatus/ks.yaml
-  - code-server/ks.yaml
-  - loki/ks.yaml
-  - alloy/ks.yaml
-  - kromgo/ks.yaml
-  - flaresolverr/ks.yaml
-  - jellyfin/ks.yaml
