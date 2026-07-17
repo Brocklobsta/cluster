@@ -1,0 +1,203 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: reactive-resume
+  namespace: reactive-resume
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 18.14.4
+      sourceRef:
+        kind: HelmRepository
+        name: truecharts
+        namespace: flux-system
+      interval: 15m
+  timeout: 20m
+  maxHistory: 3
+  driftDetection:
+    mode: warn
+  install:
+    timeout: 30m
+    createNamespace: true
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  valuesFrom:
+    - kind: Secret
+      name: reactive-resume-values
+      valuesKey: values.yaml
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              group: postgresql.cnpg.io
+              version: v1
+              kind: Cluster
+              name: reactive-resume-app-template-cnpg-main
+            patch: |-
+              - op: add
+                path: /spec/affinity
+                value:
+                  podAntiAffinityType: required
+                  topologyKey: kubernetes.io/hostname
+  values:
+    global:
+      stopAll: false
+    TZ: America/Los_Angeles
+    image:
+      repository: ghcr.io/amruthpillai/reactive-resume
+      tag: v5.2.3@sha256:bfacee69faad04a8b785854d02cb078fb223824e8b07a07ff21fa39ebfa9fe8c
+      pullPolicy: IfNotPresent
+    securityContext:
+      container:
+        runAsUser: 1000
+        runAsGroup: 1000
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
+        privileged: false
+        seccompProfile:
+          type: RuntimeDefault
+        capabilities:
+          drop:
+            - ALL
+      pod:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 2Gi
+    credentials:
+      b2:
+        accessKey: ${S3_KEY_ID}
+        bucket: ${S3_BUCKET}
+        encrKey: ${S3_PASSWORD}
+        secretKey: ${S3_SECRET_KEY}
+        type: s3
+        url: ${S3_ENDPOINT}
+    workload:
+      main:
+        podSpec:
+          containers:
+            main:
+              env:
+                APP_URL: https://rr.${DOMAIN_0}
+                AUTH_SECRET: '{{ .Values.authSecret }}'
+                DATABASE_URL: '{{ .Values.cnpg.main.creds.std }}'
+                ENCRYPTION_SECRET: '{{ .Values.encryptionSecret }}'
+                FLAG_ALLOW_UNSAFE_AI_BASE_URL: "false"
+                FLAG_ALLOW_UNSAFE_OAUTH_REDIRECT_URI: "false"
+                FLAG_DISABLE_API_RATE_LIMIT: "false"
+                FLAG_DISABLE_EMAIL_AUTH: "false"
+                FLAG_DISABLE_IMAGE_PROCESSING: "false"
+                FLAG_DISABLE_SIGNUPS: "false"
+                FLAG_SHOW_SPONSORS: "false"
+                LOCAL_STORAGE_PATH: /app/data
+                PORT: "3000"
+                REDIS_URL: 'redis://:{{ .Values.redis.password }}@reactive-resume-redis:6379/0'
+              probes:
+                liveness:
+                  enabled: true
+                  type: http
+                  port: 3000
+                  path: /api/health
+                readiness:
+                  enabled: true
+                  type: http
+                  port: 3000
+                  path: /api/health
+                startup:
+                  enabled: true
+                  type: http
+                  port: 3000
+                  path: /api/health
+    service:
+      main:
+        ports:
+          main:
+            port: 3000
+            targetPort: 3000
+            protocol: http
+    ingress:
+      main:
+        enabled: true
+        required: true
+        ingressClassName: external
+        hosts:
+          - host: rr.${DOMAIN_0}
+            paths:
+              - path: /
+                pathType: Prefix
+        integrations:
+          certManager:
+            enabled: true
+            certificateIssuer: domain-0-le-prod
+          nginx:
+            enabled: true
+            auth:
+              type: authentik
+              internalHost: authentik-http.authentik.svc.cluster.local:10230
+              externalHost: auth.${DOMAIN_0}
+              responseHeaders: []
+    persistence:
+      data:
+        enabled: true
+        type: pvc
+        size: 5Gi
+        mountPath: /app/data
+        targetSelectAll: true
+        volsync:
+          - name: data
+            type: restic
+            credentials: b2
+            dest:
+              enabled: true
+            src:
+              enabled: true
+              trigger:
+                schedule: 30 2 * * *
+    cnpg:
+      main:
+        enabled: true
+        mode: standalone
+        database: reactive_resume
+        user: reactive_resume
+        password: ${CNPG_PASSWORD}
+        pgVersion: 16
+        cluster:
+          instances: 2
+          storage:
+            size: 10Gi
+          walStorage:
+            size: 5Gi
+        monitoring:
+          enablePodMonitor: true
+        backups:
+          enabled: true
+          credentials: b2
+          target: prefer-standby
+          scheduledBackups:
+            - name: daily-backup
+              schedule: "0 5 0 * * *"
+              backupOwnerReference: self
+              immediate: true
+              suspend: false
+          retentionPolicy: 30d
+    redis:
+      enabled: true
+      securityContext:
+        container:
+          runAsNonRoot: true
+          runAsUser: 568
+          runAsGroup: 568
