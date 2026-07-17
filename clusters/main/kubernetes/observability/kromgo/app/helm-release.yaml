@@ -92,7 +92,7 @@ spec:
         - id: cluster_memory_usage
           query: round(sum(node_memory_MemTotal_bytes{pod!=""} - node_memory_MemAvailable_bytes{pod!=""}) / sum(node_memory_MemTotal_bytes{pod!=""}) * 100, 0.1)
           valueExpr: humanizeFloat(result) + "%"
-          colorExpr: 'result <= 35.0 ? "green" : result <= 75.0 ? "orange" : "red"'
+          colorExpr: 'result < 60.0 ? "green" : result <= 75.0 ? "orange" : "red"'
           title: Memory
 
         - id: cluster_power_usage
