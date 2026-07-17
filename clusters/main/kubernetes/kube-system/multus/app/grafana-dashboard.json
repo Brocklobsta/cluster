@@ -98,7 +98,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(up{job=\"multus-cni\",pod=~\"$pod\"})",
+          "expr": "sum(up{job=\"multus-cni\",pod=~\"$pod\"}) or vector(0)",
           "legendFormat": "",
           "range": false,
           "refId": "A",
@@ -168,7 +168,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "100 * avg(up{job=\"multus-cni\",pod=~\"$pod\"})",
+          "expr": "100 * avg(up{job=\"multus-cni\",pod=~\"$pod\"}) or vector(0)",
           "legendFormat": "",
           "range": false,
           "refId": "A",
@@ -430,7 +430,7 @@
       "id": 8,
       "type": "timeseries",
       "title": "Request Handlers by Pod",
-      "description": "Rate for the CNI and health handlers. This makes health-check traffic distinguishable from actual CNI operations.",
+      "description": "Request rate grouped by handler, separating actual CNI operations from health checks and any other daemon endpoints.",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
