@@ -13,7 +13,6 @@ resources:
   - nextcloud/ks.yaml
   - ollama/ks.yaml
   - protonmail-bridge/ks.yaml
-  - reactive-resume/ks.yaml
   - proxmox-gui/ks.yaml
   - static/ks.yaml
   - teslamate/ks.yaml
