@@ -8,7 +8,6 @@ resources:
   - home-assistant/ks.yaml
   - homepage/ks.yaml
   - it-tools/ks.yaml
-  - kitchenowl/ks.yaml
   - kubernetes-dashboard/ks.yaml
   - nextcloud/ks.yaml
   - ollama/ks.yaml
