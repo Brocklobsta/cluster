@@ -30,9 +30,6 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    resources:
-      limits:
-        memory: 32Gi
     global:
       stopAll: false
     TZ: America/Los_Angeles
