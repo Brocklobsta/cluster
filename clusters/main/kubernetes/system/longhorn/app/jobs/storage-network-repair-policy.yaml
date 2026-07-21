@@ -1,0 +1,38 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: longhorn-storage-network-repair
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - DELETE
+        resources:
+          - pods
+        scope: Namespaced
+  matchConditions:
+    - name: repair-service-account
+      expression: >-
+        request.userInfo.username ==
+        'system:serviceaccount:longhorn-system:longhorn-storage-network-repair'
+  validations:
+    - expression: >-
+        oldObject.metadata.namespace == 'longhorn-system' &&
+        oldObject.metadata.labels['longhorn.io/component'] == 'instance-manager' &&
+        oldObject.metadata.labels['longhorn.io/data-engine'] == 'v1' &&
+        oldObject.metadata.labels['longhorn.io/managed-by'] == 'longhorn-manager'
+      message: The Longhorn storage-network repair account may delete only v1 instance-manager pods.
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: longhorn-storage-network-repair
+spec:
+  policyName: longhorn-storage-network-repair
+  validationActions:
+    - Deny

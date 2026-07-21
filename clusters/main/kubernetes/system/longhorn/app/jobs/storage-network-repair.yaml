@@ -1,0 +1,157 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: longhorn-storage-network-repair
+  namespace: longhorn-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: longhorn-storage-network-repair
+  namespace: longhorn-system
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - delete
+  - apiGroups:
+      - longhorn.io
+    resources:
+      - volumes
+    verbs:
+      - list
+  - apiGroups:
+      - longhorn.io
+    resources:
+      - instancemanagers
+    verbs:
+      - get
+  - apiGroups:
+      - longhorn.io
+    resources:
+      - settings
+    resourceNames:
+      - storage-network
+    verbs:
+      - get
+  - apiGroups:
+      - k8s.cni.cncf.io
+    resources:
+      - network-attachment-definitions
+    resourceNames:
+      - storage-network
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: longhorn-storage-network-repair
+  namespace: longhorn-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: longhorn-storage-network-repair
+subjects:
+  - kind: ServiceAccount
+    name: longhorn-storage-network-repair
+    namespace: longhorn-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: longhorn-storage-network-repair-multus-reader
+  namespace: kube-system
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: longhorn-storage-network-repair-multus-reader
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: longhorn-storage-network-repair-multus-reader
+subjects:
+  - kind: ServiceAccount
+    name: longhorn-storage-network-repair
+    namespace: longhorn-system
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: longhorn-storage-network-repair
+  namespace: longhorn-system
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 120
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 480
+      backoffLimit: 0
+      ttlSecondsAfterFinished: 900
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: longhorn-storage-network-repair
+        spec:
+          serviceAccountName: longhorn-storage-network-repair
+          automountServiceAccountToken: true
+          enableServiceLinks: false
+          restartPolicy: Never
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: repair
+              image: docker.io/alpine/k8s:1.36.2@sha256:44ef4942e171939b9c665a4a84beb80e2dcdb9a24330d4651cfdfd2e9deecc47
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/sh
+                - /scripts/repair.sh
+              env:
+                - name: HOME
+                  value: /tmp
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  cpu: 100m
+                  memory: 128Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 568
+                runAsGroup: 568
+              volumeMounts:
+                - name: script
+                  mountPath: /scripts
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: script
+              configMap:
+                name: longhorn-storage-network-repair-script
+                defaultMode: 0555
+            - name: tmp
+              emptyDir: {}
