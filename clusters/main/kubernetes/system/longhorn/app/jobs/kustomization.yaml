@@ -4,3 +4,11 @@ resources:
   - trim.yaml
   - snapshot-delete.yaml
   - snapshot-cleanup.yaml
+  - storage-network-repair.yaml
+  - storage-network-repair-policy.yaml
+
+configMapGenerator:
+  - name: longhorn-storage-network-repair-script
+    namespace: longhorn-system
+    files:
+      - repair.sh=storage-network-repair.sh
