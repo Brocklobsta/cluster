@@ -9,6 +9,7 @@ resources:
   - homepage/ks.yaml
   - it-tools/ks.yaml
   - kubernetes-dashboard/ks.yaml
+  - mosquitto/ks.yaml
   - nextcloud/ks.yaml
   - ollama/ks.yaml
   - protonmail-bridge/ks.yaml
