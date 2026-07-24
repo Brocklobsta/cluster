@@ -14,6 +14,7 @@ resources:
   - ollama/ks.yaml
   - protonmail-bridge/ks.yaml
   - proxmox-gui/ks.yaml
+  - smarthome/namespace/ks.yaml
   - static/ks.yaml
   - teslamate/ks.yaml
   - truenas-gui/ks.yaml

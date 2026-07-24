@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: mosquitto
-  namespace: mosquitto
+  namespace: smarthome
 spec:
   podSelector:
     matchLabels:
@@ -11,15 +11,28 @@ spec:
     - Ingress
   ingress:
     - from:
+        # Final-state consumers in the shared smarthome namespace.
+        # Home Assistant currently uses hostNetwork. Cilium treats that source
+        # as node/host traffic, so Kubernetes pod selectors cannot isolate it;
+        # broker authentication and ACLs remain the enforcement boundary.
+        # Keep explicit selectors for intent and for a future non-hostNetwork HA.
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: home-assistant
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: zigbee2mqtt
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: mosquitto
+        # Transitional access until Home Assistant is migrated from its
+        # existing namespace with its PVCs and CloudNativePG cluster.
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: home-assistant
-        - namespaceSelector:
+          podSelector:
             matchLabels:
-              kubernetes.io/metadata.name: zigbee2mqtt
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: mosquitto
+              app.kubernetes.io/instance: home-assistant
       ports:
         - protocol: TCP
           port: 1883

@@ -1,13 +1,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: mosquitto
+  name: smarthome-namespace
   namespace: flux-system
 spec:
   interval: 10m
-  dependsOn:
-    - name: smarthome-namespace
-  path: clusters/main/kubernetes/apps/mosquitto/app
+  path: clusters/main/kubernetes/apps/smarthome/namespace/app
   prune: true
   sourceRef:
     kind: GitRepository
