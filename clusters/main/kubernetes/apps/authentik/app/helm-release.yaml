@@ -18,32 +18,6 @@ spec:
   maxHistory: 3
   driftDetection:
     mode: warn
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              group: apps
-              version: v1
-              kind: Deployment
-              name: authentik-worker
-            patch: |-
-              apiVersion: apps/v1
-              kind: Deployment
-              metadata:
-                name: authentik-worker
-              spec:
-                template:
-                  spec:
-                    containers:
-                      - name: authentik
-                        volumeMounts:
-                          - name: session-blueprint
-                            mountPath: /blueprints/custom/managed
-                            readOnly: true
-                    volumes:
-                      - name: session-blueprint
-                        configMap:
-                          name: authentik-session-blueprint
   install:
     timeout: 30m
     createNamespace: true
