@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - helm-release.yaml
+  - instance-manager-multus-init.yaml
   - volumeSnapshotClass.yaml
   - jobs
   - storage-nad.yaml
