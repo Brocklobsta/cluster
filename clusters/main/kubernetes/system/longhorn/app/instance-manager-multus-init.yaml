@@ -43,7 +43,7 @@ spec:
                   imagePullPolicy: "IfNotPresent",
                   command: ["/bin/sh", "-ec"],
                   args: [
-                    "echo \"Waiting for Multus on ${NODE_NAME}\"\nuntil kubectl wait --namespace=kube-system --for=condition=Ready pod --selector=app.kubernetes.io/name=multus-cni --field-selector=spec.nodeName=${NODE_NAME},status.phase=Running --timeout=10s; do\n  echo \"Multus is not ready on ${NODE_NAME}; retrying\"\n  sleep 5\ndone\n"
+                    "echo \"Waiting for Multus on $${NODE_NAME}\"\nuntil kubectl wait --namespace=kube-system --for=condition=Ready pod --selector=app.kubernetes.io/name=multus-cni --field-selector=spec.nodeName=$${NODE_NAME},status.phase=Running --timeout=10s; do\n  echo \"Multus is not ready on $${NODE_NAME}; retrying\"\n  sleep 5\ndone\n"
                   ],
                   env: [
                     Object.spec.initContainers.env{
