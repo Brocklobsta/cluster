@@ -31,41 +31,46 @@ spec:
         !has(object.spec.initContainers) ||
         !object.spec.initContainers.exists(container, container.name == "wait-for-multus")
   mutations:
-    - patchType: ApplyConfiguration
-      applyConfiguration:
+    - patchType: JSONPatch
+      jsonPatch:
         expression: >-
-          Object{
-            spec: Object.spec{
-              initContainers: [
-                Object.spec.initContainers{
-                  name: "wait-for-multus",
-                  image: "docker.io/alpine/kubectl:1.36.2@sha256:9b053116c5c9b746e466230ea3b8bd381757064ee483e236dbadcf7f798f73cf",
-                  imagePullPolicy: "IfNotPresent",
-                  command: ["/bin/sh", "-ec"],
-                  args: [
-                    "echo \"Waiting for Multus on $${NODE_NAME}\"\nuntil kubectl wait --namespace=kube-system --for=condition=Ready pod --selector=app.kubernetes.io/name=multus-cni --field-selector=spec.nodeName=$${NODE_NAME},status.phase=Running --timeout=10s; do\n  echo \"Multus is not ready on $${NODE_NAME}; retrying\"\n  sleep 5\ndone\n"
-                  ],
-                  env: [
-                    Object.spec.initContainers.env{
-                      name: "NODE_NAME",
-                      value: object.spec.nodeName
-                    }
-                  ],
-                  securityContext: Object.spec.initContainers.securityContext{
-                    allowPrivilegeEscalation: false,
-                    capabilities: Object.spec.initContainers.securityContext.capabilities{
-                      drop: ["ALL"]
-                    },
-                    privileged: false,
-                    readOnlyRootFilesystem: true,
-                    runAsGroup: 101,
-                    runAsNonRoot: true,
-                    runAsUser: 100
+          [
+            JSONPatch{
+              op: "add",
+              path: "/spec/initContainers",
+              value: has(object.spec.initContainers) ? object.spec.initContainers : []
+            },
+            JSONPatch{
+              op: "add",
+              path: "/spec/initContainers/-",
+              value: Object.spec.initContainers{
+                name: "wait-for-multus",
+                image: "docker.io/alpine/kubectl:1.36.2@sha256:9b053116c5c9b746e466230ea3b8bd381757064ee483e236dbadcf7f798f73cf",
+                imagePullPolicy: "IfNotPresent",
+                command: ["/bin/sh", "-ec"],
+                args: [
+                  "echo \"Waiting for Multus on $${NODE_NAME}\"\nuntil kubectl wait --namespace=kube-system --for=condition=Ready pod --selector=app.kubernetes.io/name=multus-cni --field-selector=spec.nodeName=$${NODE_NAME},status.phase=Running --timeout=10s; do\n  echo \"Multus is not ready on $${NODE_NAME}; retrying\"\n  sleep 5\ndone\n"
+                ],
+                env: [
+                  Object.spec.initContainers.env{
+                    name: "NODE_NAME",
+                    value: object.spec.nodeName
                   }
+                ],
+                securityContext: Object.spec.initContainers.securityContext{
+                  allowPrivilegeEscalation: false,
+                  capabilities: Object.spec.initContainers.securityContext.capabilities{
+                    drop: ["ALL"]
+                  },
+                  privileged: false,
+                  readOnlyRootFilesystem: true,
+                  runAsGroup: 101,
+                  runAsNonRoot: true,
+                  runAsUser: 100
                 }
-              ]
+              }
             }
-          }
+          ]
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingAdmissionPolicyBinding
