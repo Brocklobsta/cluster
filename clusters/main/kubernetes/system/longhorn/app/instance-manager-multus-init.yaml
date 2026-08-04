@@ -1,0 +1,83 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingAdmissionPolicy
+metadata:
+  name: longhorn-instance-manager-multus-ready
+spec:
+  failurePolicy: Fail
+  reinvocationPolicy: IfNeeded
+  matchConstraints:
+    resourceRules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+        resources:
+          - pods
+        scope: Namespaced
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: longhorn-system
+    objectSelector:
+      matchLabels:
+        longhorn.io/component: instance-manager
+        longhorn.io/managed-by: longhorn-manager
+  matchConditions:
+    - name: node-is-assigned
+      expression: object.spec.nodeName != ""
+    - name: init-container-is-absent
+      expression: >-
+        !has(object.spec.initContainers) ||
+        !object.spec.initContainers.exists(container, container.name == "wait-for-multus")
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: >-
+          Object{
+            spec: Object.spec{
+              initContainers: [
+                Object.spec.initContainers{
+                  name: "wait-for-multus",
+                  image: "docker.io/alpine/kubectl:1.36.2@sha256:9b053116c5c9b746e466230ea3b8bd381757064ee483e236dbadcf7f798f73cf",
+                  imagePullPolicy: "IfNotPresent",
+                  command: ["/bin/sh", "-ec"],
+                  args: [
+                    "echo \"Waiting for Multus on ${NODE_NAME}\"\nuntil kubectl wait --namespace=kube-system --for=condition=Ready pod --selector=app.kubernetes.io/name=multus-cni --field-selector=spec.nodeName=${NODE_NAME},status.phase=Running --timeout=10s; do\n  echo \"Multus is not ready on ${NODE_NAME}; retrying\"\n  sleep 5\ndone\n"
+                  ],
+                  env: [
+                    Object.spec.initContainers.env{
+                      name: "NODE_NAME",
+                      value: object.spec.nodeName
+                    }
+                  ],
+                  securityContext: Object.spec.initContainers.securityContext{
+                    allowPrivilegeEscalation: false,
+                    capabilities: Object.spec.initContainers.securityContext.capabilities{
+                      drop: ["ALL"]
+                    },
+                    privileged: false,
+                    readOnlyRootFilesystem: true,
+                    runAsGroup: 101,
+                    runAsNonRoot: true,
+                    runAsUser: 100
+                  }
+                }
+              ]
+            }
+          }
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingAdmissionPolicyBinding
+metadata:
+  name: longhorn-instance-manager-multus-ready
+spec:
+  policyName: longhorn-instance-manager-multus-ready
+  matchResources:
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: longhorn-system
+    objectSelector:
+      matchLabels:
+        longhorn.io/component: instance-manager
+        longhorn.io/managed-by: longhorn-manager
