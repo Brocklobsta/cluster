@@ -75,6 +75,33 @@ spec:
             enabled: true
           nginx:
             enabled: true
+    workload:
+      main:
+        podSpec:
+          initContainers:
+            initialize-storage-markers:
+              enabled: true
+              type: init
+              imageSelector: image
+              securityContext:
+                capabilities:
+                  disableS6Caps: true
+              command:
+                - /bin/sh
+                - -ec
+                - |
+                  for directory in \
+                    /usr/src/app/upload/encoded-video \
+                    /usr/src/app/upload/library \
+                    /usr/src/app/upload/upload \
+                    /usr/src/app/upload/profile \
+                    /usr/src/app/upload/thumbs \
+                    /usr/src/app/upload/backups; do
+                    if [ ! -f "$${directory}/.immich" ]; then
+                      echo "Creating Immich storage marker in $${directory}"
+                      touch "$${directory}/.immich"
+                    fi
+                  done
     persistence:
       library:
         enabled: true
@@ -82,3 +109,26 @@ spec:
         readOnly: false
         server: ${TRUENAS_IP}
         type: nfs
+        targetSelector:
+          main:
+            initialize-storage-markers: {}
+      uploads:
+        targetSelector:
+          main:
+            initialize-storage-markers: {}
+      backups:
+        targetSelector:
+          main:
+            initialize-storage-markers: {}
+      thumbs:
+        targetSelector:
+          main:
+            initialize-storage-markers: {}
+      profile:
+        targetSelector:
+          main:
+            initialize-storage-markers: {}
+      video:
+        targetSelector:
+          main:
+            initialize-storage-markers: {}
