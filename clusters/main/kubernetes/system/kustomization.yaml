@@ -5,6 +5,7 @@ resources:
   - cloudnative-pg/ks.yaml
   - kubernetes-reflector/ks.yaml
   - longhorn/ks.yaml
+  - longhorn/config/ks.yaml
   - metallb/ks.yaml
   - openebs/ks.yaml
   - snapshot-controller/ks.yaml
