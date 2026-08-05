@@ -14,7 +14,7 @@ spec:
         kind: HelmRepository
         name: openebs
         namespace: flux-system
-  timeout: 20m
+  timeout: 30m
   install:
     timeout: 30m
     createNamespace: true
