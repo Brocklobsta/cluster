@@ -49,7 +49,9 @@ spec:
       # Overprovisioning might be needed when using volsync
       storageOverProvisioningPercentage: "100000"
       v2DataEngine: false
-      nodeDrainPolicy: allow-if-replica-is-stopped
+      # Permit maintenance when another healthy replica exists, but continue to
+      # block draining a node that contains a volume's last healthy replica.
+      nodeDrainPolicy: block-if-contains-last-replica
     persistence:
       # Set to false to pick another CSI as default
       defaultClass: true
