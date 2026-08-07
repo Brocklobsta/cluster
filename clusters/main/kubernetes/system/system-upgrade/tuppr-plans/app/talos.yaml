@@ -14,24 +14,3 @@ spec:
     rebootMode: default  # Optional, default|powercycle
     placement: soft      # Optional, hard|soft
     timeout: 1h          # Allow slow post-upgrade node reboots to complete
-    # Drain before starting the Talos upgrade, wait for CSI detach, and roll
-    # back the cordon if the pre-upgrade drain cannot complete safely.
-    waitForVolumeDetach: true
-
-  healthChecks:
-    # Gate retries on the live Setting, not only on Flux dependency readiness,
-    # so the safer policy must be active before any node drain begins.
-    - apiVersion: longhorn.io/v1beta2
-      kind: Setting
-      name: node-drain-policy
-      namespace: longhorn-system
-      description: Longhorn allows drains when a healthy replica remains
-      expr: object.value == "block-if-contains-last-replica"
-      timeout: 10m
-    # A degraded attached Longhorn volume can make its instance-manager PDB
-    # unevictable. Do not begin an upgrade until every attached volume is healthy.
-    - apiVersion: longhorn.io/v1beta2
-      kind: Volume
-      namespace: longhorn-system
-      expr: status.state != "attached" || status.robustness == "healthy"
-      timeout: 30m
