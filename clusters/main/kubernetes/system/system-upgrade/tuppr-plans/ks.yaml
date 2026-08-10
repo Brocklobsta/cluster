@@ -6,9 +6,6 @@ metadata:
 spec:
   dependsOn:
     - name: tuppr
-    # Apply Longhorn's live drain policy before a TalosUpgrade spec change can
-    # trigger another maintenance attempt.
-    - name: longhorn-config
   interval: 1h
   path: clusters/main/kubernetes/system/system-upgrade/tuppr-plans/app
   prune: true
