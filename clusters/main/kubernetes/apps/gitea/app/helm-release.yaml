@@ -44,9 +44,8 @@ spec:
         backups:
           credentials: b2
           enabled: true
-        mode: recovery
+        mode: standalone
         password: ${CNPG_PASSWORD}
-        pgVersion: 15
         recovery:
           credentials: b2
           enabled: true
