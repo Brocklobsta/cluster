@@ -4,6 +4,7 @@ resources:
   - cert-manager/ks.yaml
   - cloudnative-pg/ks.yaml
   - kubernetes-reflector/ks.yaml
+  - longhorn/recovery/ks.yaml
   - longhorn/ks.yaml
   - longhorn/config/ks.yaml
   - metallb/ks.yaml

@@ -10,4 +10,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: cluster
+  timeout: 10m
+  wait: true
 

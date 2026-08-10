@@ -19,8 +19,9 @@ spec:
     timeout: 30m
     createNamespace: true
     crds: CreateReplace
-    remediation:
-      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
   upgrade:
     crds: CreateReplace
     remediation:

@@ -6,6 +6,8 @@ metadata:
 spec:
   dependsOn:
     - name: multus
+    - name: nginx-external
+    - name: nginx-internal
     - name: snapshot-controller
   interval: 10m
   path: clusters/main/kubernetes/system/longhorn/app

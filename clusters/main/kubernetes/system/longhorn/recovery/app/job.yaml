@@ -1,0 +1,148 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: longhorn-helm-recovery-v1
+  namespace: longhorn-system
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      automountServiceAccountToken: true
+      containers:
+        - name: recover
+          image: docker.io/library/python:3.13-alpine@sha256:399babc8b49529dabfd9c922f2b5eea81d611e4512e3ed250d75bd2e7683f4b0
+          command:
+            - python3
+            - -c
+          args:
+            - |
+              import json
+              import ssl
+              import time
+              import urllib.error
+              import urllib.request
+
+              namespace = "longhorn-system"
+              secret_name = "sh.helm.release.v1.longhorn.v1"
+              token_path = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+              ca_path = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+              api = "https://kubernetes.default.svc"
+              token = open(token_path, encoding="utf-8").read()
+              context = ssl.create_default_context(cafile=ca_path)
+
+              def request(method, path, body=None):
+                  data = None if body is None else json.dumps(body).encode()
+                  req = urllib.request.Request(
+                      api + path,
+                      data=data,
+                      method=method,
+                      headers={
+                          "Authorization": "Bearer " + token,
+                          "Accept": "application/json",
+                          "Content-Type": "application/json",
+                      },
+                  )
+                  with urllib.request.urlopen(req, context=context, timeout=10) as response:
+                      return json.load(response)
+
+              release_path = (
+                  "/apis/helm.toolkit.fluxcd.io/v2/namespaces/"
+                  + namespace
+                  + "/helmreleases/longhorn"
+              )
+              while True:
+                  try:
+                      release = request("GET", release_path)
+                      strategy = (
+                          release.get("spec", {})
+                          .get("install", {})
+                          .get("strategy", {})
+                          .get("name")
+                      )
+                  except urllib.error.HTTPError as error:
+                      if error.code != 404:
+                          raise
+                      strategy = None
+
+                  if strategy == "RetryOnFailure":
+                      break
+                  print("Waiting for the safe Longhorn install strategy", flush=True)
+                  time.sleep(5)
+
+              secret_path = "/api/v1/namespaces/{}/secrets/{}".format(
+                  namespace, secret_name
+              )
+              try:
+                  secret = request("GET", secret_path)
+              except urllib.error.HTTPError as error:
+                  if error.code == 404:
+                      print("No Helm release recovery is required")
+                      raise SystemExit(0)
+                  raise
+
+              metadata = secret.get("metadata", {})
+              labels = metadata.get("labels", {})
+              identity = (
+                  metadata.get("namespace"),
+                  metadata.get("name"),
+                  secret.get("type"),
+                  labels.get("owner"),
+                  labels.get("name"),
+                  labels.get("version"),
+                  labels.get("status"),
+              )
+              expected = (
+                  namespace,
+                  secret_name,
+                  "helm.sh/release.v1",
+                  "helm",
+                  "longhorn",
+                  "1",
+                  "uninstalling",
+              )
+              if identity != expected:
+                  raise RuntimeError("refusing to delete unexpected Helm state: {!r}".format(identity))
+
+              uid = metadata.get("uid")
+              resource_version = metadata.get("resourceVersion")
+              if not uid or not resource_version:
+                  raise RuntimeError(
+                      "refusing to delete Helm state without UID and resourceVersion"
+                  )
+
+              request(
+                  "DELETE",
+                  secret_path,
+                  {
+                      "apiVersion": "v1",
+                      "kind": "DeleteOptions",
+                      "preconditions": {
+                          "uid": uid,
+                          "resourceVersion": resource_version,
+                      },
+                  },
+              )
+              print(
+                  "Removed the stale Longhorn Helm v1 release record; "
+                  "live Longhorn resources were left intact"
+              )
+          env:
+            - name: PYTHONDONTWRITEBYTECODE
+              value: "1"
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 101
+            runAsNonRoot: true
+            runAsUser: 100
+      restartPolicy: Never
+      serviceAccountName: longhorn-helm-recovery

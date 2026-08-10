@@ -1,15 +1,17 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: nginx-external
+  name: longhorn-helm-recovery
   namespace: flux-system
 spec:
+  dependsOn:
+    - name: nginx-external
+    - name: nginx-internal
   interval: 10m
-  path: clusters/main/kubernetes/networking/nginx-external/app
+  path: clusters/main/kubernetes/system/longhorn/recovery/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: cluster
-  timeout: 10m
+  timeout: 5m
   wait: true
-
