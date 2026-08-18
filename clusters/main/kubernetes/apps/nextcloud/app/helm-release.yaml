@@ -122,8 +122,28 @@ spec:
         strategy: Recreate
       nginx:
         strategy: Recreate
+        podSpec:
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - topologyKey: kubernetes.io/hostname
+                  labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/instance: nextcloud
+                      app.kubernetes.io/name: nextcloud
+                      pod.name: main
       notify:
         strategy: Recreate
+        podSpec:
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - topologyKey: kubernetes.io/hostname
+                  labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/instance: nextcloud
+                      app.kubernetes.io/name: nextcloud
+                      pod.name: main
       imaginary:
         strategy: Recreate
       collabora:
