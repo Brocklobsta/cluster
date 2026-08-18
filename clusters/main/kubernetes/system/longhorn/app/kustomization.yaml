@@ -4,6 +4,7 @@ resources:
   - namespace.yaml
   - helm-release.yaml
   - instance-manager-multus-init.yaml
+  - prometheus-network-policy.yaml
   - volumeSnapshotClass.yaml
   - ingress.yaml
   - storage-nad.yaml
