@@ -114,7 +114,7 @@ General applications remain under [`clusters/main/kubernetes/apps`](clusters/mai
 |---|---|
 | Identity and access | Authentik, Vaultwarden |
 | Development and AI | Code Server, Gitea, Ollama |
-| Home and personal | Home Assistant, TeslaMate |
+| Home and personal | Home Assistant, Mosquitto, TeslaMate |
 | Productivity | Nextcloud, Proton Mail Bridge |
 | Dashboards and utilities | Homepage, IT-Tools, Kubernetes Dashboard, Static |
 | External service portals | Proxmox GUI, TrueNAS GUI |
