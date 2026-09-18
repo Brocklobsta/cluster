@@ -114,7 +114,7 @@ spec:
           title: Uptime
 
         - id: cluster_alert_count
-          query: alertmanager_alerts{state="active"} - 1 # Ignore Watchdog
+          query: count(ALERTS{alertstate="firing", severity=~"warning|critical"}) or vector(0)
           valueExpr: humanizeFloat(result)
           colorExpr: 'result <= 0.0 ? "green" : "red"'
           title: Alerts
