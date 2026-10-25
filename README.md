@@ -99,7 +99,8 @@ Media workloads live under [`clusters/main/kubernetes/media`](clusters/main/kube
 | Immich | Photo and video library |
 | Jellyfin | Secondary media server |
 | Lidarr | Music library automation |
-| Ombi | Media request management |
+| Ombi | Existing media requests (retained during Seerr migration) |
+| Seerr | New media request manager (staged at `seerr.brocklobsta.net`; [cutover steps](clusters/main/kubernetes/media/seerr/MIGRATION.md)) |
 | Prowlarr | Indexer management |
 | qBittorrent | Download client |
 | Radarr | Movie library automation |
