@@ -44,6 +44,9 @@ spec:
       main:
         enabled: true
         ingressClassName: external
+        annotations:
+          nginx.ingress.kubernetes.io/configuration-snippet: |
+            if ($uri ~ "(^|/)\.") { return 404; }
         hosts:
           - host: resume.${DOMAIN_0}
             paths:
