@@ -37,6 +37,34 @@ spec:
               url = "http://loki-headless.loki.svc.cluster.local:3100/loki/api/v1/push"
             }
           }
+          // Talos rotates the audit file every ~20 minutes and keeps ten backups.
+          // Discover both the active file and rotated files so short collector
+          // interruptions can be backfilled before Talos removes the backups.
+          loki.source.file "kube_audit" {
+            targets = [{
+              "__path__" = "/var/log/audit/kube/kube-apiserver*.log",
+              "job"      = "kube-audit",
+              "node"     = sys.env("K8S_NODE_NAME"),
+            }]
+            file_match {
+              enabled     = true
+              sync_period = "5s"
+            }
+            forward_to = [loki.process.kube_audit.receiver]
+          }
+          loki.process "kube_audit" {
+            stage.json {
+              expressions = { audit_timestamp = "stageTimestamp" }
+            }
+            stage.timestamp {
+              source = "audit_timestamp"
+              format = "RFC3339Nano"
+            }
+            stage.static_labels {
+              values = { cluster = "main" }
+            }
+            forward_to = [loki.write.default.receiver]
+          }
           // discovery.kubernetes allows you to find scrape targets from Kubernetes resources.
           // It watches cluster state and ensures targets are continually synced with what is currently running in your cluster.
           discovery.kubernetes "pod" {
@@ -123,3 +151,24 @@ spec:
 
             forward_to = [loki.write.default.receiver]
           }
+      mounts:
+        extra:
+          - name: kube-audit-logs
+            mountPath: /var/log/audit/kube
+            readOnly: true
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: [ALL]
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+    controller:
+      volumes:
+        extra:
+          - name: kube-audit-logs
+            hostPath:
+              path: /var/log/audit/kube
+              type: Directory
