@@ -24,7 +24,6 @@ spec:
   upgrade:
     cleanupOnFail: true
     crds: CreateReplace
-    serverSideApply: disabled
     remediation:
       strategy: rollback
       retries: 3
