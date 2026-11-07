@@ -36,9 +36,12 @@ function checkEditorMapping(files) {
   if (JSON.stringify(files) !== JSON.stringify(mapped)) {
     throw new Error('VS Code schema mapping differs from TrueCharts release inventory; update .vscode/settings.json.');
   }
+  const wrapperPath = path.join(root, 'schemas/truecharts-helmrelease.schema.json');
   for (const file of files) {
-    if (fs.readFileSync(path.join(root, file), 'utf8').includes('yaml-language-server: $schema=')) {
-      throw new Error(`${file}: inline schema directive overrides the editor mapping`);
+    const text = fs.readFileSync(path.join(root, file), 'utf8');
+    const directives = [...text.matchAll(/^# yaml-language-server: \$schema=(\S+)\s*$/gm)];
+    if (directives.length !== 1 || path.resolve(root, path.dirname(file), directives[0][1]) !== wrapperPath) {
+      throw new Error(`${file}: inline schema must resolve to the same wrapper as the editor mapping`);
     }
   }
 }
