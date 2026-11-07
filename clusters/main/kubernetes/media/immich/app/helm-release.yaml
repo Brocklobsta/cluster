@@ -49,13 +49,11 @@ spec:
         mode: recovery
         recovery:
           credentials: b2
-          enabled: true
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}
         bucket: ${S3_BUCKET}
         encrKey: ${S3_PASSWORD}
-        name: b2
         path: ""
         secretKey: ${S3_SECRET_KEY}
         type: s3

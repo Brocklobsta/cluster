@@ -41,7 +41,6 @@ spec:
         accessKey: ${S3_KEY_ID}
         bucket: ${S3_BUCKET}
         encrKey: ${S3_PASSWORD}
-        name: b2
         secretKey: ${S3_SECRET_KEY}
         type: s3
         url: ${S3_ENDPOINT}
@@ -66,12 +65,6 @@ spec:
           nginx:
             enabled: true
     persistence:
-      config:
-        volsync:
-          - dest:
-              enabled: false
-            src:
-              enabled: false
       data:
         volsync:
           - credentials: b2
