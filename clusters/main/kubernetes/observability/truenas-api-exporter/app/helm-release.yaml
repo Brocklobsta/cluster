@@ -1,0 +1,24 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: truenas-api-exporter
+  namespace: truenas-exporter
+spec:
+  interval: 15m
+  chartRef:
+    kind: OCIRepository
+    name: truenas-scale-exporter
+    namespace: flux-system
+  values:
+    truenas:
+      url: ${TRUENAS_IP}
+      existingSecret: truenas-api-exporter
+      existingSecretKey: api-key
+      # The NAS's direct-IP endpoint uses a self-signed certificate; no API key
+      # is ever sent over plaintext HTTP. Install a trusted NAS certificate
+      # and remove this exception when feasible.
+      insecure: true
+    serviceMonitor:
+      enabled: true
+      interval: 60s
