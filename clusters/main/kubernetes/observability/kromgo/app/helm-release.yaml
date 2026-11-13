@@ -67,9 +67,15 @@ spec:
           title: Flux
 
         - id: truenas_version
-          query: truenas_info
+          query: truenas_system_info{job="truenas-api-exporter-truenas-scale-exporter"}
           valueExpr: labels["version"]
-          title: Truenas
+          title: TrueNAS
+
+        - id: redwood_pool_usage
+          query: round(100 * truenas_pool_allocated_bytes{job="truenas-api-exporter-truenas-scale-exporter",pool="Redwood"} / truenas_pool_size_bytes{job="truenas-api-exporter-truenas-scale-exporter",pool="Redwood"}, 0.1)
+          valueExpr: humanizeFloat(result) + "%"
+          colorExpr: 'result < 60.0 ? "green" : result <= 75.0 ? "orange" : "red"'
+          title: Redwood
 
         - id: cluster_node_count
           query: count(count by (node) (kube_node_status_condition{condition="Ready"}))

@@ -7,6 +7,7 @@ A two-node, GitOps-managed home Kubernetes cluster powered by [Talos Linux](http
 [![Talos](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.brocklobsta.net%2Fbadges%2Ftalos_version%3Fformat%3Dshields&style=for-the-badge&logo=talos&logoColor=white&label=%20&color=blue)](https://www.talos.dev/)&nbsp;&nbsp;
 [![Kubernetes](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.brocklobsta.net%2Fbadges%2Fkubernetes_version%3Fformat%3Dshields&style=for-the-badge&logo=kubernetes&logoColor=white&label=%20&color=blue)](https://www.kubernetes.io/)&nbsp;&nbsp;
 [![Flux](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.brocklobsta.net%2Fbadges%2Fflux_version%3Fformat%3Dshields&style=for-the-badge&logo=flux&logoColor=white&color=blue&label=%20)](https://fluxcd.io/)&nbsp;&nbsp;
+[![TrueNAS](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.brocklobsta.net%2Fbadges%2Ftruenas_version%3Fformat%3Dshields&style=for-the-badge&label=TrueNAS&color=blue)](https://www.truenas.com/)
 
 [![Home-Internet](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus.brocklobsta.net%2Fapi%2Fv1%2Fendpoints%2Fbuddy_ping-(buddy)%2Fhealth%2Fbadge.shields&style=for-the-badge&logo=ubiquiti&logoColor=white&label=Home%20Internet)](https://status.brocklobsta.net)&nbsp;&nbsp;
 [![Alertmanager](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus.brocklobsta.net%2Fapi%2Fv1%2Fendpoints%2Fbuddy_heartbeat-(buddy)%2Fhealth%2Fbadge.shields&style=for-the-badge&logo=prometheus&logoColor=white&label=Alertmanager)](https://status.brocklobsta.net)
@@ -18,6 +19,7 @@ A two-node, GitOps-managed home Kubernetes cluster powered by [Talos Linux](http
 [![CPU-Usage](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.brocklobsta.net%2Fbadges%2Fcluster_cpu_usage%3Fformat%3Dshields&style=flat-square&label=CPU)](https://github.com/home-operations/kromgo)&nbsp;&nbsp;
 [![Memory-Usage](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.brocklobsta.net%2Fbadges%2Fcluster_memory_usage%3Fformat%3Dshields&style=flat-square&label=Memory)](https://github.com/home-operations/kromgo)&nbsp;&nbsp;
 [![Alerts](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.brocklobsta.net%2Fbadges%2Fcluster_alert_count%3Fformat%3Dshields&style=flat-square&label=Alerts)](https://github.com/home-operations/kromgo)&nbsp;&nbsp;
+[![Redwood pool usage](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.brocklobsta.net%2Fbadges%2Fredwood_pool_usage%3Fformat%3Dshields&style=flat-square&label=Redwood%20pool)](https://www.truenas.com/)
 
 </div>
 
@@ -86,7 +88,16 @@ Observability workloads live under [`clusters/main/kubernetes/observability`](cl
 | kube-prometheus-stack | Prometheus, Alertmanager, exporters, and alert rules |
 | Loki | Centralized log storage and querying |
 | TrueNAS Exporter | TrueNAS metrics collection |
+| TrueNAS API Exporter | Live TrueNAS version and Redwood pool capacity badges (requires a read-only API key) |
 | Unpoller | UniFi metrics collection |
+
+The TrueNAS badges require an independently provisioned `truenas-api-exporter`
+Secret in the `truenas-exporter` namespace, with a `api-key` entry issued to a
+**dedicated read-only TrueNAS user**. Supply it through the cluster's encrypted
+secret workflow before merging; never add the key to Helm values or the PR.
+Until then the API exporter cannot start and both badges display "no data".
+Redwood utilization is raw ZFS allocated space divided by raw pool size
+(including parity), not the usable-space percentage shown by the TrueNAS UI.
 
 ## Media
 
