@@ -72,6 +72,21 @@ Each managed workload follows the same pattern:
     └── namespace.yaml               # Namespace and Pod Security labels
 ```
 
+## TrueCharts values schema (repository/editor validation)
+
+The [TrueCharts schema announcement](https://truecharts.org/news/truecharts/common-3-4-0-json-schema/) describes a **Helm values schema**, not a Kubernetes CRD to install. Each TrueCharts HelmRelease carries an inline `# yaml-language-server: $schema=...` directive pointing **relative to that manifest** to `schemas/truecharts-helmrelease.schema.json`. This works in editors that honor YAML Language Server schema directives without requiring VS Code workspace settings. `.vscode/settings.json` maps the same files to the same wrapper for VS Code; the validator checks that both mappings agree. The wrapper's `spec.values` reference points directly at [the upstream schema on `master`](https://github.com/trueforge-org/truecharts/blob/master/charts/library/common/values.schema.json). The validator fetches that same URL on every run, prints the fetched schema's SHA-256 for traceability, and needs network access. Schema changes upstream can surface new warnings **without any Git change here**, deliberately giving early notice before chart upgrades. The wrapper does **not** replace Kubernetes API validation for the rest of a HelmRelease. When adding a new TrueCharts release, add an inline directive and its path to the VS Code mapping.
+
+To check every TrueCharts release from the repository root (Node.js 18+ and npm required; an upstream connection is needed each run):
+
+```sh
+npm ci --prefix tools/truecharts-schema
+npm run report --prefix tools/truecharts-schema      # report existing schema issues; exit 0
+npm run validate --prefix tools/truecharts-schema    # strict mode; exit 1 on issues
+npm run self-test --prefix tools/truecharts-schema   # mapping and type checks
+```
+
+The upstream `master` schema currently reports issues in **22 of 38** releases with inline `spec.values` (42 TrueCharts releases total); this count can change upstream. Many installed charts still depend on older common versions (for example Home Assistant uses 30.2.9), so these are migration warnings, **not proof that the running chart is broken**. Review keys such as `credentials.b2` and `cnpg.*.recovery` against the exact chart/common version before changing production values. Strict validation is deliberately **not a CI merge gate** while the existing issues remain. The upstream change also notes that stable chart releases do not yet bundle the new schema for automatic Helm values enforcement; this repository/editor aid does not modify deployed charts or Flux behavior.
+
 ## Observability
 
 Observability workloads live under [`clusters/main/kubernetes/observability`](clusters/main/kubernetes/observability).

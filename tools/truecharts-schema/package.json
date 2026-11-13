@@ -1,0 +1,15 @@
+{
+  "name": "cluster-truecharts-schema-check",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Validate GitOps TrueCharts HelmRelease values against pinned common 30.4.0 schema",
+  "scripts": {
+    "validate": "node validate.cjs",
+    "report": "node validate.cjs --report",
+    "self-test": "node validate.cjs --self-test"
+  },
+  "dependencies": {
+    "ajv": "8.17.1",
+    "yaml": "2.9.1"
+  }
+}

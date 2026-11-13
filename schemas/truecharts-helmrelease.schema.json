@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TrueCharts HelmRelease values (upstream master)",
+  "description": "Editor aid for spec.values on TrueCharts HelmReleases using the current upstream common schema. Other HelmRelease fields are not validated by this wrapper; Kubernetes/Flux validate them on reconciliation.",
+  "type": "object",
+  "properties": {
+    "apiVersion": { "const": "helm.toolkit.fluxcd.io/v2" },
+    "kind": { "const": "HelmRelease" },
+    "spec": {
+      "type": "object",
+      "properties": {
+        "values": { "$ref": "https://raw.githubusercontent.com/trueforge-org/truecharts/master/charts/library/common/values.schema.json" }
+      }
+    }
+  }
+}
