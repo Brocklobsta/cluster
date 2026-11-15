@@ -1,0 +1,105 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: seerr
+  namespace: seerr
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: seerr
+      version: 17.0.6
+      sourceRef:
+        kind: HelmRepository
+        name: truecharts
+        namespace: flux-system
+      interval: 15m
+  timeout: 30m
+  maxHistory: 3
+  driftDetection:
+    mode: warn
+  install:
+    timeout: 30m
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              group: postgresql.cnpg.io
+              version: v1
+              kind: Cluster
+              name: seerr-cnpg-main
+            patch: |-
+              - op: add
+                path: /spec/affinity
+                value:
+                  enablePodAntiAffinity: true
+                  podAntiAffinityType: required
+                  topologyKey: kubernetes.io/hostname
+              - op: replace
+                path: /spec/enableSuperuserAccess
+                value: false
+  values:
+    TZ: America/Los_Angeles
+    credentials:
+      b2:
+        accessKey: ${S3_KEY_ID}
+        bucket: ${S3_BUCKET}
+        encrKey: ${S3_PASSWORD}
+        name: b2
+        secretKey: ${S3_SECRET_KEY}
+        type: s3
+        url: ${S3_ENDPOINT}
+    cnpg:
+      main:
+        monitoring:
+          enablePodMonitor: true
+        backups:
+          enabled: true
+          credentials: b2
+          scheduledBackups:
+            - name: daily-backup
+              schedule: "0 6 0 * * *"
+              backupOwnerReference: self
+              immediate: true
+              suspend: false
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: external
+        hosts:
+          - host: seerr.${DOMAIN_0}
+            paths:
+              - path: /
+                pathType: Prefix
+        integrations:
+          certManager:
+            certificateIssuer: domain-0-le-prod
+            enabled: true
+          nginx:
+            enabled: true
+            auth:
+              type: authentik
+              internalHost: authentik-http.authentik.svc.cluster.local:10230
+              externalHost: seerr.${DOMAIN_0}
+              responseHeaders: []
+    persistence:
+      config:
+        volsync:
+          - credentials: b2
+            dest:
+              enabled: true
+            src:
+              enabled: true
+              trigger:
+                schedule: 35 9 * * *
+            type: restic
+            name: config
