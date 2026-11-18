@@ -32,9 +32,6 @@ spec:
   values:
     controller:
       replicaCount: 2
-      # Replace old workers as well as reloading their configuration.
-      podAnnotations:
-        security.brocklobsta.net/http2-mitigation: "CVE-2026-123633-CVE-2026-123007"
       service:
         externalTrafficPolicy: Local
         annotations:
@@ -56,8 +53,6 @@ spec:
         default: false
         controllerValue: k8s.io/external
       config:
-        # Mitigate the HTTP/2 memory-corruption CVEs until a patched controller is deployed.
-        use-http2: "false"
         allow-snippet-annotations: true
         annotations-risk-level: Critical
         client-body-buffer-size: 100M
