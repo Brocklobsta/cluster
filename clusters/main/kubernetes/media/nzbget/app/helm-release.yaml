@@ -31,6 +31,64 @@ spec:
     keepHistory: false
   values:
     TZ: America/Los_Angeles
+    addons:
+      gluetun:
+        enabled: true
+        container:
+          probes:
+            readiness:
+              enabled: true
+              type: exec
+              command:
+                - /gluetun-entrypoint
+                - healthcheck
+          resources:
+            # The addon default hides non-CPU/memory resources.
+            excludeExtra: false
+            limits:
+              truecharts.org/tun: 1
+          env:
+            FIREWALL: "on"
+            FIREWALL_OUTBOUND_SUBNETS: "192.168.1.0/24"
+            # NZBGet listens on 6789; the Service exposes 10057.
+            FIREWALL_INPUT_PORTS: "6789"
+            VPN_SERVICE_PROVIDER: protonvpn
+            VPN_TYPE: wireguard
+            # Use a separate Proton profile to avoid WireGuard endpoint roaming
+            # against qBittorrent's concurrently running tunnel.
+            WIREGUARD_ENDPOINT_IP:
+              secretKeyRef:
+                name: nzbget-vpn
+                expandObjectName: false
+                key: endpoint-ip
+            WIREGUARD_ENDPOINT_PORT:
+              secretKeyRef:
+                name: nzbget-vpn
+                expandObjectName: false
+                key: endpoint-port
+            WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL:
+              secretKeyRef:
+                name: nzbget-vpn
+                expandObjectName: false
+                key: keepalive
+            WIREGUARD_ADDRESSES:
+              secretKeyRef:
+                name: nzbget-vpn
+                expandObjectName: false
+                key: addresses
+            WIREGUARD_PRIVATE_KEY:
+              secretKeyRef:
+                name: nzbget-vpn
+                expandObjectName: false
+                key: private-key
+            WIREGUARD_PUBLIC_KEY:
+              secretKeyRef:
+                name: nzbget-vpn
+                expandObjectName: false
+                key: public-key
+            # Usenet is outbound-only; no torrent port forwarding or HTTP proxy.
+            VPN_PORT_FORWARDING: "off"
+            HTTPPROXY: "off"
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}

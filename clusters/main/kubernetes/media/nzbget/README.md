@@ -9,6 +9,26 @@ TrueCharts `nzbget` 31.1.5 deploys NZBGet 26.3.0 using the chart's digest-pinned
 - Configure your Usenet provider, TLS, connections, and categories in NZBGet after deployment. This PR does not add provider credentials or modify existing Arr download-client settings.
 - From Sonarr/Radarr/Lidarr, configure NZBGet at `nzbget.nzbget.svc.cluster.local:10057` (HTTP inside the cluster), using its native credentials. This avoids the browser-only Authentik redirect.
 
+## VPN prerequisite and behavior
+
+NZBGet uses the same ProtonVPN/WireGuard Gluetun approach as qBittorrent, but **requires a separate Proton WireGuard profile**. Do not share qBittorrent's private key between concurrent tunnels: WireGuard peer endpoint roaming can disrupt connectivity.
+
+The dedicated `nzbget-CH-744` profile is included as SOPS-encrypted `app/vpn.secret.yaml`, creating Secret `nzbget-vpn` in namespace `nzbget`. Its six keys hold the client private key, server public key, IPv4 endpoint and port, client IPv4 address, and persistent keepalive. Flux decrypts it through the existing SOPS configuration; no separate manual Secret creation is needed. Missing Secret keys prevent the VPN container from starting; application startup is not explicitly gated on VPN health.
+
+The deployment selects the profile's IPv4 path and preserves its endpoint port and 25-second keepalive. IPv6 addresses/routes are not enabled by this change. The profile's DNS addresses are not imported: existing cluster DNS behavior remains, so Proton NetShield DNS filtering is not guaranteed. NAT-PMP stays disabled for the outbound-only Usenet workload, regardless of the profile comment.
+
+Gluetun runs as an ordinary chart-generated sidecar, following qBittorrent's convention. Both workloads explicitly run `/gluetun-entrypoint healthcheck` as the Gluetun readiness probe. A failed probe makes the whole pod unready and removes it from normal Service endpoints. This does not stop existing downloads or restart Gluetun; the firewall remains responsible for traffic blocking. There is no Flux post-renderer, native-sidecar conversion, or explicit VPN startup/shutdown gate.
+
+- Firewall stays enabled; Internet download traffic is routed through the VPN once connected. Verify the actual egress IP and tunnel-loss behavior after rollout; rendering cannot prove absence of leaks.
+- LAN `192.168.1.0/24` is an explicit non-VPN exception, matching qBittorrent. Pod/service exceptions use the chart's normal discovery/default behavior; no extra `chartContext` CIDRs are supplied. This is not an all-traffic isolation policy.
+- Native application port **6789** is allowed through Gluetun; the chart also adds Service port 10057. The ingress and Arr RPC address are unchanged.
+- The addon retains its default cluster nameserver behavior, as with qBittorrent; this does not establish DNS privacy through Proton.
+- Torrent port forwarding, its qBittorrent callback, and the HTTP proxy are not needed and are disabled.
+- The dedicated namespace receives the same Pod Security `enforce: privileged` exception as qBittorrent, because Gluetun's network capabilities are rejected by baseline policy. This relaxes admission for the namespace; the containers are not themselves set `privileged: true`.
+- The pod now needs one `truecharts.org/tun` device and Gluetun's NET_ADMIN/NET_RAW/MKNOD capabilities; the NZBGet application container retains its non-root hardening. `resources.excludeExtra: false` is retained because this pinned chart otherwise filters out the requested TUN device.
+
+After deployment, verify that Gluetun readiness follows VPN health, verify authenticated UI/RPC and the observed public egress IP, and deliberately test tunnel-loss blocking in a maintenance window. Confirm that qBittorrent remains connected and NZBGet can download/unpack/import. NFS traffic and backup mover Jobs are not tunneled by this pod sidecar.
+
 ## Storage
 
 - `/config`: new 5 GiB PVC on the cluster's default storage class (currently Longhorn).

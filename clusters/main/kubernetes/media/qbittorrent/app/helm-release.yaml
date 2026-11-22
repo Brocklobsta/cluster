@@ -102,6 +102,13 @@ spec:
       gluetun:
         enabled: true
         container:
+          probes:
+            readiness:
+              enabled: true
+              type: exec
+              command:
+                - /gluetun-entrypoint
+                - healthcheck
           resources:
             limits:
               truecharts.org/tun: 1
