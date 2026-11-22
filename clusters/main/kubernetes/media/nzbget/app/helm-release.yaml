@@ -29,33 +29,8 @@ spec:
       retries: 3
   uninstall:
     keepHistory: false
-  # Start the VPN before NZBGet; keep it running until NZBGet has stopped.
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              group: apps
-              version: v1
-              kind: Deployment
-              name: nzbget
-            patch: |-
-              - op: test
-                path: /spec/template/spec/containers/0/name
-                value: nzbget-gluetun
-              - op: add
-                path: /spec/template/spec/initContainers
-                value: []
-              - op: move
-                from: /spec/template/spec/containers/0
-                path: /spec/template/spec/initContainers/0
-              - op: add
-                path: /spec/template/spec/initContainers/0/restartPolicy
-                value: Always
   values:
     TZ: America/Los_Angeles
-    chartContext:
-      podCIDR: ${PODNET}
-      svcCIDR: ${SVCNET}
     addons:
       gluetun:
         enabled: true
@@ -107,19 +82,6 @@ spec:
             # Usenet is outbound-only; no torrent port forwarding or HTTP proxy.
             VPN_PORT_FORWARDING: "off"
             HTTPPROXY: "off"
-          probes:
-            startup:
-              enabled: true
-              type: exec
-              command:
-                - /gluetun-entrypoint
-                - healthcheck
-            readiness:
-              enabled: true
-              type: exec
-              command:
-                - /gluetun-entrypoint
-                - healthcheck
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}
