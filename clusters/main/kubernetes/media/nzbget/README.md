@@ -1,0 +1,27 @@
+# NZBGet
+
+TrueCharts `nzbget` 31.1.5 deploys NZBGet 26.3.0 using the chart's digest-pinned image.
+
+## Access and setup
+
+- Browser: `https://nzbget.${DOMAIN_0}` through the **internal** ingress and Authentik.
+- Native NZBGet authentication is also required: the deployment uses the existing SOPS-backed `${ADMIN_USER}` / `${ADMIN_PASSWORD}` substitutions. No credentials are stored in Homepage annotations.
+- Configure your Usenet provider, TLS, connections, and categories in NZBGet after deployment. This PR does not add provider credentials or modify existing Arr download-client settings.
+- From Sonarr/Radarr/Lidarr, configure NZBGet at `nzbget.nzbget.svc.cluster.local:10057` (HTTP inside the cluster), using its native credentials. This avoids the browser-only Authentik redirect.
+
+## Storage
+
+- `/config`: new 5 GiB PVC on the cluster's default storage class (currently Longhorn).
+- Downloads: the same `${TRUENAS_IP}:${DOWNLOADS_PATH}` NFS export and `${DOWNLOADS_MOUNT_PATH}` mount used by the existing Arr applications.
+- Completed files: `${DOWNLOADS_MOUNT_PATH}/usenet/completed`.
+- Intermediate files: `${DOWNLOADS_MOUNT_PATH}/usenet/intermediate`.
+- Both download paths are set as command-line overrides; edit the HelmRelease to change them, not only the UI.
+- The container runs as UID/GID 568. Verify that the NFS export permits this identity to create, rename, and remove files. No recursive permission-changing init container is added.
+
+## Backups and rollout verification
+
+The config PVC has a daily VolSync Restic source at `50 9 * * *`, using the existing B2 credentials. Restore destination is disabled for the fresh install; a restore must be explicitly configured. Downloads on NFS are not included in this config backup.
+
+After merge, verify the Flux Kustomization and HelmRelease, PVC binding, startup/readiness, HTTPS/Auth workflows, and native authenticated RPC. Then test NFS writes, a provider connection, an actual download/unpack/import, and the first successful config backup. Render/schema checks do not establish these runtime outcomes.
+
+Upstream chart metadata advertises a maximum tested Kubernetes version of 1.35.0, while this cluster runs 1.37.2; the chart's actual `kubeVersion` constraint accepts 1.33+. Rendering and admission dry-runs are useful checks but do not prove upstream-tested support for 1.37.
