@@ -9,4 +9,5 @@ resources:
   - kube-prometheus-stack/ks.yaml
   - loki/ks.yaml
   - truenas-exporter/ks.yaml
+  - truenas-api-exporter/ks.yaml
   - unpoller/ks.yaml
