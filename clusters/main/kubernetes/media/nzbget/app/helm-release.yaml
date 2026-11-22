@@ -61,11 +61,6 @@ spec:
                 name: nzbget-vpn
                 expandObjectName: false
                 key: endpoint-ip
-            WIREGUARD_ENDPOINT_PORT:
-              secretKeyRef:
-                name: nzbget-vpn
-                expandObjectName: false
-                key: endpoint-port
             WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL:
               secretKeyRef:
                 name: nzbget-vpn
