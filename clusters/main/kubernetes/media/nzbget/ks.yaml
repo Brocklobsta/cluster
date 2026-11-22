@@ -11,6 +11,7 @@ spec:
     kind: GitRepository
     name: cluster
   dependsOn:
+    - name: generic-device-plugin
     - name: longhorn
     - name: volsync
     - name: nginx-internal
