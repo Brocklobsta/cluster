@@ -85,6 +85,10 @@ spec:
       main:
         podSpec:
           containers:
+            # Same-pod API calls must use a host accepted by AllowedHosts.
+            exportarr:
+              env:
+                URL: http://127.0.0.1:9696
             main:
               env:
                 PROWLARR__AUTH__METHOD: "External"
