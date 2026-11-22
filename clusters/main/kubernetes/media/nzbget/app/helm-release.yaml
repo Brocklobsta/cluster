@@ -35,6 +35,13 @@ spec:
       gluetun:
         enabled: true
         container:
+          probes:
+            readiness:
+              enabled: true
+              type: exec
+              command:
+                - /gluetun-entrypoint
+                - healthcheck
           resources:
             # The addon default hides non-CPU/memory resources.
             excludeExtra: false

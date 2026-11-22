@@ -17,7 +17,7 @@ The dedicated `nzbget-CH-744` profile is included as SOPS-encrypted `app/vpn.sec
 
 The deployment selects the profile's IPv4 path and preserves its endpoint port and 25-second keepalive. IPv6 addresses/routes are not enabled by this change. The profile's DNS addresses are not imported: existing cluster DNS behavior remains, so Proton NetShield DNS filtering is not guaranteed. NAT-PMP stays disabled for the outbound-only Usenet workload, regardless of the profile comment.
 
-Gluetun runs as an ordinary chart-generated sidecar, following qBittorrent's convention. There is no Flux post-renderer, custom VPN health probe, native-sidecar conversion, or explicit VPN startup/shutdown gate. Application readiness does not establish that the VPN is connected.
+Gluetun runs as an ordinary chart-generated sidecar, following qBittorrent's convention. Both workloads explicitly run `/gluetun-entrypoint healthcheck` as the Gluetun readiness probe. A failed probe makes the whole pod unready and removes it from normal Service endpoints. This does not stop existing downloads or restart Gluetun; the firewall remains responsible for traffic blocking. There is no Flux post-renderer, native-sidecar conversion, or explicit VPN startup/shutdown gate.
 
 - Firewall stays enabled; Internet download traffic is routed through the VPN once connected. Verify the actual egress IP and tunnel-loss behavior after rollout; rendering cannot prove absence of leaks.
 - LAN `192.168.1.0/24` is an explicit non-VPN exception, matching qBittorrent. Pod/service exceptions use the chart's normal discovery/default behavior; no extra `chartContext` CIDRs are supplied. This is not an all-traffic isolation policy.
@@ -27,7 +27,7 @@ Gluetun runs as an ordinary chart-generated sidecar, following qBittorrent's con
 - The dedicated namespace receives the same Pod Security `enforce: privileged` exception as qBittorrent, because Gluetun's network capabilities are rejected by baseline policy. This relaxes admission for the namespace; the containers are not themselves set `privileged: true`.
 - The pod now needs one `truecharts.org/tun` device and Gluetun's NET_ADMIN/NET_RAW/MKNOD capabilities; the NZBGet application container retains its non-root hardening. `resources.excludeExtra: false` is retained because this pinned chart otherwise filters out the requested TUN device.
 
-After deployment, independently verify VPN health (do not rely on application readiness), verify authenticated UI/RPC, check the observed public egress IP, and deliberately test tunnel-loss blocking in a maintenance window. Confirm that qBittorrent remains connected and NZBGet can download/unpack/import. NFS traffic and backup mover Jobs are not tunneled by this pod sidecar.
+After deployment, verify that Gluetun readiness follows VPN health, verify authenticated UI/RPC and the observed public egress IP, and deliberately test tunnel-loss blocking in a maintenance window. Confirm that qBittorrent remains connected and NZBGet can download/unpack/import. NFS traffic and backup mover Jobs are not tunneled by this pod sidecar.
 
 ## Storage
 
