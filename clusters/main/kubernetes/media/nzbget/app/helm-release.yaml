@@ -1,0 +1,110 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nzbget
+  namespace: nzbget
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: nzbget
+      version: 31.1.5
+      sourceRef:
+        kind: HelmRepository
+        name: truecharts
+        namespace: flux-system
+      interval: 15m
+  timeout: 30m
+  maxHistory: 3
+  driftDetection:
+    mode: warn
+  install:
+    timeout: 30m
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    TZ: America/Los_Angeles
+    credentials:
+      b2:
+        accessKey: ${S3_KEY_ID}
+        bucket: ${S3_BUCKET}
+        encrKey: ${S3_PASSWORD}
+        secretKey: ${S3_SECRET_KEY}
+        type: s3
+        url: ${S3_ENDPOINT}
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: internal
+        hosts:
+          - host: nzbget.${DOMAIN_0}
+            paths:
+              - path: /
+                pathType: Prefix
+        integrations:
+          certManager:
+            certificateIssuer: domain-0-le-prod
+            enabled: true
+          homepage:
+            enabled: true
+            group: Arr
+            # Do not publish RPC credentials in Ingress annotations.
+            widget:
+              enabled: false
+          nginx:
+            enabled: true
+            auth:
+              type: authentik
+              internalHost: authentik-http.authentik.svc.cluster.local:10230
+              externalHost: auth.${DOMAIN_0}
+              responseHeaders: []
+    persistence:
+      config:
+        size: 5Gi
+        volsync:
+          - name: config
+            type: restic
+            credentials: b2
+            # Fresh installation; enable destination explicitly for a restore.
+            dest:
+              enabled: false
+            src:
+              enabled: true
+              trigger:
+                schedule: 50 9 * * *
+      downloads:
+        enabled: true
+        type: nfs
+        path: ${DOWNLOADS_PATH}
+        server: ${TRUENAS_IP}
+        mountPath: ${DOWNLOADS_MOUNT_PATH}
+    workload:
+      main:
+        podSpec:
+          containers:
+            main:
+              # Shared paths remain visible to the existing Arr workloads.
+              args:
+                - -o
+                - DestDir=${DOWNLOADS_MOUNT_PATH}/usenet/completed
+                - -o
+                - InterDir=${DOWNLOADS_MOUNT_PATH}/usenet/intermediate
+              env:
+                NZBGET__USER: ${ADMIN_USER}
+                NZBGET__PASS: ${ADMIN_PASSWORD}
+              probes:
+                startup:
+                  enabled: true
+                  type: tcp
+                  port: 6789
+                readiness:
+                  enabled: true
+                  type: tcp
+                  port: 6789

@@ -99,6 +99,7 @@ Media workloads live under [`clusters/main/kubernetes/media`](clusters/main/kube
 | Immich | Photo and video library |
 | Jellyfin | Secondary media server |
 | Lidarr | Music library automation |
+| NZBGet | Usenet download client |
 | Ombi | Media request management |
 | Prowlarr | Indexer management |
 | qBittorrent | Download client |
