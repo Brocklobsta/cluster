@@ -30,8 +30,6 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    global:
-      stopAll: true
     TZ: America/Los_Angeles
     credentials:
       b2:
