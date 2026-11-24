@@ -4,6 +4,8 @@ metadata:
   name: gitea
   namespace: flux-system
 spec:
+  dependsOn:
+    - name: plugin-barman-cloud
   interval: 10m
   path: clusters/main/kubernetes/apps/gitea/app
   prune: true

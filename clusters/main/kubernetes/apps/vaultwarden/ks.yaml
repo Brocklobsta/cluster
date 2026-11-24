@@ -4,6 +4,8 @@ metadata:
   name: vaultwarden
   namespace: flux-system
 spec:
+  dependsOn:
+    - name: plugin-barman-cloud
   interval: 10m
   path: clusters/main/kubernetes/apps/vaultwarden/app
   prune: true

@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: nextcloud
-      version: 49.2.11
+      version: 50.0.0
       sourceRef:
         kind: HelmRepository
         name: truecharts
@@ -32,25 +32,40 @@ spec:
     global:
       stopAll: false
     TZ: America/Los_Angeles
-    cnpg:
-      main:
-        monitoring:
-          enablePodMonitor: true
-        backups:
-          credentials: b2
-          enabled: true
-          scheduledBackups:
+    dependencies:
+      postgresql:
+        enabled: true
+        mode: operator
+        depconfig:
+          postgresqlUsername: nextcloud
+          postgresqlDatabase: nextcloud
+          password: ${CNPG_PASSWORD}
+        operator:
+          monitoring:
+            enablePodMonitor: true
+          backups:
+            credentials: b2
+            enabled: true
+            scheduledBackups:
             - name: daily-backup
-              schedule: "0 5 0 * * *"
+              schedule: 0 5 0 * * *
               backupOwnerReference: self
               immediate: true
               suspend: false
-        mode: recovery
-        password: ${CNPG_PASSWORD}
-        pgVersion: 15
-        recovery:
-          credentials: b2
-        user: nextcloud
+            destinationPath: s3://${S3_BUCKET}/nextcloud/cnpg
+            serverName: nextcloud-cnpg-main
+            revision: ''
+            target: prefer-standby
+          mode: recovery
+          # Migration bridge: retain PG15 AND its existing OS/image; do not upgrade majors here.
+          pgVersion: 15
+          cluster:
+            imageName: ghcr.io/cloudnative-pg/postgresql:15.19@sha256:11274300143f02d369ea2ff6082b028b6b662915f06bf59f26b808b53823475a
+          recovery:
+            credentials: b2
+            destinationPath: s3://${S3_BUCKET}/nextcloud/cnpg
+            serverName: nextcloud-cnpg-main
+            revision: ''
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}
@@ -148,3 +163,18 @@ spec:
         strategy: Recreate
       clamav:
         strategy: Recreate
+    # Retain the old Redis PVC offline. Dump/restore into the new Valkey layout before cutover.
+    extraTpl:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: nextcloud-redis-data
+        namespace: nextcloud
+        annotations:
+          helm.sh/resource-policy: keep
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Gi
