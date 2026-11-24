@@ -1,0 +1,41 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: plugin-barman-cloud
+  # CNPG discovers CNPG-I plugins in its own namespace.
+  namespace: cloudnative-pg
+spec:
+  interval: 15m
+  dependsOn:
+    - name: cert-manager
+      namespace: cert-manager
+    - name: cloudnative-pg
+      namespace: cloudnative-pg
+  chart:
+    spec:
+      chart: plugin-barman-cloud
+      version: 0.9.0
+      sourceRef:
+        kind: HelmRepository
+        name: cloudnative-pg
+        namespace: flux-system
+      interval: 15m
+  timeout: 30m
+  install:
+    timeout: 30m
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  values:
+    crds:
+      create: true
+    replicaCount: 1
+    # The official chart provisions CNPG-I client/server certificates via cert-manager.
+    certificate:
+      createClientCertificate: true
+      createServerCertificate: true
+      createIssuer: true
