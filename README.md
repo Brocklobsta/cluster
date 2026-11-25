@@ -146,6 +146,10 @@ General applications remain under [`clusters/main/kubernetes/apps`](clusters/mai
 4. Open a pull request and wait for repository checks.
 5. Merge the pull request; Flux applies the desired state and reports reconciliation status.
 
+## Common2026 Migration
+
+The [migration and backup runbook](docs/common2026-migration.md) records the verified encrypted Nextcloud backup, PostgreSQL image/version bridge, dependency data-layout risks, and deployment verification gates. Do not combine the common-library migration with an unreviewed PostgreSQL major upgrade.
+
 ## License
 
 [AGPL-3.0](LICENSE)

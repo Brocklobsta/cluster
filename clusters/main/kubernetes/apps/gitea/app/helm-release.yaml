@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: gitea
-      version: 27.5.0
+      version: 28.0.0
       sourceRef:
         kind: HelmRepository
         name: truecharts
@@ -37,19 +37,35 @@ spec:
       email: ${ADMIN_EMAIL}
       password: ${ADMIN_PASSWORD}
       username: brock
-    cnpg:
-      main:
-        monitoring:
-          enablePodMonitor: true
-        backups:
-          credentials: b2
-          enabled: true
-        mode: recovery
-        password: ${CNPG_PASSWORD}
-        pgVersion: 15
-        recovery:
-          credentials: b2
-        user: gitea
+    dependencies:
+      postgresql:
+        enabled: true
+        mode: operator
+        depconfig:
+          postgresqlUsername: gitea
+          postgresqlDatabase: gitea
+          password: ${CNPG_PASSWORD}
+        operator:
+          monitoring:
+            enablePodMonitor: true
+          backups:
+            credentials: b2
+            enabled: true
+            destinationPath: s3://${S3_BUCKET}/gitea/cnpg
+            serverName: gitea-cnpg-main
+            revision: ''
+            target: prefer-standby
+          mode: recovery
+          # Migration bridge: retain PG15 AND its existing OS/image; do not upgrade majors here.
+          pgVersion: 15
+          # Hibernated: Helm Ready does not establish that a new DB image has started.
+          cluster:
+            imageName: ghcr.io/cloudnative-pg/postgresql:15.19@sha256:11274300143f02d369ea2ff6082b028b6b662915f06bf59f26b808b53823475a
+          recovery:
+            credentials: b2
+            destinationPath: s3://${S3_BUCKET}/gitea/cnpg
+            serverName: gitea-cnpg-main
+            revision: ''
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}

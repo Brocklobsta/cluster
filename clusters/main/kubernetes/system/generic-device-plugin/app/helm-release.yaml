@@ -9,7 +9,7 @@ spec:
         spec:
             # renovate: registryUrl=https://charts.truechartsoci.org
             chart: generic-device-plugin
-            version: 1.2.0
+            version: 5.0.0
             sourceRef:
                 kind: HelmRepository
                 name: truecharts
@@ -27,3 +27,13 @@ spec:
         remediation:
             retries: 3
     values:
+        # Bridge common2026 independently of device-plugin binary/resource changes.
+        image:
+            tag: latest@sha256:ba6f0b4cf6c858d6ad29ba4d32e4da11638abbc7d96436bf04f582a97b2b8821
+        resources:
+            requests:
+                cpu: 10m
+                memory: 50Mi
+            limits:
+                cpu: 4000m
+                memory: 8Gi
