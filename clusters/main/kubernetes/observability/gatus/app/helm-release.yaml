@@ -23,6 +23,9 @@ spec:
       retries: 3
   upgrade:
     crds: CreateReplace
+    # A successful major upgrade cannot be rolled back by Helm.
+    strategy:
+      name: RetryOnFailure
     remediation:
       retries: 3
   values:
@@ -37,16 +40,15 @@ spec:
           mode: standalone
           monitoring:
             enablePodMonitor: true
-          # Move to Trixie on PostgreSQL 16 before the separate major upgrade.
-          pgVersion: 16
+          pgVersion: 17
           cluster:
-            imageName: ghcr.io/cloudnative-pg/postgresql:16.15-system-trixie@sha256:1546be7d23066aaf9eb75b07df17c843c98483cede7afdbaf01dca785fb3bf60
+            imageName: ghcr.io/cloudnative-pg/postgresql:17.12-system-trixie@sha256:0f34d3fb12f415713ec94c3f2aa8295c7975f7114a0a8d360f26c958253bd032
             skipEmptyWalArchiveCheck: false
           backups:
             enabled: true
             credentials: b2
             destinationPath: s3://${S3_BUCKET}/gatus/cnpg
-            serverName: gatus-cnpg-main
+            serverName: gatus-cnpg-main-pg17
             revision: ''
             target: prefer-standby
     credentials:
