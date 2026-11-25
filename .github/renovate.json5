@@ -4,7 +4,9 @@
   "timezone": "America/Los_Angeles",
   "extends": [
     "config:recommended",
-    "github>trueforge-org/truecharts//.github/renovate/main.json5",
+    "github>trueforge-org/renovate-config",
     "github>Brocklobsta/cluster//.github/kubectl.json5"
-  ]
+  ],
+  // Keep updates in PRs rather than letting the new preset merge branches directly.
+  "ignorePresets": ["github>trueforge-org/renovate-config//.github/renovate/special/quickMerge.json5"]
 }
