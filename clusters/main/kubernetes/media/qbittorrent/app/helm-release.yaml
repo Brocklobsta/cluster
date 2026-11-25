@@ -98,6 +98,16 @@ spec:
       enabled: false
       QBT_USERNAME: "${ADMIN_USER}"
       QBT_PASSWORD: "${ADMIN_PASSWORD}"
+    gluetunImage:
+      # Pin: containerforge/gluetun:3.41.3 (the chart-republished default)
+      # panics at startup with a nil-pointer deref of
+      # pprof.Settings.BlockProfileRate at internal/pprof/server.go:16
+      # (called unconditionally from main._main). Upstream v3.41.x bug, hit
+      # by any config lacking the PPROF_BLOCK_PROFILE_RATE/MUTEX env vars
+      # which this chart's addon does not set; reproduced on a bare config,
+      # not workload-specific. Keep last known-good tccr build until fixed.
+      repository: oci.trueforge.org/tccr/gluetun
+      tag: v3.40.0@sha256:a8189e29155e0f8142be1500ae068a92b189b1b25abbba036321e74d6389bf2b
     addons:
       gluetun:
         enabled: true
