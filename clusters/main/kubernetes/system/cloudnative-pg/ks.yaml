@@ -4,6 +4,9 @@ metadata:
   name: cloudnative-pg
   namespace: flux-system
 spec:
+  # Dependents must wait for the operator/webhook Helm release, not merely its creation.
+  wait: true
+  timeout: 35m
   interval: 10m
   path: clusters/main/kubernetes/system/cloudnative-pg/app
   prune: true

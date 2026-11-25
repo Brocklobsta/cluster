@@ -1,0 +1,17 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: plugin-barman-cloud
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: cert-manager
+    - name: cloudnative-pg
+  interval: 10m
+  path: clusters/main/kubernetes/system/plugin-barman-cloud/app
+  prune: true
+  wait: true
+  timeout: 35m
+  sourceRef:
+    kind: GitRepository
+    name: cluster
