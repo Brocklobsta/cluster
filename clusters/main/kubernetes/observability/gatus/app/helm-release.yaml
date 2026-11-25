@@ -34,12 +34,30 @@ spec:
           postgresqlUsername: gatus
           postgresqlDatabase: gatus
         operator:
+          mode: standalone
           monitoring:
             enablePodMonitor: true
           # Keep the existing PG16 OS/image during the common/plugin migration.
           pgVersion: 16
           cluster:
             imageName: ghcr.io/cloudnative-pg/postgresql:16.15@sha256:34cd4159d07b3410a1b29da35072e2e927a0905e717a61afa3814624a2e8859a
+            skipEmptyWalArchiveCheck: false
+          backups:
+            enabled: true
+            credentials: b2
+            destinationPath: s3://${S3_BUCKET}/gatus/cnpg
+            serverName: gatus-cnpg-main
+            revision: ''
+            target: prefer-standby
+    credentials:
+      b2:
+        accessKey: ${S3_KEY_ID}
+        bucket: ${S3_BUCKET}
+        encrKey: ${S3_PASSWORD}
+        path: ""
+        secretKey: ${S3_SECRET_KEY}
+        type: s3
+        url: ${S3_ENDPOINT}
     portal:
       open:
         enabled: false
