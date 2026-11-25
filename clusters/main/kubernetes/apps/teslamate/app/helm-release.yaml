@@ -14,6 +14,12 @@ spec:
         name: truecharts
         namespace: flux-system
 
+  upgrade:
+    # A successful major upgrade cannot be rolled back by Helm.
+    strategy:
+      name: RetryOnFailure
+    remediation:
+      retries: 3
   values:
     TZ: America/Los_Angeles
     dependencies:
@@ -37,19 +43,18 @@ spec:
               immediate: true
               suspend: false
             destinationPath: s3://${S3_BUCKET}/teslamate/cnpg
-            serverName: teslamate-cnpg-main
+            serverName: teslamate-cnpg-main-pg17
             revision: ''
             target: prefer-standby
           recovery:
             method: object_store
             credentials: b2
             destinationPath: s3://${S3_BUCKET}/teslamate/cnpg
-            serverName: teslamate-cnpg-main
+            serverName: teslamate-cnpg-main-pg17
             revision: ''
-          # Keep the existing PG16 OS/image during the common/plugin migration.
-          pgVersion: 16
+          pgVersion: 17
           cluster:
-            imageName: ghcr.io/cloudnative-pg/postgresql:16.15-system-trixie@sha256:1546be7d23066aaf9eb75b07df17c843c98483cede7afdbaf01dca785fb3bf60
+            imageName: ghcr.io/cloudnative-pg/postgresql:17.12-system-trixie@sha256:0f34d3fb12f415713ec94c3f2aa8295c7975f7114a0a8d360f26c958253bd032
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}
