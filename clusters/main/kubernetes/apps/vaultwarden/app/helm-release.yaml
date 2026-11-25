@@ -47,19 +47,19 @@ spec:
             credentials: b2
             enabled: true
             destinationPath: s3://${S3_BUCKET}/vaultwarden/cnpg
-            serverName: vaultwarden-cnpg-main-pg16
+            serverName: vaultwarden-cnpg-main-pg18
             revision: ''
             target: prefer-standby
           mode: recovery
-          # Move to Trixie on PostgreSQL 16 before the separate major upgrade.
-          pgVersion: 16
+          # Upgrade in place only after Trixie is running on both PG16 instances.
+          pgVersion: 18
           cluster:
-            imageName: ghcr.io/cloudnative-pg/postgresql:16.15-system-trixie@sha256:1546be7d23066aaf9eb75b07df17c843c98483cede7afdbaf01dca785fb3bf60
+            imageName: ghcr.io/cloudnative-pg/postgresql:18.7-system-trixie@sha256:c437b7c6c00aa7e66f5d6de1dd83602391fdebd4ff776ffb1ab7aaba5e7351ad
           recovery:
             method: object_store
             credentials: b2
             destinationPath: s3://${S3_BUCKET}/vaultwarden/cnpg
-            serverName: vaultwarden-cnpg-main-pg16
+            serverName: vaultwarden-cnpg-main-pg18
             revision: ''
     credentials:
       b2:
