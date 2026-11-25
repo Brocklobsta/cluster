@@ -54,18 +54,17 @@ spec:
               immediate: true
               suspend: false
             destinationPath: s3://${S3_BUCKET}/nextcloud/cnpg
-            serverName: nextcloud-cnpg-main-pg16
+            serverName: nextcloud-cnpg-main-pg17
             revision: ''
             target: prefer-standby
           mode: recovery
-          # PG15 -> PG16 uses the same Debian bullseye image family.
-          pgVersion: 16
+          pgVersion: 17
           cluster:
-            imageName: ghcr.io/cloudnative-pg/postgresql:16.15-system-trixie@sha256:1546be7d23066aaf9eb75b07df17c843c98483cede7afdbaf01dca785fb3bf60
+            imageName: ghcr.io/cloudnative-pg/postgresql:17.12-system-trixie@sha256:0f34d3fb12f415713ec94c3f2aa8295c7975f7114a0a8d360f26c958253bd032
           recovery:
             credentials: b2
             destinationPath: s3://${S3_BUCKET}/nextcloud/cnpg
-            serverName: nextcloud-cnpg-main-pg16
+            serverName: nextcloud-cnpg-main-pg17
             revision: ''
     credentials:
       b2:
