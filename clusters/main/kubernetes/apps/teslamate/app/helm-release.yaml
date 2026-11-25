@@ -49,7 +49,7 @@ spec:
           # Keep the existing PG16 OS/image during the common/plugin migration.
           pgVersion: 16
           cluster:
-            imageName: ghcr.io/cloudnative-pg/postgresql:16.15@sha256:34cd4159d07b3410a1b29da35072e2e927a0905e717a61afa3814624a2e8859a
+            imageName: ghcr.io/cloudnative-pg/postgresql:16.15-system-trixie@sha256:1546be7d23066aaf9eb75b07df17c843c98483cede7afdbaf01dca785fb3bf60
     credentials:
       b2:
         accessKey: ${S3_KEY_ID}
