@@ -52,10 +52,10 @@ spec:
             revision: ''
             target: prefer-standby
           mode: recovery
-          # Keep the existing PG16 OS/image during the common/plugin migration.
+          # Move to Trixie on PostgreSQL 16 before the separate major upgrade.
           pgVersion: 16
           cluster:
-            imageName: ghcr.io/cloudnative-pg/postgresql:16.15@sha256:34cd4159d07b3410a1b29da35072e2e927a0905e717a61afa3814624a2e8859a
+            imageName: ghcr.io/cloudnative-pg/postgresql:16.15-system-trixie@sha256:1546be7d23066aaf9eb75b07df17c843c98483cede7afdbaf01dca785fb3bf60
           recovery:
             credentials: b2
             destinationPath: s3://${S3_BUCKET}/grafana/cnpg
