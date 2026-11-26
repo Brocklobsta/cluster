@@ -89,22 +89,6 @@ spec:
       datasource:
         enabled: false
 
-    # Retain the unmounted pre-migration cache volume until its recovery data is retired.
-    extraTpl:
-      - apiVersion: v1
-        kind: PersistentVolumeClaim
-        metadata:
-          name: blocky-redis-data
-          namespace: blocky
-          annotations:
-            helm.sh/resource-policy: keep
-        spec:
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 100Gi
-
     dependencies:
       postgresql:
         enabled: false

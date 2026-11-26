@@ -8,10 +8,13 @@ versions, PostgreSQL images, or instructions to replay it.
 
 The backup and recovery ObjectStores are plugin configuration, not legacy
 in-tree Barman settings. Keep active schedules, credential references, and
-recovery sources. Blocky, Immich, and Nextcloud now run on separate Valkey
-volumes. The unmounted pre-migration Redis PVCs remain protected; running
-Valkey does not prove the old data was restored or can be discarded. Retire
-those PVCs only as a separate, reviewed data-retention decision.
+recovery sources. Blocky, Immich, and Nextcloud run on separate Valkey volumes.
+The old, unmounted `*-redis-data` claims are no longer declared. Helm honors the
+existing `helm.sh/resource-policy: keep` annotation and leaves those claims in
+the cluster. Retire them separately only after the updated releases reconcile
+and the exact claims are verified to be unused. Their PV reclaim policy is
+`Delete`, so removing the claims also removes their backing data. Do not delete
+the active `*-valkey-data` claims.
 
 Upstream references:
 
