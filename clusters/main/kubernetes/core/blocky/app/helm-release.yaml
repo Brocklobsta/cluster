@@ -89,8 +89,7 @@ spec:
       datasource:
         enabled: false
 
-    # Preserve the legacy PVC in this Helm release; Valkey uses a NEW volume.
-    # Keep until the RDB dump is restored and verified after the major upgrade.
+    # Retain the unmounted pre-migration cache volume until its recovery data is retired.
     extraTpl:
       - apiVersion: v1
         kind: PersistentVolumeClaim

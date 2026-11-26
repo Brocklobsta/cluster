@@ -72,7 +72,6 @@ spec:
             destinationPath: s3://${S3_BUCKET}/home-assistant/cnpg
             serverName: home-assistant-cnpg-main-pg18
             revision: ''
-          # Keep the existing PG16 OS/image during the common/plugin migration.
           pgVersion: 18
           cluster:
             imageName: ghcr.io/cloudnative-pg/postgresql:18.7-system-trixie@sha256:c437b7c6c00aa7e66f5d6de1dd83602391fdebd4ff776ffb1ab7aaba5e7351ad
