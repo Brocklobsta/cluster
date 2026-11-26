@@ -40,15 +40,15 @@ spec:
           mode: standalone
           monitoring:
             enablePodMonitor: true
-          pgVersion: 17
+          pgVersion: 18
           cluster:
-            imageName: ghcr.io/cloudnative-pg/postgresql:17.12-system-trixie@sha256:0f34d3fb12f415713ec94c3f2aa8295c7975f7114a0a8d360f26c958253bd032
+            imageName: ghcr.io/cloudnative-pg/postgresql:18.7-system-trixie@sha256:c437b7c6c00aa7e66f5d6de1dd83602391fdebd4ff776ffb1ab7aaba5e7351ad
             skipEmptyWalArchiveCheck: false
           backups:
             enabled: true
             credentials: b2
             destinationPath: s3://${S3_BUCKET}/gatus/cnpg
-            serverName: gatus-cnpg-main-pg17
+            serverName: gatus-cnpg-main-pg18
             revision: ''
             target: prefer-standby
     credentials:
