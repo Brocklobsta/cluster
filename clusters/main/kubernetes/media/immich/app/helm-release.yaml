@@ -64,7 +64,7 @@ spec:
             revision: ''
           pgVersion: 16
           cluster:
-            # Preserve the existing VectorChord image/extensions during the plugin migration.
+            # Pin the PostgreSQL image that supplies Immich's VectorChord extension.
             imageName: ghcr.io/tensorchord/cloudnative-vectorchord:16.15-1.1.1@sha256:f5a17fa05faf25e81304ee95e9f920d8ae077ac4a4ef0a1251e09c7197cbb236
           type: vectorchord
     credentials:
@@ -148,18 +148,3 @@ spec:
         targetSelector:
           main:
             initialize-storage-markers: {}
-    # Retain the old Redis PVC offline. Dump/restore into the new Valkey layout before cutover.
-    extraTpl:
-    - apiVersion: v1
-      kind: PersistentVolumeClaim
-      metadata:
-        name: immich-redis-data
-        namespace: immich
-        annotations:
-          helm.sh/resource-policy: keep
-      spec:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 100Gi

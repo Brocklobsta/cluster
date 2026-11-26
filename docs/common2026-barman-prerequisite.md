@@ -1,4 +1,10 @@
-# Barman plugin prerequisite (no database cutover)
+# Barman plugin prerequisite (historical)
+
+This records the prerequisite-only change in [#6077](https://github.com/Brocklobsta/cluster/pull/6077).
+Production later moved to plugin-based backups in [#6076](https://github.com/Brocklobsta/cluster/pull/6076).
+The steps below describe what was verified before that cutover, not the current
+database backup state. The production ObjectStores and plugin dependency must
+remain in place.
 
 ## Scope and reconciliation order
 

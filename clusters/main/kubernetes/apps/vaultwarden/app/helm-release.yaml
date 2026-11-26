@@ -51,7 +51,6 @@ spec:
             revision: ''
             target: prefer-standby
           mode: recovery
-          # Upgrade in place only after Trixie is running on both PG16 instances.
           pgVersion: 18
           cluster:
             imageName: ghcr.io/cloudnative-pg/postgresql:18.7-system-trixie@sha256:c437b7c6c00aa7e66f5d6de1dd83602391fdebd4ff776ffb1ab7aaba5e7351ad

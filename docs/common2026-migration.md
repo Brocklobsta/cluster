@@ -1,4 +1,20 @@
-# Common2026 migration and data-safety gates
+# Common2026 migration record and pre-migration backup
+
+The migration was deployed by [#6076](https://github.com/Brocklobsta/cluster/pull/6076)
+after the [Barman plugin prerequisite](common2026-barman-prerequisite.md), with a
+Gluetun follow-up in [#6079](https://github.com/Brocklobsta/cluster/pull/6079).
+The preparation notes below describe the historical rollout, not current chart
+versions, PostgreSQL images, or instructions to replay it.
+
+The backup and recovery ObjectStores are plugin configuration, not legacy
+in-tree Barman settings. Keep active schedules, credential references, and
+recovery sources. Blocky, Immich, and Nextcloud run on separate Valkey volumes.
+The old, unmounted `*-redis-data` claims are no longer declared. Helm honors the
+existing `helm.sh/resource-policy: keep` annotation and leaves those claims in
+the cluster. Retire them separately only after the updated releases reconcile
+and the exact claims are verified to be unused. Their PV reclaim policy is
+`Delete`, so removing the claims also removes their backing data. Do not delete
+the active `*-valkey-data` claims.
 
 Upstream references:
 
@@ -8,7 +24,7 @@ Upstream references:
 
 This migration must separate the common-library and dependency-values changes from PostgreSQL major-version upgrades. A pull request, successful render, or healthy operator does **not** establish that the live application has migrated successfully. Leave migration pull requests unmerged for owner review.
 
-## PostgreSQL version bridge
+## Historical PostgreSQL version bridge
 
 The rollout article recommends pinning PostgreSQL 16. That is not a harmless pin for this cluster: Authentik, Gitea, Nextcloud, and Vaultwarden currently use PostgreSQL 15.19 based on Debian bullseye. The installed CNPG 1.30.2 operator automatically starts an offline major upgrade when the requested image major increases. CNPG only supports that operation between images based on the **same operating-system distribution**; changing directly from PG15 bullseye to a new PG16 trixie default is not supported.
 
@@ -54,7 +70,7 @@ Immich's database still declares `vectors`0.2.1, although its current VectorChor
 
 The encrypted archive includes the required package under `restore-dependencies/`, its source URL and checksum, and instructions in its README. This is an isolated restore dependency—not authorization to install obsolete binaries in production or drop production extensions. Preserve and audit extension dependencies before any later database migration.
 
-## Proposed GitOps scope and verification
+## Original GitOps proposal and verification
 
 - All **43 existing TrueCharts common-library consumers** are pinned to exact chart releases bundling **common 32.8.5**. Unrelated upstream charts are unchanged.
 - The official `plugin-barman-cloud` chart is pinned to **0.9.0** (plugin v0.16.0) in `cloudnative-pg`. Cert-manager and CNPG readiness precede the plugin; the nine database-bearing apps depend on plugin readiness.
@@ -65,7 +81,7 @@ The encrypted archive includes the required package under `restore-dependencies/
 - Root Kustomize rendering, Flux dependency-cycle checks, original database/bootstrap/PVC and backup-destination invariants, and secret-encryption checks passed. These are source/schema/admission checks, not a deployed application or plugin-runtime test.
 - TrueCharts metadata advertises testing through Kubernetes 1.35; the live cluster is 1.37.2. The local validations do not establish upstream runtime support for 1.37.
 
-## Deployment gates
+## Original deployment gates
 
 1. Confirm fresh CNPG, application-file, and persistent-volume backups before deployment. The backup above is a fixed recovery point, not an automatically refreshed pre-cutover snapshot.
 2. Install and verify the Barman Cloud plugin and its prerequisites before reconciling dependent application charts. Verify the exact rendered ObjectStores, credentials references, server names, destination paths, and backup schedules.

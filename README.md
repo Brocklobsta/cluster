@@ -146,9 +146,10 @@ General applications remain under [`clusters/main/kubernetes/apps`](clusters/mai
 4. Open a pull request and wait for repository checks.
 5. Merge the pull request; Flux applies the desired state and reports reconciliation status.
 
-## Common2026 Migration
+## Database backups and recovery
 
-The [migration and backup runbook](docs/common2026-migration.md) records the verified encrypted Nextcloud backup, PostgreSQL image/version bridge, dependency data-layout risks, and deployment verification gates. Do not combine the common-library migration with an unreviewed PostgreSQL major upgrade.
+Production CloudNativePG backups use the Barman Cloud plugin. The
+[Common2026 migration record](docs/common2026-migration.md) preserves the location and restore instructions for the verified pre-migration backup. Use the live Cluster, ObjectStore, and ScheduledBackup resources to identify current backup destinations and PostgreSQL versions; the historical image pins are not current deployment instructions.
 
 ## License
 

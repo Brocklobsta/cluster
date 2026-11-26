@@ -89,23 +89,6 @@ spec:
       datasource:
         enabled: false
 
-    # Preserve the legacy PVC in this Helm release; Valkey uses a NEW volume.
-    # Keep until the RDB dump is restored and verified after the major upgrade.
-    extraTpl:
-      - apiVersion: v1
-        kind: PersistentVolumeClaim
-        metadata:
-          name: blocky-redis-data
-          namespace: blocky
-          annotations:
-            helm.sh/resource-policy: keep
-        spec:
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 100Gi
-
     dependencies:
       postgresql:
         enabled: false

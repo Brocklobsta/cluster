@@ -31,15 +31,6 @@ spec:
     keepHistory: false
   values:
     TZ: America/Los_Angeles
-    credentials:
-      b2:
-        accessKey: ${S3_KEY_ID}
-        bucket: ${S3_BUCKET}
-        encrKey: ${S3_PASSWORD}
-        path: ""
-        secretKey: ${S3_SECRET_KEY}
-        type: s3
-        url: ${S3_ENDPOINT}
     workload:
       main:
         podSpec:

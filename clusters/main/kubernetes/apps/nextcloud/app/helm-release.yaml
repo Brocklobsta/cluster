@@ -163,18 +163,3 @@ spec:
         strategy: Recreate
       clamav:
         strategy: Recreate
-    # Retain the old Redis PVC offline. Dump/restore into the new Valkey layout before cutover.
-    extraTpl:
-    - apiVersion: v1
-      kind: PersistentVolumeClaim
-      metadata:
-        name: nextcloud-redis-data
-        namespace: nextcloud
-        annotations:
-          helm.sh/resource-policy: keep
-      spec:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 100Gi
