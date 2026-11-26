@@ -24,9 +24,9 @@ spec:
     remediation:
       retries: 3
   upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
   uninstall:
     keepHistory: false
   values:
@@ -53,19 +53,18 @@ spec:
               immediate: true
               suspend: false
             destinationPath: s3://${S3_BUCKET}/immich/cnpg
-            serverName: immich-cnpg-main
+            serverName: immich-cnpg-main-pg18
             revision: ''
             target: prefer-standby
           mode: recovery
           recovery:
             credentials: b2
             destinationPath: s3://${S3_BUCKET}/immich/cnpg
-            serverName: immich-cnpg-main
+            serverName: immich-cnpg-main-pg18
             revision: ''
-          pgVersion: 16
+          pgVersion: 18
           cluster:
-            # Preserve the existing VectorChord image/extensions during the plugin migration.
-            imageName: ghcr.io/tensorchord/cloudnative-vectorchord:16.15-1.1.1@sha256:f5a17fa05faf25e81304ee95e9f920d8ae077ac4a4ef0a1251e09c7197cbb236
+            imageName: git.brocklobsta.net/clawdaddy/immich-postgresql:18.7-1.1.1@sha256:5daa1616b1dcdd91054491fa2641c1ddc3293fe39e8d66c4be82f2821fd88135
           type: vectorchord
     credentials:
       b2:
