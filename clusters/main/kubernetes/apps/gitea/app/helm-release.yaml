@@ -32,7 +32,7 @@ spec:
     keepHistory: false
   values:
     global:
-      stopAll: false
+      stopAll: true
     TZ: America/Los_Angeles
     admin:
       email: ${ADMIN_EMAIL}
